@@ -163,5 +163,8 @@ $autoload['model'] = array(
 							'config_model',
 							'chat_model',
 							'incidencias_model',
-							'cincidencia_model'
+							'cincidencia_model',
+							'licenciaturas_model',
+							'materias_model',
+							//'profesionmateria_model'
 						);
