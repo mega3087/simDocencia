@@ -1,0 +1,109 @@
+/*
+Modificación de estilos definidos en la plantilla INSPINIA y creación de estilos propios
+*/
+/* 
+    Created on : 20/08/2014, 01:33:55 PM
+    Author     : Adrian Cerritos
+*/
+
+body {
+    background: white;
+}
+
+.fondosplash {
+    background-image: url("../assets/img/FondoSplash.jpg");
+    background-repeat: no-repeat;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	padding: 10px;
+	width: auto;
+	height: 780px;
+	 background-position: center 0px;
+}
+
+a {
+    color: inherit;
+}
+
+
+.input-group-addon {
+    background-color: #f7f7f7;
+}
+.loginscreen {
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 20px;
+    width: 400px;
+    height: auto;
+    margin: 80px auto 0;
+}
+.loginscreen{
+	background: #F2EEEC;	
+}
+
+
+.loginscreen.middle-box { 
+    /* se redefine el margen para permitir que los logos se muestren en versión móvil*/
+    margin-top: -210px;
+    width: 400px;
+    height: auto;
+}
+
+.loginscreen h3{
+    margin: 20px 0;
+}
+
+
+
+
+.navbar-header {
+    margin-top: 5px;
+}
+
+.user-name {
+    color: #888888;
+}
+
+.navbar-default {
+    background: white;
+}
+.navbar-default .nav > li > a:hover,
+.navbar-default .nav > li > a:focus {
+  background-color: #f7f7f7;
+  color: #676a6c;
+}
+
+.nav > li.active {
+    background: none repeat scroll 0 0 #428bca;
+}
+
+.nav > li > a {
+    color: #676a6c;
+}
+
+.nav > li > a i {
+    color: #428bca;
+}
+
+.nav > li.active > a i {
+    color: #fff; // color del icono - opcion lista activa
+}
+
+@media screen and (max-width: 360px) {
+    .loginscreen {
+        width: auto;
+        margin: 20px;
+    }
+
+}
+
+
+/*
+Un dispositivo con una ventana de navegador no mayor a (es decir menor a) 1000 pixeles (max-width).
+*/
+@media (max-width: 50px) {
+    .welcome-messageXXXX {
+        display: none !important;
+    }
+}

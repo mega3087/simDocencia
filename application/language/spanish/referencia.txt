@@ -1,0 +1,4 @@
+Archivos descargados desde:
+
+http://codeigniter.com/wiki/Language_Translation/
+http://codeigniter.com/wiki/File:spanish_1.7.2.zip/

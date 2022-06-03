@@ -1,0 +1,2 @@
+ALTER TABLE `sim`.`noconfig`     ADD COLUMN `CORango_fechas_i` VARCHAR(60) NULL  COMMENT 'Limite de fecha inicial para crear FUMP'  AFTER `COLimite_fump`,     ADD COLUMN `CORango_fechas_f` VARCHAR(60) NULL  COMMENT 'Limite de fecha final para crear FUMP'  AFTER `CORango_fechas_i`;
+ALTER TABLE `sim`.`noconfig`     ADD COLUMN `COUsuario_modificacion` INT NULL AFTER `CORango_fechas_f`,     ADD COLUMN `COFecha_modificacion` DATETIME NULL AFTER `COUsuario_modificacion`;

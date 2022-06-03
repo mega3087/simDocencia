@@ -1,0 +1,191 @@
+/*
+	Modificación de estilos definidos en la plantilla INSPINIA y creación de estilos propios
+*/
+/*
+    Created on : 20/08/2014, 01:33:55 PM
+    Author     : José Luis Lino
+*/
+
+
+/* Para mantener el color blanco del texto al usar una etiqueta 'a' en lugar de 'button' */
+
+/* Cambiar el estilo de la divicion ya que oculta los link */
+.ibox-tools {
+	position: static !important;
+}
+
+
+
+/* ******************************************************************** */
+
+/* Para marcar los campos requeridos con color rojo */
+em {
+	color:red;
+	font-style: normal;
+	font-family:"open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.disabled{
+	color: #707070;
+	background-color: #FFFFF;
+	border-width:0;
+	_height: 34px;
+	_width: 100%;
+	pointer-events: none;
+}
+
+#cboxClose{
+    background-color: #1AB394;
+    border-color: #1AB394;
+    color: #FFF;
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	-moz-user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+#cboxClose:hover{
+    background-color: #18A689;
+    border-color: #18A689;
+    color: #FFF;
+}
+
+/* Alinear a la derecha los campos que representan cantidades */
+.number {
+	text-align: right !important;
+ }
+ /* Alinear a la derecha los campos que representan montos */
+.money {
+	text-align: right !important;
+ }
+/* Para mantener el tamaño de la letra a 13px */
+ .sidebard-panel .feed-element, .media-body, .sidebard-panel p {
+    font-size: 13px;
+}
+/* Interlineado de los formularios */
+.form-group {
+    margin-bottom: 7px;
+}
+/* Para la alineación del texto simple en los fomularios */
+.form-text {
+    padding-top: 7px;
+    margin-bottom: 0px;
+}
+
+.tables {
+	width:100%;
+}
+
+/*Quitar mucho espaciado a los content*/
+
+.ibox-content {
+    padding: 15px 10px 1px;
+}
+
+.navy-bg a{
+	color:#fff
+}
+
+/*mostrar texto completo en los dt */
+.dl-horizontal dt {
+    white-space: unset;
+}
+/* Ampliar el espacio entre los elementos de la lista */
+/* ejem http://192.168.100.6/estancias/evaluador */
+.dl-horizontal dt, .dl-horizontal dd {
+		padding-top: 3px;
+		padding-bottom: 3px;
+}
+
+.red{
+	color: red;
+}
+
+.oculto{
+	display: none;
+}
+.a {
+	color: #676a6c; !important;
+}
+
+/* para colocar texto en marca de agua */
+	.marca_agua {
+	text-transform: uppercase;
+	font_family: Monospace;
+	font-weight: bold;
+	color: Black ;
+	font-size:100px;
+	position: absolute;
+	z-index: 1;
+	left:50%;
+    top: 50%;
+	width:700px;
+	margin: 0 0 0 -300px;
+	transform:  rotate(-45deg);
+	opacity: 0.1;
+    filter: alpha(opacity=10); /* For IE8 and earlier */
+	}
+	
+	.texto-sello{
+	font-size:8px !important;
+	font-family :  Microsoft PhagsPa !important;
+	color: #71a7d7 !important;
+	text-transform: uppercase !important;
+	filter: brightness(100%)!important;
+	}
+	
+	.firma{
+		position : relative;
+		margin: -30px auto;
+		top: auto;
+		width:170px;;
+	}
+	
+@media only screen and (max-width: 800px) {
+    .marca_agua {
+		left:60%;
+		font-size:70px;
+    }
+}
+	
+@media only screen and (max-width: 500px) {
+    .marca_agua {
+		left:80%;
+		font-size:50px;
+    }
+}
+/* fin para colocar texto en marca de agua */
+
+
+/*Para adaptar el estilo de los select dinamicos*/
+.chosen-container{
+	width:100% !important;
+	text-align: left;
+}	
+.chosen-container .chosen-results {
+	z-index: 1;
+}
+
+/*Para quita el cambiar tamaño*/
+.textarea{
+	resize:none;
+}
+
+@media print {
+  /* Contenido del fichero print.css */
+	.no-imprimir {
+	display: none !important;
+	}
+	.text-danger{
+	color: red !important;
+	}
+}
