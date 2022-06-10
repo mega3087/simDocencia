@@ -83,7 +83,7 @@
 			<?php } ?>
 			
 			<?php if( is_permitido(null,'horasClase','index') or is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'grupos','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'nuevaplantilla','index')) { ?>
-			<li class="<?php if(nvl($modulo)=='horasClase' or nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='grupos' or nvl($modulo)=='plantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
+			<li class="<?php if(nvl($modulo)=='horasClase' or nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='grupos' or nvl($modulo)=='plantilla' or nvl($modulo)=='nuevaplantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
 				<a href="#"><i class="fa fa-building-o"></i> <span class="nav-label">Docencia</span> <span class="fa arrow"></span></a>
 				<ul class="nav nav-second-level collapse" style="height: 0px;">
 					<?php if(is_permitido(null,'profesiograma','index')) { ?>

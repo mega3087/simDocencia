@@ -166,5 +166,5 @@ $autoload['model'] = array(
 							'cincidencia_model',
 							'licenciaturas_model',
 							'materias_model',
-							//'profesionmateria_model'
+							'usuariolic_model'
 						);

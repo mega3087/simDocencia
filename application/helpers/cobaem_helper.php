@@ -715,7 +715,7 @@
 
 	function setMes($m = '') {
 		if (strlen($m) == 2) {
-			$mes = $f;
+			$mes = $m;
 		} else {
 			$mes = "0" . $m;
 		}
@@ -752,5 +752,7 @@
         header ('Pragma: public'); // HTTP/1.0
 
     }
+
+	
 	
 ?>

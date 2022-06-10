@@ -6,7 +6,7 @@
 <div class="row">
 	<div class="ibox float-e-margins">
 		<div class="ibox-content">
-			<h3>Planteles</h3>
+			<h3>Generar Plantilla</h3>
 		</div>
 	</div>
 </div>
@@ -14,30 +14,17 @@
 	<div class="col-lg-12">
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
-			<div class="ibox-title">
-				<div class="pull-right">
-				<?php if( is_permitido(null,'plantilla','load') ){ ?>
-					<button 
-					class="btn btn-primary open"
-					data-target="#modal_plantilla" 
-					data-toggle="modal"
-					data-unci_usuario_skip=""
-					><i class="fa fa-building-o"></i> Cargar Plantilla</button>
-				<?php } ?>
-				</div>
-				<h3>&nbsp;</h3>
-			</div> 
 			<div class="ibox-content">
 				
 				<div class="table-responsive">
 					<table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
 						<thead>
 							<tr>
-								<th>Periodo</th>
+								<th>#</th>
 								<th>Plantel</th>
-								<th>Fecha</th>
-								<th>Plantilla</th>
-								<th width="130px">Acción</th> 
+								<th>CCT</th>
+								<th>Acción</th>
+								<th width="130px">Plantilla</th> 
 							</tr>	
 						</thead>
 						<tbody>
@@ -45,7 +32,7 @@
                             $i = 1;
 								foreach($planteles as $key => $list) { 
                                     $PClave_skip = $this->encrypt->encode($list['CPLClave']);	
-                                    $urlCrear = base_url("nuevaplantilla/crearplantilla/".$this->encrypt->encode($list['CPLClave'])."");	    
+                                    $urlCrear = base_url("NuevaPlantilla/crear/".$this->encrypt->encode($list['CPLClave'])."");	    
                                 ?>
 								<tr>
 									<td class="text-left"><?php echo $i; ?></td>
@@ -53,7 +40,7 @@
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
 									<td class="text-left"><a href='<?=$urlCrear?>' target='_blank'>Crear Plantilla</a></td>							
 									<td>
-										<?php if( is_permitido(null,'nuevaplantilla','verPlantilla') ){ ?>
+										<?php if( is_permitido(null,'NuevaPlantilla','verPlantilla') ){ ?>
 											<a href="<?php echo base_url("plantilla/delete/$PClave_skip"); ?>" class="btn btn-default btn-sm delete"><i class="fa fa-times"></i> Ver Plantilla</a>
 										<?php } ?>
 									</td>
