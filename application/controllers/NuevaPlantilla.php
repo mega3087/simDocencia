@@ -64,7 +64,7 @@
 			$this->db->group_by('Licenciatura');
 			$this->db->order_by('Licenciatura', 'ASC');
 			$data['carreras'] = $this->licenciaturas_model->find_all();
-
+			
 			$selectNom = 'PLClave, PLTipo, PLTipo_plantel, PLTipo_clase, PLPuesto';
 			if ($data['planteles'][0]['CPLTipo'] == 35) {
 				$this->db->where('PLTipo_plantel', 'Plantel');
@@ -108,14 +108,11 @@
 				$data['carreras'] = $this->licenciaturas_model->find_all();
 				
 				?>
-				<select name="UPLicenciatura" id="UPLicenciatura" class="form-control">
-					<option value="">- Especialidad -</option>
-					<?php foreach ($data['carreras']  as $k => $listCar) { ?>
-						<option value="<?= $listCar['IdLicenciatura'] ?>"><?= $listCar['Licenciatura'] ?></option>    
-					<?php } ?>
-				</select>
-			
-				<?php
+				<option value=""></option>
+				<?php foreach ($data['carreras']  as $k => $listCar) { ?>
+					<option value="<?= $listCar['IdLicenciatura']; ?>"><?= $listCar['Licenciatura']; ?></option>    
+				<?php } 
+				
 			}
 		}
 		
@@ -141,18 +138,6 @@
 			$plantel = $this->input->post('plantel');
 
 			if($this->input->post('usernew') == 'Si') {
-				echo "vacio";
-				echo $this->input->post('UCURP').'<br>';
-				echo json_encode($data);
-			} else {
-				$idUser = $this->input->post('idUsuario');
-				echo $idUser;
-			}
-			
-			exit;
-			if($this->input->post('idUsuario')) {
-				echo "hola";
-				$idUser = $this->input->post('FClave_skip');
 				$datosUser = array(
 					'UCURP' => $data['UCURP'], 
 					'UNombre' => $data['UNombre'], 
@@ -161,34 +146,33 @@
 					'URFC' => $data['URFC'], 
 					'UFecha_ingreso' => $data['UFecha_ingreso']
 				);
-				//$this->usuario_model->update($idUser,$datosUser);
-				if ($this->input->post('Titulado')== 'Titulado') {
-					echo "aqui";
-					$this->db->where('ULUsuario',$idUser);
-					$nolic = $this->usuariolic_model->find_all();
-					if (count($nolic) == '0'){
-						$dataTitulado = array(
-							'ULUsuario' => $idUser,
-							'ULPlantel' => $plantel,
-							'ULNivel_estudio' => $data['UPNivel_estudio'], 
-							'ULLicenciatura' => $data['UPLicenciatura'], 
-							'ULCedulaProf' => $data['UPCedulaProf'], 
-							'ULNombramiento' => $data['UPNombramiento'],
-							'ULActivo' => 1,
-							'ULUsuarioRegistro' => get_session('UNCI_usuario'),
-							'ULFechaRegistro' => date('Y-m-d H:i:s')
-						);
-					//	echo json_encode($dataTitulado);
-					} else {
-						//echo "modificar";
-					}
+				//$idU = $this->usuario_model->insert($datosUser);
+				
+				if ($this->input->post('FClave_skip') != '') {
+					$datosEstudios = array(
+						'ULUsuario' => $this->input->post('FClave_skip'), 
+						'ULPlantel' => $plantel, 
+						'ULNivel_estudio' => $data['ULNivel_estudio'], 
+						'ULLicenciatura' => $data['ULLicenciatura'], 
+						'ULCedulaProf' => $data['ULCedulaProf'], 
+						'ULNombramiento' => $data['ULNombramiento'], 
+						'ULTitutado' => $data['Titulado'], 
+						'ULActivo' => '1',
+						'ULUsuarioRegistro' => get_session('UNCI_usuario'),
+						'ULFechaRegistro' => date('Y-m-d H:i:s')
+					);
+					//$idEst = $this->usuario_model->insert($datosEstudios);
 				}
-				
-				//$this->docper_model->insert($data_dp);
-				echo json_encode($data);
-				
-			}
 
+//				echo "::".$idU;
+				//echo"::OK";
+			} else {
+				$idUser = $this->input->post('idUsuario');
+				echo $idUser;
+			}
+			
+			exit;
+			
 			echo "::".$idUser;
 			echo "::"."Se guardarpn los datos correctos";
 		}

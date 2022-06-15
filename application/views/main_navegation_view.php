@@ -1,5 +1,5 @@
 <nav class="navbar-default navbar-static-side" role="navigation">
-    <div  style="" class="sidebar-collapse">
+    <div class="sidebar-collapse">
         <ul class="nav metismenu" id="side-menu" data-toggle="tooltip">
 			
 			<li class="nav-header text-center">
@@ -91,6 +91,9 @@
 					<?php } ?>
 					<?php if(is_permitido(null,'periodos','index')) { ?>
 					<li <?php if( nvl($modulo) == 'periodos' ) echo 'class="active"'; ?>><a href='<?php echo base_url("periodos");?>' >Periodo Escolar</a></li>
+					<?php } ?>
+					<?php if(is_permitido(null,'docente','index')) { ?>
+					<li <?php if( nvl($modulo) == 'docente' ) echo 'class="active"'; ?>><a href='<?php echo base_url("docente");?>' >Docentes</a></li>
 					<?php } ?>
 					<?php if(is_permitido(null,'grupos','index')) { ?>
 					<li <?php if( nvl($modulo) == 'grupos' ) echo 'class="active"'; ?>><a href='<?php echo base_url("grupos");?>' >Grupos</a></li>

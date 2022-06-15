@@ -14,6 +14,8 @@
 <link href="<?php echo base_url('assets/inspinia/css/plugins/dropzone/basic.css'); ?>" rel="stylesheet">
 <link href="<?php echo base_url('assets/inspinia/css/plugins/dropzone/dropzone.css'); ?>" rel="stylesheet">
 
+<link href="<?php echo base_url('assets/inspinia/css/plugins/select2/select2.min.css'); ?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/css/plugins/chosen/bootstrap-chosen.css'); ?>" rel="stylesheet">
 <div class="row">
 	<div class="ibox float-e-margins">
 		<div class="ibox-content">
@@ -37,7 +39,7 @@
 								<div class="ibox-content">
                                 <form action="<?php echo base_url("NuevaPlantilla/save"); ?>" name="form" id="form" method="POST" class="wizard-big form-horizontal" enctype="multipart/form-data" >
                                 <input type="hidden" name="plantel" id="plantel" value="<?= $plantel; ?>" />    
-                                <input type="hidden" name="FClave_skip" id="FClave_skip" />
+                                <input type="hidden" name="FClave_skip" id="FClave_skip" value="<?= nvl($usuario); ?>"/>
                                 <h1>USUARIOS</h1>
                                     <fieldset>
                                     <div class="col-lg-6"><h2>Usuarios del <?php if ($planteles[0]['CPLTipo'] == '35') { echo "Plantel"; } else { echo "CEMSAD"; }  ?></h2></div>
@@ -116,9 +118,12 @@
                                                     <label>R.F.C.: <em>*</em></label>
                                                     <input id="URFC" name="URFC" value="<?php echo nvl($usuario['URFC']); ?><?php echo nvl($fump['URFC']); ?>" type="text" class="form-control "  minlength="13" maxlength="13" />
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group" id="data_2">
                                                     <label>Fecha de Ingreso: <em>*</em></label>
-                                                    <input id="UFecha_ingreso" name="UFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UFecha_registro'])); ?><?php echo fecha_format(nvl($fump['UFecha_registro'])); ?>" type="text" class="form-control  fecha" minlength="10" maxlength="10" />
+                                                    <div class="input-group date">
+                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                        <input type="text" class="form-control fecha" id="UFecha_ingreso" name="UFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UFecha_registro'])); ?><?php echo fecha_format(nvl($fump['UFecha_registro'])); ?>" minlength="10" maxlength="10">
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
@@ -149,7 +154,7 @@
                                                     
                                                     <div class="form-group">
                                                         <label>Nivel de Estudios: <em>*</em></label>
-                                                        <select id="UPNivel_estudio" name="UPNivel_estudio" class="form-control MostrarCarreras required">
+                                                        <select id="ULNivel_estudio" name="ULNivel_estudio" class="form-control MostrarCarreras required" >
                                                             <option value="">-Seleccionar-</option>
                                                             <?php foreach ($estudios as $e => $listEst) { ?>
                                                                 <option value="<?= $listEst['LGradoEstudio'] ?>"><?= $listEst['LGradoEstudio'] ?></option>
@@ -159,15 +164,16 @@
                                                     
                                                     <div class="form-group">
                                                         <label>Especialidad: <em>*</em></label>
-                                                        <div class="resultCarrera">
-                                                        <select name="UPLicenciatura" id="UPLicenciatura" class="form-control">
-                                                            <option value="">- Especialidad -</option>
-                                                            <?php foreach ($data['carreras']  as $k => $listCar) { ?>
-                                                                <option value="<?= $listCar['IdLicenciatura'] ?>"><?= $listCar['Licenciatura'] ?></option>    
-                                                            <?php } ?>
+                                                        <select class="select2_demo_3 form-control resultCarrera select2" name="ULLicenciatura" id="ULLicenciatura" style="width:100%">
+                                                            <option value="">-Seleccionar-</option>
+                                                            <option value=""></option>
+                                                                <?php foreach ($carreras as $k => $listCar) { ?>
+                                                                    <option value="<?php echo $listCar['IdLicenciatura']; ?>"><?php echo $listCar['Licenciatura']; ?></option>    
+                                                                <?php } ?>
                                                         </select>
-                                                        </div>
-                                                    </div>
+                                                    </div>                                                    
+
+                                                    <div id="contentPasante">
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-lg-6">
@@ -199,16 +205,19 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
-                                                    <div id="contentPasante">
-                                                        <div class="form-group">
-                                                            <label>Cédula Profesional: <em>*</em></label>
-                                                            <input id="UPCedulaProf" name="UPCedulaProf" value="<?php echo nvl($usuario['UPCedulaProf']); ?><?php echo nvl($fump['UPCedulaProf']); ?>" type="text" class="form-control "  minlength="10" maxlength="10" />
+                                                    
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <label>No. de Cédula Profesional: <em>*</em></label>
+                                                                <input id="ULCedulaProf" name="ULCedulaProf" value="<?php echo nvl($usuario['ULCedulaProf']); ?><?php echo nvl($fump['UPCedulaProf']); ?>" type="text" class="form-control "  minlength="10" maxlength="10" />
+                                                            </div>
                                                         </div>
+                                                    </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Tipo Nombramiento: <em>*</em></label>
-                                                        <select name="UPNombramiento" id="UPNombramiento" class="form-control">
+                                                        <select name="ULNombramiento" id="ULNombramiento" class="form-control">
                                                             <option value="">- Nombramiento -</option>
                                                             <?php foreach($nombramiento as $key_n => $list_n){ ?>
                                                             <option value="<?=$list_n['PLClave']?>"><?=$list_n['PLPuesto']?></option>
@@ -289,7 +298,10 @@
 <script src="<?php echo base_url('assets/inspinia/js/plugins/codemirror/codemirror.js'); ?>"></script>
 <script src="<?php echo base_url('assets/inspinia/js/plugins/codemirror/mode/xml/xml.js'); ?>"></script>
 <script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
-
+<!-- Select2 -->
+<script src="<?php echo base_url('assets/inspinia/js/plugins/select2/select2.full.min.js'); ?>"></script>
+<!-- Data picker -->
+<script src="<?php echo base_url('assets/inspinia/js/plugins/datapicker/bootstrap-datepicker.js'); ?> "></script>
 
     
 <script>
@@ -331,14 +343,22 @@
                     if(newIndex == '1'){
 						nuevoUsuario();
 					}
+
+                    if(newIndex == '2'){
+						save(form);
+					}
+
+                    if(newIndex == '3'){
+						save(form);
+					}
                 }
 
                 // Disable validation on fields that are disabled or hidden.
                 form.validate().settings.ignore = ":disabled,:hidden";
                 
-                if( form.valid() ){
+                /*if( form.valid() ){
 					save(form);
-				}
+				}*/
                 // Start validation; Prevent going forward if false
                 return form.valid();
             },
@@ -387,16 +407,32 @@
             }
         });
 
+        $('.chosen-select').chosen({width: "100%"});
+        $(".select2_demo_1").select2();
+        $(".select2_demo_3").select2({
+            placeholder: "Seleccionar Especialidad",
+            allowClear: true
+        });
+        
         $('.custom-file-input').on('change', function() {
             let fileName = $(this).val().split('\\').pop();
             $(this).next('.custom-file-label').addClass("selected").html(fileName);
         });
 
-        let Checked = null;
+        $('#data_2 .input-group.date').datepicker({
+                startView: 1,
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: "yyyy-mm-dd"
+            });
+
         //The class name can vary
+        let Checked = null;
         for (let CheckBox of document.getElementsByClassName('only-one')){
             CheckBox.onclick = function(){
-                if(Checked!=null){
+                if(Checked != null) {
                 Checked.checked = false;
                 Checked = CheckBox;
                 }
@@ -407,6 +443,7 @@
         // Disable checkbox
         $("input[value='Si']").change(function() {
             $("input[name='idUsuario']").prop('disabled', true);
+            
         });
 
         // Enable checkbox
@@ -450,6 +487,7 @@
             var idUser = $('input:checkbox[name=idUsuario]:checked').val();
 
             let formData = new FormData(); 
+                formData.append("file", UPDocCedula_file.files[0]);
                 formData.append("idUsuario", idUser);
                 formData.append("idPlantel", idPlantel);
             $.ajax({
@@ -467,7 +505,7 @@
             });  
         });
 
-        $(".semLic").click(function(e) {
+        /*$(".semLic").click(function(e) {
             var idPlantel = document.getElementById("GRSemestre").value;
 
             let formData = new FormData(); 
@@ -488,7 +526,7 @@
                     $(".loading").html('');
                 }
             });  
-        });
+        });*/
         
         function nuevoUsuario(){
             var idUser = $('input:checkbox[name=idUsuario]:checked').val();
@@ -528,6 +566,7 @@
 			},
 			success: function(data){
 				var data = data.split("::");
+                alert(data);
                 $("#FClave_skip").val(data[1]);
 				$("#result").html(data[0]);
 				$(".loading").html('');
@@ -579,5 +618,18 @@
 }
 .wizard > .content > .body label.error {
     margin-left: 75px !important;
+}
+
+.select2 {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #e5e6e7;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    font-size: 14px;
 }
 </style>
