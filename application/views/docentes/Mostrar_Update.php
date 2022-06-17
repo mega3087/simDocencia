@@ -34,11 +34,14 @@
                         <div class="col-lg-12">
                             
                             <form id="form" action="#" class="wizard-big">
+                                <input type="hidden" id="idPlantel" name="idPlantel" value="<?php echo nvl($plantel[0]['CPLClave']); ?>" />
+                                <input type="hidden" id="idUser" name="idUser" value="<?php echo nvl($usuario['UNCI_usuario']); ?>" />
                                 <h1>Información Personal</h1>
                                 <fieldset>
                                     <!--<h2>Account Information</h2>-->
                                     <div class="row">
                                         <div class="col-lg-8">
+
                                             <div class="form-group">
                                                 <label>CURP.: <em>*</em></label>
                                                 <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario['UCURP']); ?>" type="text" class="form-control <?php if (nvl($usuario['UCURP'])) echo "disabled";?>"  minlength="18" maxlength="18"/>
@@ -306,8 +309,16 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        </div>                                        
-                                        <div class="loadingArchivo"></div>
+                                        <br>
+                                        <button type='button' class='btn btn-sm btn-success saveEstudios'> Guardar Estudios</button>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <form action="#" method='POST' name='estudios_form' id='estudios_form'>
+                                                <div class="msgEstudios"></div>
+                                                <div class="resultEstudios"></div>
+                                            </form>
+                                        </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="text-center">
@@ -389,40 +400,44 @@
 	        });
 		});
 
-        //Subir Archivo Nombramiento
-        $(".douploadNombramiento").click(function(e) {
-            var idPlantel = document.getElementById("plantel").value;
-            var idUser = $('input:checkbox[name=idUsuario]:checked').val();
 
-            let formData = new FormData(); 
-                formData.append("file", UPDocTitulo_file.files[0]);
-                formData.append("idUsuario", idUser);
-                formData.append("idPlantel", idPlantel);
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                data: formData,
-                dataType: "html",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data){
-                    var data = data.split("::");
-                    alert(data[1]);
-                }
+        //Subir Archivo Nombramiento
+        $(document).on("click", ".douploadNombramiento", function () {
+                var idPlantel = document.getElementById("idPlantel").value;
+                var idUser = document.getElementById("idUser").value;
+
+                let formData = new FormData(); 
+                    formData.append("file", UDNombramiento_file.files[0]);
+                    formData.append("idUsuario", idUser);
+                    formData.append("idPlantel", idPlantel);
+                    formData.append("tipoDoc", 'Nombramiento');
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
+                    data: formData,
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data){
+                        var data = data.split("::");
+                        alert(data[1]);
+                    }
+                });
+
             });
 
-        });
 
         //Subir Archivo Oficio
-        $(".douploadOficio").click(function(e) {
-            var idPlantel = document.getElementById("plantel").value;
-            var idUser = $('input:checkbox[name=idUsuario]:checked').val();
+        $(document).on("click", ".douploadOficio", function () {
+            var idPlantel = document.getElementById("idPlantel").value;
+            var idUser = document.getElementById("idUser").value;
 
             let formData = new FormData(); 
-                formData.append("file", UPDocTitulo_file.files[0]);
+                formData.append("file", UDOficio_file.files[0]);
                 formData.append("idUsuario", idUser);
                 formData.append("idPlantel", idPlantel);
+                formData.append("tipoDoc", 'OficioPeticion');
             $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
@@ -440,14 +455,15 @@
         });
 
         //Subir Archivo Curriculum
-        $(".douploadCurriculum").click(function(e) {
-            var idPlantel = document.getElementById("plantel").value;
-            var idUser = $('input:checkbox[name=idUsuario]:checked').val();
+        $(document).on("click", ".douploadCurriculum", function () {
+            var idPlantel = document.getElementById("idPlantel").value;
+            var idUser = document.getElementById("idUser").value;
 
             let formData = new FormData(); 
-                formData.append("file", UPDocTitulo_file.files[0]);
+                formData.append("file", UDCurriculum_file.files[0]);
                 formData.append("idUsuario", idUser);
                 formData.append("idPlantel", idPlantel);
+                formData.append("tipoDoc", 'Curriculum');
             $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
@@ -465,14 +481,15 @@
         });
 
         //Subir Archivo CURP
-        $(".douploadCURP").click(function(e) {
-            var idPlantel = document.getElementById("plantel").value;
-            var idUser = $('input:checkbox[name=idUsuario]:checked').val();
+        $(document).on("click", ".douploadCURP", function () {
+            var idPlantel = document.getElementById("idPlantel").value;
+            var idUser = document.getElementById("idUser").value;
 
             let formData = new FormData(); 
-                formData.append("file", UPDocTitulo_file.files[0]);
+                formData.append("file", UDCURP_file.files[0]);
                 formData.append("idUsuario", idUser);
                 formData.append("idPlantel", idPlantel);
+                formData.append("tipoDoc", 'CURP');
             $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
@@ -489,14 +506,16 @@
 
         });
 
-        $(".douploadTitulo").click(function(e) {
-            var idPlantel = document.getElementById("plantel").value;
-            var idUser = $('input:checkbox[name=idUsuario]:checked').val();
+        //Subir Archivo Titulo
+        $(document).on("click", ".douploadTitulo", function () {
+            var idPlantel = document.getElementById("idPlantel").value;
+            var idUser = document.getElementById("idUser").value;
 
             let formData = new FormData(); 
                 formData.append("file", UPDocTitulo_file.files[0]);
                 formData.append("idUsuario", idUser);
                 formData.append("idPlantel", idPlantel);
+                formData.append("tipoDoc", 'Titulo');
             $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
@@ -513,14 +532,16 @@
 
         });
 
-        $(".douploadCedula").click(function(e) {
-            var idPlantel = document.getElementById("plantel").value;
-            var idUser = $('input:checkbox[name=idUsuario]:checked').val();
+        //Subir Archivo Cedula
+        $(document).on("click", ".douploadCedula", function () {
+            var idPlantel = document.getElementById("idPlantel").value;
+            var idUser = document.getElementById("idUser").value;
 
             let formData = new FormData(); 
                 formData.append("file", UPDocCedula_file.files[0]);
                 formData.append("idUsuario", idUser);
                 formData.append("idPlantel", idPlantel);
+                formData.append("tipoDoc", 'Cedula');
             $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
@@ -535,129 +556,202 @@
                 }
             });  
         });
+
+        //Guardar Estudios del Docente 
+		$(document).on("click", ".saveEstudios", function () {
+            var idUser = document.getElementById("idUser").value;
+            var idPlantel = document.getElementById("idPlantel").value;
+            var Titulado = document.getElementById("Titulado").value;
+            var ULNivel_estudio = document.getElementById("ULNivel_estudio").value;
+            var ULLicenciatura = document.getElementById("ULLicenciatura").value;
+            var ULCedulaProf = document.getElementById("ULCedulaProf").value;
+                        
+            let formData = new FormData(); 
+            formData.append("ULUsuario", idUser);
+            formData.append("ULPlantel", idPlantel);
+            formData.append("ULNivel_estudio", ULNivel_estudio);
+            formData.append("ULLicenciatura", ULLicenciatura);
+            formData.append("ULTitulo_file", UPDocTitulo_file.files[0]);
+            formData.append("ULCedula_file", UPDocCedula_file.files[0]);
+            formData.append("ULCedulaProf", ULCedulaProf);
+            formData.append("ULTitulado", Titulado);
+
+            $.ajax({
+                type: "POST",
+                url: "<?php echo base_url("docente/saveEstudios"); ?>",
+                data: formData,
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data){
+	                var data = data.split(";");
+	                if(data[0]==' OK'){
+	                    $(".msgArchivo").empty();
+	                    $(".msgArchivo").append(data[1]);
+	                    datosArchivos( data[2]);
+	                    FormArchivo.UPNivel_estudio.value = "";
+						FormArchivo.UPCarrera.value = "";
+						FormArchivo.UPDocTitulo_file.value = "";
+						FormArchivo.UPDocCedula_file.value = "";
+	                    $(".loadingArchivo").html("");
+	                } else {
+	                    $(".msgEstudios").empty();
+	                    $(".msgEstudios").append(data[0]);  
+	                    datosArchivos( data[1]);
+	                    $(".loadingArchivo").html(""); 
+	                }
+	                
+	            } 
+            }); 
+            
+		});//----->fin
+
+        function datosArchivos(idUsuario){
+			var idUsuario = idUsuario;
+			var idPlantel = document.getElementById("idPlantel").value;
+			$.ajax({
+	            type: "POST",
+	            url: "<?php echo base_url("docente/mostrarEstudios"); ?>",
+	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
+	            dataType: "html",
+	            beforeSend: function(){
+	                //carga spinner
+	                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+	            },
+	            success: function(data){
+	                $(".resultEstudios").empty();
+	                $(".resultEstudios").append(data);  
+	                $(".loading").html("");
+	            }
+	        });
+	    }
+
     });
 </script>
 <script>
-        $(document).ready(function(){
-            
-            $("#form").steps({
-                bodyTag: "fieldset",
-                /* Labels */
-                labels: {
-                    cancel: "Cancelar",
-                    current: "Vista actual:",
-                    pagination: "Paginación",
-                    finish: "Finalizar",
-                    next: "Siguiente",
-                    previous: "Anterior",
-                    loading: "Cargando ..."
-                },
-                /* Behaviour */
-                enableCancelButton: true,
-                startIndex: 0,
-                onStepChanging: function (event, currentIndex, newIndex)
-                {
-                    // Always allow going backward even if the current step contains invalid fields!
-                    if (currentIndex > newIndex)
-                    {
-                        return true;
-                    }
 
-                    // Forbid suppressing "Warning" step if the user is to young
-                    if (newIndex === 3 && Number($("#age").val()) < 18)
-                    {
-                        return false;
-                    }
-
-                    var form = $(this);
-
-                    // Clean up if user went backward before
-                    if (currentIndex < newIndex)
-                    {
-                        // To remove error styles
-                        $(".body:eq(" + newIndex + ") label.error", form).remove();
-                        $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
-                    }
-
-                    // Disable validation on fields that are disabled or hidden.
-                    form.validate().settings.ignore = ":disabled,:hidden";
-
-                    // Start validation; Prevent going forward if false
-                    return form.valid();
-                },
-                onStepChanged: function (event, currentIndex, priorIndex)
-                {
-                    // Suppress (skip) "Warning" step if the user is old enough.
-                    if (currentIndex === 2 && Number($("#age").val()) >= 18)
-                    {
-                        $(this).steps("next");
-                    }
-
-                    // Suppress (skip) "Warning" step if the user is old enough and wants to the previous step.
-                    if (currentIndex === 2 && priorIndex === 3)
-                    {
-                        $(this).steps("previous");
-                    }
-                },
-                onFinishing: function (event, currentIndex)
-                {
-                    var form = $(this);
-
-                    // Disable validation on fields that are disabled.
-                    // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
-                    form.validate().settings.ignore = ":disabled";
-
-                    // Start validation; Prevent form submission if false
-                    return form.valid();
-                },
-                onFinished: function (event, currentIndex)
-                {
-                    var form = $(this);
-
-                    // Submit form input
-                    form.submit();
-                }
-            }).validate({
-                        errorPlacement: function (error, element)
-                        {
-                            element.before(error);
-                        },
-                        rules: {
-                            confirm: {
-                                equalTo: "#password"
-                            }
-                        }
-                    });
-       });
-    </script>
-    <style>
-    .select2 {
-        background-color: #FFFFFF;
-        background-image: none;
-        border: 1px solid #e5e6e7;
-        border-radius: 1px;
-        color: inherit;
-        display: block;
-        padding: 6px 12px;
-        transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-        width: 100%;
-        font-size: 14px;
-    }
-    </style>
-    <script>
+</script>
+<script>
     $(document).ready(function(){
-        $(".select2_demo_1").select2();
-        $(".select2_demo_2").select2();
-        $(".select2_demo_3").select2({
-            placeholder: "Seleccionar",
-            allowClear: true
-        });
+        $("#form").steps({
+            bodyTag: "fieldset",
+            /* Labels */
+            labels: {
+                cancel: "Cancelar",
+                current: "Vista actual:",
+                pagination: "Paginación",
+                finish: "Finalizar",
+                next: "Siguiente",
+                previous: "Anterior",
+                loading: "Cargando ..."
+            },
+            /* Behaviour */
+            enableCancelButton: true,
+            startIndex: 0,
+            onStepChanging: function (event, currentIndex, newIndex)
+            {
+                // Always allow going backward even if the current step contains invalid fields!
+                if (currentIndex > newIndex)
+                {
+                    return true;
+                }
 
-        $("input[value='Titulado']").change(function() {
-            $('#contentPasante').show();
-        });
-        $("input[value='Pasante']").change(function() {
-            $('#contentPasante').hide();
-        });
+                // Forbid suppressing "Warning" step if the user is to young
+                if (newIndex === 3 && Number($("#age").val()) < 18)
+                {
+                    return false;
+                }
+
+                var form = $(this);
+
+                // Clean up if user went backward before
+                if (currentIndex < newIndex)
+                {
+                    // To remove error styles
+                    $(".body:eq(" + newIndex + ") label.error", form).remove();
+                    $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
+                }
+
+                // Disable validation on fields that are disabled or hidden.
+                form.validate().settings.ignore = ":disabled,:hidden";
+
+                // Start validation; Prevent going forward if false
+                return form.valid();
+            },
+            onStepChanged: function (event, currentIndex, priorIndex)
+            {
+                // Suppress (skip) "Warning" step if the user is old enough.
+                if (currentIndex === 2 && Number($("#age").val()) >= 18)
+                {
+                    $(this).steps("next");
+                }
+
+                // Suppress (skip) "Warning" step if the user is old enough and wants to the previous step.
+                if (currentIndex === 2 && priorIndex === 3)
+                {
+                    $(this).steps("previous");
+                }
+            },
+            onFinishing: function (event, currentIndex)
+            {
+                var form = $(this);
+
+                // Disable validation on fields that are disabled.
+                // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
+                form.validate().settings.ignore = ":disabled";
+
+                // Start validation; Prevent form submission if false
+                return form.valid();
+            },
+            onFinished: function (event, currentIndex)
+            {
+                var form = $(this);
+
+                // Submit form input
+                form.submit();
+            }
+        }).validate({
+                    errorPlacement: function (error, element)
+                    {
+                        element.before(error);
+                    },
+                    rules: {
+                        confirm: {
+                            equalTo: "#password"
+                        }
+                    }
+                });
     });
-    </script>
+</script>
+<style>
+.select2 {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #e5e6e7;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    font-size: 14px;
+}
+</style>
+<script>
+$(document).ready(function(){
+    $(".select2_demo_1").select2();
+    $(".select2_demo_2").select2();
+    $(".select2_demo_3").select2({
+        placeholder: "Seleccionar",
+        allowClear: true
+    });
+
+    $("input[value='Titulado']").change(function() {
+        $('#contentPasante').show();
+    });
+    $("input[value='Pasante']").change(function() {
+        $('#contentPasante').hide();
+    });
+});
+</script>

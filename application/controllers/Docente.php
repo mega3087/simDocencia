@@ -141,8 +141,111 @@ class Docente extends CI_Controller {
 
         $this->load->view('plantilla_general', $data);
     }
+
+    public function saveEstudios() {
+        $data= post_to_array('_skip');
+        $_FILES["ULTitulo_file"]["tmp_name"];
+        $_FILES["ULCedula_file"]["tmp_name"];
+
+        //Subir Titulo Profesional
+        $nom = $_POST['ULUsuario'].date("dmY").'.pdf';
+        $directorio = "uploads/Documentos/".$_POST['ULUsuario']."/";
+
+        $nomTitulo = 'Titulo'.$_POST['ULUsuario'];
+        $fileTitulo = $nomTitulo.$nom;
+        $targetFileTitulo = $directorio . $fileTitulo;
+        
+        //Subir Cedula Profesional
+        $nomCedula = 'Cedula'.$_POST['ULUsuario'];
+        $fileCedula = $nomCedula.$nom;
+        $targetFileCedula = $directorio . $fileCedula;
+        if (!file_exists($directorio)) {
+            mkdir($directorio, 0777, true);
+        }
+        move_uploaded_file($_FILES["ULTitulo_file"]["tmp_name"], $targetFileTitulo);        
+        move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
+            $data = array (
+                'ULUsuario' => $_POST['ULUsuario'],
+                'ULPlantel' => $_POST['ULPlantel'],
+                'ULNivel_estudio' => $_POST['ULNivel_estudio'],
+                'ULLicenciatura' => $_POST['ULLicenciatura'],
+                'ULTitulo_file' => $targetFileTitulo,
+                'ULCedula_file' => $targetFileCedula,
+                'ULCedulaProf' => $_POST['ULCedulaProf'],
+                'ULTitulado' => $_POST['ULTitulado'],
+                'ULActivo' => 1,
+                'ULUsuarioRegistro' => get_session('UNCI_usuario'),
+                'UlFechaRegistro' => date('Y-m-d H:i:s')
+            );
+            echo json_encode($data);
+        $id = $this->usuariolic_model->insert($data);
+        echo $id;
+        echo ";".$_POST['ULUsuario'];
+        exit;
+        
+        if ($data['UPNivel_estudio'] == '' || $data['UPLicenciatura'] == '' || $data['UPTitulo_file'] == '' || $data['UPCedula_file'] == '' ) {
+            set_mensaje("Favor de ingresar todos los datos requeridos.");
+            muestra_mensaje();
+        } else {
+            $lista_archivos = array(
+                'UPTitulo_file',
+                'UPCedula_file',
+                );
+
+            $old_data = $this->usuariodatos_model->find("UDCUsuario = ".$data['UPUClave']); 
+            mover_archivos($data,$lista_archivos,$old_data,"./documentos/Docentes/".$data['UPUClave']."/"); 
+            //Subir archivos al servidor
+
+            $this->usuarioprofesion_model->insert($data);
+            set_mensaje("Los datos y archivos se guardaron correctamente",'success::');
+            echo "OK;";
+            muestra_mensaje();
+        }
+        echo ";".$data['ULClave'];
+    }
+
+    public function mostrarArchivos () {
+        $idUsuario = $this->input->post('idUsuario');
+        $idPlantel = $this->input->post('idPlantel');
+
+        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULActivo";
+        $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura');
+
+        $this->db->where('ULUsuario',$idUsuario);
+        $this->db->where('ULPlantel',$idPlantel);
+        $this->db->where('ULActivo','1');
+        $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
+        
+        $this->load->view('docentes/Mostrar_archivos', $data);
+    }   
+
+    public function deleteEstudios() {
+        $UPClave = $this->encrypt->decode($this->input->post('UPClave'));
+        $data = array(
+            'UPActivo' => '0',
+            'UPUsuarioModificacion' => get_session('UNCI_usuario'),
+            'UPFechaModificacion' => date('Y-m-d H:i:s')
+        );
+        
+        $this->usuarioprofesion_model->update($UPClave,$data);
+        set_mensaje("Los datos del usuario se eliminaron correctamente.",'success::');
+        muestra_mensaje();
+
+        $idUsuario = $this->input->post('idUsuario');
+        $idPlantel = $this->input->post('idPlantel');
+        
+         $selectDatos = "UPClave, UPUClave, UPPClave, UPNivel_estudio, UPLicenciatura, Licenciatura, UPTitulo_file, UPCedula_file, UPActivo";
+        $this->db->join('nolicenciaturas','UPLicenciatura = IdLicenciatura');
+
+        $this->db->where('UPUClave',$idUsuario);
+        $this->db->where('UPPClave',$idPlantel);
+        $this->db->where('UPActivo','1');
+        $data['data'] = $this->usuarioprofesion_model->find_all(null, $selectDatos);
+
+        $this->load->view('docentes/Mostrar_archivos', $data);
+    }
     
-    public function Registrar() {
+    /*public function Registrar() {
         $data = post_to_array('_skip');
         
         if (!$data['UNCI_usuario']) {
@@ -322,75 +425,6 @@ class Docente extends CI_Controller {
         }    
     }
 
-    public function saveArchivo() {
-        
-        $data= post_to_array('_skip');
-        $data['UPActivo'] = 1;
-        $data['UPUsuarioRegistro'] = get_session('UNCI_usuario');
-        $data['UPFechaRegistro'] = date('Y-m-d H:i:s');
-        
-        if ($data['UPNivel_estudio'] == '' || $data['UPLicenciatura'] == '' || $data['UPTitulo_file'] == '' || $data['UPCedula_file'] == '' ) {
-            set_mensaje("Favor de ingresar todos los datos requeridos.");
-            muestra_mensaje();
-        } else {
-            $lista_archivos = array(
-                'UPTitulo_file',
-                'UPCedula_file',
-                );
-
-            $old_data = $this->usuariodatos_model->find("UDCUsuario = ".$data['UPUClave']); 
-            mover_archivos($data,$lista_archivos,$old_data,"./documentos/Docentes/".$data['UPUClave']."/"); 
-            //Subir archivos al servidor
-
-            $this->usuarioprofesion_model->insert($data);
-            set_mensaje("Los datos y archivos se guardaron correctamente",'success::');
-            echo "OK;";
-            muestra_mensaje();
-        }
-        echo ";".$data['UPUClave'];
-    }
-
-    public function mostrarArchivos () {
-        $idUsuario = $this->input->post('idUsuario');
-        $idPlantel = $this->input->post('idPlantel');
-
-        $selectDatos = "UPClave, UPUClave, UPPClave, UPNivel_estudio, UPLicenciatura, Licenciatura, UPTitulo_file, UPCedula_file, UPActivo";
-        $this->db->join('nolicenciaturas','UPLicenciatura = IdLicenciatura');
-
-        $this->db->where('UPUClave',$idUsuario);
-        $this->db->where('UPPClave',$idPlantel);
-        $this->db->where('UPActivo','1');
-        $data['data'] = $this->usuarioprofesion_model->find_all(null, $selectDatos);
-        
-        $this->load->view('docentes/Mostrar_archivos', $data);
-    }   
-
-    public function deleteEstudios() {
-        $UPClave = $this->encrypt->decode($this->input->post('UPClave'));
-        $data = array(
-            'UPActivo' => '0',
-            'UPUsuarioModificacion' => get_session('UNCI_usuario'),
-            'UPFechaModificacion' => date('Y-m-d H:i:s')
-        );
-        
-        $this->usuarioprofesion_model->update($UPClave,$data);
-        set_mensaje("Los datos del usuario se eliminaron correctamente.",'success::');
-        muestra_mensaje();
-
-        $idUsuario = $this->input->post('idUsuario');
-        $idPlantel = $this->input->post('idPlantel');
-        
-         $selectDatos = "UPClave, UPUClave, UPPClave, UPNivel_estudio, UPLicenciatura, Licenciatura, UPTitulo_file, UPCedula_file, UPActivo";
-        $this->db->join('nolicenciaturas','UPLicenciatura = IdLicenciatura');
-
-        $this->db->where('UPUClave',$idUsuario);
-        $this->db->where('UPPClave',$idPlantel);
-        $this->db->where('UPActivo','1');
-        $data['data'] = $this->usuarioprofesion_model->find_all(null, $selectDatos);
-
-        $this->load->view('docentes/Mostrar_archivos', $data);
-    }
-
     public function ver_curp(){
         $curp =  new Curp;
             
@@ -415,7 +449,7 @@ class Docente extends CI_Controller {
         /*$this->db->like('LGradoEstudio', $nivel);
         $this->db->group_by('LNombreLic');
         $this->db->order_by('LNombreLic', 'ASC');
-        $data['carreras'] = $this->licenciaturas_model->find_all();*/
+        $data['carreras'] = $this->licenciaturas_model->find_all();*
 
         $this->db->where('LIdentificador !=','0');
         $this->db->like('LGradoEstudio', $nivel);
@@ -459,12 +493,12 @@ class Docente extends CI_Controller {
                     }
                 }
             }
-        }*/
+        }*
         //$data['UTipoDocente'] = "A";
         $this->usuario_model->update($UNCI_usuario, $data);
         set_mensaje("El docente se quito correctamente",'success::');
         echo "OK";
-    }
+    }*/
 
     public function _set_rules() {
         $rango_fechas = date('d/m/Y',strtotime('-100 year') ) . "," . date('d/m/Y', strtotime('+0 year'));

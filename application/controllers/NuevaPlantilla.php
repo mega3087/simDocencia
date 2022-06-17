@@ -117,14 +117,14 @@
 		}
 		
 		public function uploads() {
-			$filename = $_FILES['file']['name'];
-			echo $_POST['idUsuario'];
-			echo $_POST['idPlantel'];
-			
-			/* Choose where to save the uploaded file */
-			$location = "uploads/".$filename;
-			/* Save the uploaded file to the local filesystem */
-			if ( move_uploaded_file($_FILES['file']['tmp_name'], $location) ) {
+			//$filename = $_FILES['file']['name'];
+
+			$time = $_POST['idUsuario'].date("dmY");
+			$targetDir = "uploads/";
+			$doc = $_POST['tipoDoc'].'.pdf';
+			$file_name = $time."-".$doc;
+			$targetFilePath = $targetDir . $file_name;
+			if ( move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)) {
 				//insertar los documentos en la tabla
 			echo '::'.'El archivo se subio Correctamente'; 
 			} else { 

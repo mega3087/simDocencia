@@ -11,15 +11,15 @@
 		</thead>
 		<tbody>
 		<?php foreach($data as $key => $list) { 
-			if($UPTitulo_file = $list['UPTitulo_file']) {
+			if($UPTitulo_file = $list['ULTitulo_file']) {
 				$UPTitulo_file="<a href='".base_url($UPTitulo_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
-			if($UPCedula_file = $list['UPCedula_file']) {
+			if($UPCedula_file = $list['ULCedula_file']) {
 				$UPCedula_file="<a href='".base_url($UPCedula_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
-			$borrar = "<button type='button' value=".$this->encrypt->encode($list['UPClave'])." class='btn btn-sm btn-danger quitarArchivos' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
+			$borrar = "<button type='button' value=".$this->encrypt->encode($list['ULClave'])." class='btn btn-sm btn-danger quitarEstudios' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
-				<td><?php echo $list['UPNivel_estudio']; ?></td>
+				<td><?php echo $list['ULNivel_estudio']; ?></td>
 				<td><?php echo $list['Licenciatura']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<td><?php echo nvl($UPCedula_file); ?></td>
@@ -34,10 +34,10 @@
 
 <script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
 <script type="text/javascript">
-	$(".quitarArchivos").click(function(e) {
+	$(".quitarEstudios").click(function(e) {
 		UPClave = $(this).val();
 		var idUsuario = document.getElementById("UNCI_usuario").value;
-		var idPlantel = document.getElementById("CPLClave").value;
+		var idPlantel = document.getElementById("CLPlantel").value;
 
 		bootbox.confirm({
 		    message: "¿Desea eliminar los Estudios del Usuario?",
