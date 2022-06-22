@@ -168,5 +168,6 @@ $autoload['model'] = array(
 							'materias_model',
 							'usuariodatos_model',
 							'usuariolic_model',
-							'tipopersonal_model'
+							'tipopersonal_model',
+							'grupos_model'
 						);

@@ -57,13 +57,13 @@ class Docente extends CI_Controller {
         $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
         
         foreach ($data['docentes'] as $k => $doc) {
-            $selectD = '`UDClave`, `UDTipo_Docente`, `UDActivo`, TPClave, `TPNombre`, `UDFecha_ingreso`, `UDPlaza`, PLPuesto,
+            $selectD = '`UDClave`, `UDTipo_Docente`, `UDActivo`, TPClave, `TPNombre`, `UDNombramiento`, PLPuesto,
             `UDNombramiento_file`, `UDOficio_file`, `UDCurriculum_file`, `UDCURP_file`';
 
             $this->db->join('noctipopersonal','UDTipo_Docente = TPClave', 'LEFT');
-            $this->db->join('noplaza','PLClave = UDPlaza', 'LEFT');
-            $this->db->where('UDCUsuario',$doc['UNCI_usuario']);
-            $this->db->where('UDCPlantel', $idPlantel);
+            $this->db->join('noplaza','PLClave = UDNombramiento', 'LEFT');
+            $this->db->where('UDUsuario',$doc['UNCI_usuario']);
+            $this->db->where('UDPlantel', $idPlantel);
 
             $data['docentes'][$k]['datosDocentes'] = $this->usuariodatos_model->find_all(null, $selectD);
         }
@@ -101,8 +101,12 @@ class Docente extends CI_Controller {
         $idPlantel = $this->encrypt->decode($idPlantel);
         $idUser = $this->encrypt->decode($idUser);
 
-        if($idUser)
-        $data['usuario'] = $this->usuario_model->get($idUser);
+        if($idUser != '') {
+            $this->db->join('nousuariodatos','UNCI_usuario = UDUsuario', 'LEFT');
+            $this->db->where('UNCI_usuario', $idUser);
+            $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
+            $data['usuario'] = $this->usuario_model->find_all();
+        }
         
         $data['estado_civil'] = $this->estciv_model->find_all();
 
@@ -144,12 +148,10 @@ class Docente extends CI_Controller {
 
     public function saveEstudios() {
         $data= post_to_array('_skip');
-        $_FILES["ULTitulo_file"]["tmp_name"];
-        $_FILES["ULCedula_file"]["tmp_name"];
 
         //Subir Titulo Profesional
-        $nom = $_POST['ULUsuario'].date("dmY").'.pdf';
-        $directorio = "uploads/Documentos/".$_POST['ULUsuario']."/";
+        $nom = date("dmY").'.pdf';
+        $directorio = "./Documentos/Docentes/Licenciaturas/".$data['ULUsuario']."/";
 
         $nomTitulo = 'Titulo'.$_POST['ULUsuario'];
         $fileTitulo = $nomTitulo.$nom;
@@ -162,53 +164,52 @@ class Docente extends CI_Controller {
         if (!file_exists($directorio)) {
             mkdir($directorio, 0777, true);
         }
-        move_uploaded_file($_FILES["ULTitulo_file"]["tmp_name"], $targetFileTitulo);        
-        move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
-            $data = array (
-                'ULUsuario' => $_POST['ULUsuario'],
-                'ULPlantel' => $_POST['ULPlantel'],
-                'ULNivel_estudio' => $_POST['ULNivel_estudio'],
-                'ULLicenciatura' => $_POST['ULLicenciatura'],
-                'ULTitulo_file' => $targetFileTitulo,
-                'ULCedula_file' => $targetFileCedula,
-                'ULCedulaProf' => $_POST['ULCedulaProf'],
-                'ULTitulado' => $_POST['ULTitulado'],
-                'ULActivo' => 1,
-                'ULUsuarioRegistro' => get_session('UNCI_usuario'),
-                'UlFechaRegistro' => date('Y-m-d H:i:s')
-            );
-            echo json_encode($data);
-        $id = $this->usuariolic_model->insert($data);
-        echo $id;
-        echo ";".$_POST['ULUsuario'];
-        exit;
         
-        if ($data['UPNivel_estudio'] == '' || $data['UPLicenciatura'] == '' || $data['UPTitulo_file'] == '' || $data['UPCedula_file'] == '' ) {
-            set_mensaje("Favor de ingresar todos los datos requeridos.");
-            muestra_mensaje();
+        if ($data['ULTitulado'] == 'Titulado') {
+            $datos['ULUsuario'] = $data['ULUsuario'];
+            $datos['ULPlantel'] = $data['ULPlantel'];
+            $datos['ULNivel_estudio'] = $data['ULNivel_estudio'];
+            $datos['ULLicenciatura'] = $data['ULLicenciatura'];
+            if(isset($_FILES["ULTitulo_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["ULTitulo_file"]["tmp_name"], $targetFileTitulo);
+                $datos['ULTitulo_file'] = $targetFileTitulo;
+            }
+            if(isset($_FILES["ULCedula_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
+                $datos['ULCedula_file'] = $targetFileCedula;
+            }
+                    
+            $datos['ULCedulaProf'] = $data['ULCedulaProf'];
+            $datos['ULTitulado'] = $data['ULTitulado'];
+            $datos['ULActivo'] = '1';
+            $datos['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+            $datos['UlFechaRegistro'] = date('Y-m-d H:i:s');
+                
+            $this->usuariolic_model->insert($datos);
+            echo ";".$data['ULUsuario'];
+
         } else {
-            $lista_archivos = array(
-                'UPTitulo_file',
-                'UPCedula_file',
-                );
-
-            $old_data = $this->usuariodatos_model->find("UDCUsuario = ".$data['UPUClave']); 
-            mover_archivos($data,$lista_archivos,$old_data,"./documentos/Docentes/".$data['UPUClave']."/"); 
-            //Subir archivos al servidor
-
-            $this->usuarioprofesion_model->insert($data);
-            set_mensaje("Los datos y archivos se guardaron correctamente",'success::');
-            echo "OK;";
-            muestra_mensaje();
+            $datos['ULUsuario'] = $data['ULUsuario'];
+            $datos['ULPlantel'] = $data['ULPlantel'];
+            $datos['ULNivel_estudio'] = $data['ULNivel_estudio'];
+            $datos['ULLicenciatura'] = $data['ULLicenciatura'];
+            $datos['ULTitulado'] = $data['ULTitulado'];
+            $datos['ULActivo'] = '1';
+            $datos['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+            $datos['UlFechaRegistro'] = date('Y-m-d H:i:s');
+            $this->usuariolic_model->insert($datos);
+            echo ";".$data['ULUsuario'];
         }
-        echo ";".$data['ULClave'];
+        
     }
 
-    public function mostrarArchivos () {
+    public function mostrarEstudios () {
         $idUsuario = $this->input->post('idUsuario');
         $idPlantel = $this->input->post('idPlantel');
-
-        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULActivo";
+        
+        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
         $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura');
 
         $this->db->where('ULUsuario',$idUsuario);
@@ -216,213 +217,206 @@ class Docente extends CI_Controller {
         $this->db->where('ULActivo','1');
         $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
         
-        $this->load->view('docentes/Mostrar_archivos', $data);
+        $this->load->view('docentes/Mostrar_estudios', $data);
     }   
 
     public function deleteEstudios() {
-        $UPClave = $this->encrypt->decode($this->input->post('UPClave'));
+        $idUsuario = $this->input->post('idUsuario');
+        $idPlantel = $this->input->post('idPlantel');
+
+        $ULClave = $this->encrypt->decode($this->input->post('ULClave'));
         $data = array(
-            'UPActivo' => '0',
-            'UPUsuarioModificacion' => get_session('UNCI_usuario'),
-            'UPFechaModificacion' => date('Y-m-d H:i:s')
+            'ULActivo' => '0',
+            'ULUsuarioModificacion' => get_session('UNCI_usuario'),
+            'ULFechaModificacion' => date('Y-m-d H:i:s')
         );
         
-        $this->usuarioprofesion_model->update($UPClave,$data);
+        $this->usuariolic_model->update($ULClave,$data);
         set_mensaje("Los datos del usuario se eliminaron correctamente.",'success::');
         muestra_mensaje();
 
         $idUsuario = $this->input->post('idUsuario');
         $idPlantel = $this->input->post('idPlantel');
         
-         $selectDatos = "UPClave, UPUClave, UPPClave, UPNivel_estudio, UPLicenciatura, Licenciatura, UPTitulo_file, UPCedula_file, UPActivo";
-        $this->db->join('nolicenciaturas','UPLicenciatura = IdLicenciatura');
+        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
+        $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura');
 
-        $this->db->where('UPUClave',$idUsuario);
-        $this->db->where('UPPClave',$idPlantel);
-        $this->db->where('UPActivo','1');
-        $data['data'] = $this->usuarioprofesion_model->find_all(null, $selectDatos);
+        $this->db->where('ULUsuario',$idUsuario);
+        $this->db->where('ULPlantel',$idPlantel);
+        $this->db->where('ULActivo','1');
+        $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
 
-        $this->load->view('docentes/Mostrar_archivos', $data);
+        $this->load->view('docentes/Mostrar_estudios', $data);
     }
     
-    /*public function Registrar() {
+    public function Save() {
         $data = post_to_array('_skip');
-        
-        if (!$data['UNCI_usuario']) {
-            $this->_set_rules($data); //validamos los datos
-            if($this->form_validation->run() === FALSE) {
-                set_mensaje(validation_errors());
-                muestra_mensaje();
-            } else {
-                //Subir archivos al servidor
-                $lista_archivos = array(
-                    'UDNombramiento_file',
-                    'UDOficio_file',
-                    'UDCurriculum_file',
-                    'UDCURP_file'
-                    );
 
-                $user['UNombre'] = $data['UNombre'];
-                $user['UApellido_pat'] = $data['UApellido_pat'];
-                $user['UApellido_mat'] = $data['UApellido_mat'];
-                $user['UCURP'] = $data['UCURP'];
-                $user['UFecha_nacimiento'] = fecha_format($data['UFecha_nacimiento']);
-                $user['URFC'] = $data['URFC'];
-                $user['UDomicilio'] = $data['UDomicilio'];
-                $user['UColonia'] = $data['UColonia'];
-                $user['UMunicipio'] = $data['UMunicipio'];
-                $user['UCP'] = $data['UCP'];
-                $user['UTelefono_movil'] = $data['UTelefono_movil'];
-                $user['UTelefono_casa'] = $data['UTelefono_casa'];
-                $user['UCorreo_electronico'] = $data['UCorreo_electronico'];
-                $user['ULugar_nacimiento'] = $data['ULugar_nacimiento'];
-                $user['UEstado_civil'] = $data['UEstado_civil'];
-                $user['USexo'] = $data['USexo'];
-                $user['UPlantel'] = $data['UDCPLantel'];
-                $user['URol'] = 7;
-                $user['UEstado'] = 'Activo';
-                $user['UFecha_registro'] = date('Y-m-d H:i:s');
-                $user['UUsuario_registro'] = get_session('UNCI_usuario');
+        if (isset($data)){
+            if ($data['UNCI_usuario'] == ''){
+                $user = array(
+                    'UNombre' => $data['UNombre'],
+                    'UApellido_pat' => $data['UApellido_pat'],
+                    'UApellido_mat' => $data['UApellido_mat'],
+                    'UCURP' => $data['UCURP'],
+                    'UFecha_nacimiento' => $data['UFecha_nacimiento'],
+                    'URFC' => $data['URFC'],
+                    'UDomicilio' => $data['UDomicilio'],
+                    'UColonia' => $data['UColonia'],
+                    'UMunicipio' => $data['UMunicipio'],
+                    'UCP' => $data['UCP'],
+                    'UTelefono_movil' => $data['UTelefono_movil'],
+                    'UTelefono_casa' => $data['UTelefono_casa'],
+                    'UCorreo_electronico' => $data['UCorreo_electronico'],
+                    'ULugar_nacimiento' => $data['ULugar_nacimiento'],
+                    'UEstado_civil' => $data['UEstado_civil'],
+                    'USexo' => $data['USexo'],
+                    'UPlantel' => $data['UPlantel'],
+                    'URol' => 7,
+                    'UEstado' => 'Activo',
+                    'UFecha_registro' => date('Y-m-d H:i:s'),
+                    'UUsuario_registro' => get_session('UNCI_usuario'),
+                    'UFecha_ingreso' => $data['UFecha_ingreso']
+                );
                 
-                //Insertar el nuevo docente en la tabla usuario
                 $id = $this->usuario_model->insert($user);
-
-                $old_data = $this->usuario_model->find("UNCI_usuario = ".$id); 
-                mover_archivos($data,$lista_archivos,$old_data,"./Documentos/Docentes/".$id."/");
-
-                $datos['UDCUsuario'] = $id;
-                $datos['UDCPlantel'] = $data['UDCPLantel'];
-                $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
-                $datos['UDFecha_ingreso'] = fecha_format($data['UDFecha_ingreso']);
-                $datos['UDPlaza'] = $data['UDNombramiento'];
-                $datos['UDNombramiento_file'] = $data['UDNombramiento_file'];
-                $datos['UDOficio_file'] = $data['UDOficio_file'];
-                $datos['UDCurriculum_file'] = $data['UDCurriculum_file'];
-                $datos['UDCURP_file'] = $data['UDCURP_file'];
-                $datos['UDActivo'] = 1;
-                $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
-                $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
-               
-                //Insertar los datos del nuevo usuario
-                $this->usuariodatos_model->insert($datos);
-                set_mensaje("El docente se guardo con éxito",'success::');
-                echo "OK";
-            }
-        } else {
-
-            $this->_set_rules($data); //validamos los datos
-            if($this->form_validation->run() === FALSE) {
-                set_mensaje(validation_errors());
-                muestra_mensaje();
+                set_mensaje("El Docente se guardo con éxito",'success::');
+                echo"::$id";
+                echo"::OK";
             } else {
-                $this->db->where('UDCPlantel', $data['UDCPLantel']);
-                $this->db->where('UDCUsuario', $data['UNCI_usuario']);
-                $data['datos'] = $this->usuariodatos_model->find_all();
+                $user = array(
+                    'UNombre' => $data['UNombre'],
+                    'UApellido_pat' => $data['UApellido_pat'],
+                    'UApellido_mat' => $data['UApellido_mat'],
+                    'UCURP' => $data['UCURP'],
+                    'UFecha_nacimiento' => $data['UFecha_nacimiento'],
+                    'URFC' => $data['URFC'],
+                    'UDomicilio' => $data['UDomicilio'],
+                    'UColonia' => $data['UColonia'],
+                    'UMunicipio' => $data['UMunicipio'],
+                    'UCP' => $data['UCP'],
+                    'UTelefono_movil' => $data['UTelefono_movil'],
+                    'UTelefono_casa' => $data['UTelefono_casa'],
+                    'UCorreo_electronico' => $data['UCorreo_electronico'],
+                    'ULugar_nacimiento' => $data['ULugar_nacimiento'],
+                    'UEstado_civil' => $data['UEstado_civil'],
+                    'USexo' => $data['USexo'],
+                    'UPlantel' => $data['UPlantel'],
+                    'URol' => 7,
+                    'UEstado' => 'Activo',
+                    'UFecha_registro' => date('Y-m-d H:i:s'),
+                    'UUsuario_registro' => get_session('UNCI_usuario'),
+                    'UFecha_ingreso' => $data['UFecha_ingreso']
+                );
                 
-                if (count($data['datos']) == 0) { //Validar que el docente no se encuentre dado de alta en el plantel o centro
-                    if ($data['UDOficio_file'] == '' || $data['UDCurriculum_file'] == '' || $data['UDCURP_file'] == '' || $data['UDNombramiento_file'] == '') {
-                        set_mensaje("Favor de ingresar todos los documentos requeridos.");
-                        muestra_mensaje();
-                    } else {
-                        //Subir archivos al servidor
-                        $lista_archivos = array(
-                            'UDNombramiento_file',
-                            'UDOficio_file',
-                            'UDCurriculum_file',
-                            'UDCURP_file'
-                            );
-                        $old_data = $this->usuariodatos_model->find("UDCUsuario = ".$data['UNCI_usuario']); 
-                        mover_archivos($data,$lista_archivos,$old_data,"./Documentos/Docentes/".$data['UNCI_usuario']."/"); 
-                        //Subir archivos al servidor
-                        
-                        $datos['UDCUsuario'] = $data['UNCI_usuario'];
-                        $datos['UDCPlantel'] = $data['UDCPLantel'];
-                        $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
-                        $datos['UDFecha_ingreso'] = fecha_format($data['UDFecha_ingreso']);
-                        $datos['UDPlaza'] = $data['UDNombramiento'];
-                        $datos['UDNombramiento_file'] = $data['UDNombramiento_file'];
-                        $datos['UDOficio_file'] = $data['UDOficio_file'];
-                        $datos['UDCurriculum_file'] = $data['UDCurriculum_file'];
-                        $datos['UDCURP_file'] = $data['UDCURP_file'];
-                        $datos['UDActivo'] = 1;
-                        $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
-                        $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
+                $this->usuario_model->update($data['UNCI_usuario'],$user);
+                set_mensaje("Se modificaron con éxito",'success::');
+                echo '::'.$data['UNCI_usuario']; 
+                echo"::OK";
+            }
+        } 
+    }
 
-                        $this->usuariodatos_model->insert($datos);
+    public function saveDocumentos() {
+        $data = post_to_array('_skip');
+        $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
+        $directorio = "./Documentos/Docentes/".$_POST['UDUsuario']."/";
+        
+            //Subir Nombramiento
+            $nomNombramiento = 'Nombramiento';
+            $fileNombramiento = $nomNombramiento.$nom;
+            $targetFileNombramiento = $directorio . $fileNombramiento;
+            
+            //Subir Oficio de Petición
+            $nomOficio = 'Oficio';
+            $fileOficio = $nomOficio.$nom;
+            $targetFileOficio = $directorio . $fileOficio;
 
-                        $user['UNombre'] = $data['UNombre'];
-                        $user['UApellido_pat'] = $data['UApellido_pat'];
-                        $user['UApellido_mat'] = $data['UApellido_mat'];
-                        $user['UCURP'] = $data['UCURP'];
-                        $user['UFecha_nacimiento'] = fecha_format($data['UFecha_nacimiento']);
-                        $user['URFC'] = $data['URFC'];
-                        $user['UDomicilio'] = $data['UDomicilio'];
-                        $user['UColonia'] = $data['UColonia'];
-                        $user['UMunicipio'] = $data['UMunicipio'];
-                        $user['UCP'] = $data['UCP'];
-                        $user['UTelefono_movil'] = $data['UTelefono_movil'];
-                        $user['UTelefono_casa'] = $data['UTelefono_casa'];
-                        $user['UCorreo_electronico'] = $data['UCorreo_electronico'];
-                        $user['ULugar_nacimiento'] = $data['ULugar_nacimiento'];
-                        $user['UEstado_civil'] = $data['UEstado_civil'];
-                        $user['USexo'] = $data['USexo'];
-                        
-                        $this->usuario_model->update($data['UNCI_usuario'], $user);
-                        set_mensaje("Los datos del Usuario se actualizaron con éxito",'success::');
-                        echo "OK";
-                    }
+            //Subir Curriculum
+            $nomCurriculum = 'Curriculum';
+            $fileCurriculum = $nomCurriculum.$nom;
+            $targetFileCurriculum = $directorio . $fileCurriculum;
+
+            //Subir CURP
+            $nomCURP = 'CURP';
+            $fileCURP = $nomCURP.$nom;
+            $targetFileCURP = $directorio . $fileCURP;
+
+            if (!file_exists($directorio)) {
+                mkdir($directorio, 0777, true);
+            }
+
+            $datos['UDUsuario'] = $data['UDUsuario'];
+            $datos['UDPlantel'] = $data['UDPlantel'];
+            $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
+            $datos['UDNombramiento'] = $data['UDNombramiento'];
+
+            if(isset($_FILES["UDNombramiento_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDNombramiento_file"]["tmp_name"], $targetFileNombramiento);
+                $datos['UDNombramiento_file'] = $targetFileNombramiento;
+            }
+            if(isset($_FILES["UDOficio_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDOficio_file"]["tmp_name"], $targetFileOficio);
+                $datos['UDOficio_file'] = $targetFileOficio;
+            }
+            if(isset($_FILES["UDCurriculum_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDCurriculum_file"]["tmp_name"], $targetFileCurriculum);
+                $datos['UDCurriculum_file'] = $targetFileCurriculum;
+            }
+            if(isset($_FILES["UDCURP_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDCURP_file"]["tmp_name"], $targetFileCURP);
+                $datos['UDCURP_file'] = $targetFileCURP;
+            }
+            
+            $datos['UDActivo'] = '1';
+            $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
+            $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
+                            
+            $this->db->where('UDPlantel', $data['UDPlantel']);
+            $this->db->where('UDUsuario', $data['UDUsuario']);
+            $contar = $this->usuariodatos_model->find_all();
+            
+            if (count($contar) == 0){
+                $this->usuariodatos_model->insert($datos);
+            } else {
+                $datos['UDUsuarioModificacion'] = get_session('UNCI_usuario');
+                $datos['UDFechaModificacion'] = date('Y-m-d H:i:s');
+                $this->usuariodatos_model->update($contar[0]['UDClave'],$datos);
+            }
+                
+    }
+
+    public function quitarDocente() {
+        $data = array();
+        $UNCI_usuario = $this->encrypt->decode($this->input->post('UNCI_usuario_skip'));
+        $UNCI_plantel = $this->input->post('PlantelId');
+        
+        $select = 'UNCI_usuario, UPlantel';
+        $this->db->where('UNCI_usuario', $UNCI_usuario);
+        $datos = $this->usuario_model->find_all(null, $select);
+        
+        foreach ($datos as $k => $listP) {
+        $ids = explode(',', $listP['UPlantel']);
+            if (count($ids) == 1 ) {
+                $data['UPlantel'] = '';
+                $data['UEstado'] = "Inactivo";
                 } else {
-                    //Subir archivos al servidor
-                    $lista_archivos = array(
-                        'UDOficio_file',
-                        'UDCurriculum_file',
-                        'UDCURP_file'
-                        );
-                    $old_data = $this->usuariodatos_model->find("UDCUsuario = ".$data['UNCI_usuario']); 
-                    mover_archivos($data,$lista_archivos,$old_data,"./Documentos/Docentes/".$data['UNCI_usuario']."/"); 
-                    //Subir archivos al servidor
-                    
-                    $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
-                    $datos['UDFecha_ingreso'] = fecha_format($data['UDFecha_ingreso']);
-                    $datos['UDPlaza'] = $data['UDNombramiento'];
-                    $datos['UDNombramiento_file'] = $data['UDNombramiento_file'];
-                        if (isset($data['UDOficio_file'])) {
-                            $datos['UDOficio_file'] =$data['UDOficio_file'];
-                        }
-                        if (isset($data['UDCurriculum_file'])) {
-                            $datos['UDCurriculum_file'] = $data['UDCurriculum_file'];
-                        }
-                        if (isset($data['UDCURP_file'])) {
-                            $datos['UDCURP_file'] = $data['UDCURP_file'];
-                        }
-                    $datos['UDUsuarioModificacion'] = get_session('UNCI_usuario');
-                    $datos['UDFechaModificacion'] = date('Y-m-d H:i:s');
-
-                    $this->usuariodatos_model->update($data['datos'][0]['UDClave'],$datos);
-
-                    $user['UNombre'] = $data['UNombre'];
-                    $user['UApellido_pat'] = $data['UApellido_pat'];
-                    $user['UApellido_mat'] = $data['UApellido_mat'];
-                    $user['UCURP'] = $data['UCURP'];
-                    $user['UFecha_nacimiento'] = fecha_format($data['UFecha_nacimiento']);
-                    $user['URFC'] = $data['URFC'];
-                    $user['UDomicilio'] = $data['UDomicilio'];
-                    $user['UColonia'] = $data['UColonia'];
-                    $user['UMunicipio'] = $data['UMunicipio'];
-                    $user['UCP'] = $data['UCP'];
-                    $user['UTelefono_movil'] = $data['UTelefono_movil'];
-                    $user['UTelefono_casa'] = $data['UTelefono_casa'];
-                    $user['UCorreo_electronico'] = $data['UCorreo_electronico'];
-                    $user['ULugar_nacimiento'] = $data['ULugar_nacimiento'];
-                    $user['UEstado_civil'] = $data['UEstado_civil'];
-                    $user['USexo'] = $data['USexo'];                        
-                    
-                    $this->usuario_model->update($data['UNCI_usuario'], $user);
-                    set_mensaje("Los datos del Usuario se actualizaron con éxito",'success::');
-                    echo "OK";
+                foreach ($ids as $y => $ids) {
+                    if ($ids != $UNCI_plantel) {
+                        $result[$y] = $ids;
+                        $results = implode(',', $result);
+                        $data['UPlantel'] = $results;
+                    }
                 }
-            }   
-        }    
+            }
+        }
+        $this->usuario_model->update($UNCI_usuario, $data);
+        set_mensaje("El docente se quito correctamente de su Plantel",'success::');
+        echo "OK";
     }
 
     public function ver_curp(){
@@ -443,7 +437,7 @@ class Docente extends CI_Controller {
             echo nvl($result['tipo']);
         }
     }
-
+/*
     public function mostrarCarreras() {
         $nivel =  $this->input->post('tipo');
         /*$this->db->like('LGradoEstudio', $nivel);
@@ -471,64 +465,7 @@ class Docente extends CI_Controller {
         <?php
     }
 
-    public function quitarDocente() {
-        $data = array();
-        $UNCI_usuario = $this->encrypt->decode($this->input->post('UNCI_usuario_skip'));
-        $UNCI_plantel = $this->input->post('PlantelId');
-        
-        /*$select = 'UNCI_usuario, UPlantel';
-        $this->db->where('UNCI_usuario', $UNCI_usuario);
-        $datos = $this->usuario_model->find_all(null, $select);
-        
-        foreach ($datos as $k => $listP) {
-        $ids = explode(',', $listP['UPlantel']);
-            if (count($ids) == 1 ) {
-                $data['UPlantel'] = '';
-                } else {
-                foreach ($ids as $y => $ids) {
-                    if ($ids != $UNCI_plantel) {
-                        $result[$y] = $ids;
-                        $results = implode(',', $result);
-                        $data['UPlantel'] = $results;
-                    }
-                }
-            }
-        }*
-        //$data['UTipoDocente'] = "A";
-        $this->usuario_model->update($UNCI_usuario, $data);
-        set_mensaje("El docente se quito correctamente",'success::');
-        echo "OK";
-    }*/
-
-    public function _set_rules() {
-        $rango_fechas = date('d/m/Y',strtotime('-100 year') ) . "," . date('d/m/Y', strtotime('+0 year'));
-
-        $this->form_validation->set_rules('UCURP', 'CURP', "trim|required|min_length[18]|max_length[20]");
-        $this->form_validation->set_rules('UNombre', 'Nombre(s)', "trim|required|min_length[1]|max_length[150]");
-        $this->form_validation->set_rules('UApellido_pat', 'Apellido Paterno', "trim|required|min_length[1]|max_length[150]");
-        $this->form_validation->set_rules('UApellido_mat', 'Apellido Materno', "trim|required|min_length[1]|max_length[150]");
-        $this->form_validation->set_rules('UFecha_nacimiento', 'Fecha de Nacimiento', "trim|required|max_length[10]|valida_fecha[$rango_fechas]");
-        $this->form_validation->set_rules('ULugar_nacimiento', 'Lugar de Nacimiento', "trim|required|min_length[1]|max_length[150]");
-        $this->form_validation->set_rules('URFC', 'RFC', "trim|required|min_length[10]|max_length[14]");
-        $this->form_validation->set_rules('UDomicilio', 'Domicilio', "trim|required|min_length[1]|max_length[250]");
-        $this->form_validation->set_rules('UColonia', 'Colonia', "trim|required|min_length[1]|max_length[150]");
-        $this->form_validation->set_rules('UMunicipio', 'Municipio', "trim|required|min_length[1]|max_length[150]");
-        $this->form_validation->set_rules('UCP', 'Código Postal', "trim|required|min_length[4]|max_length[5]");
-        $this->form_validation->set_rules('UTelefono_movil', 'Teléfono Móvil', "trim|required|min_length[10]|max_length[10]");
-        $this->form_validation->set_rules('UTelefono_casa', 'Teléfono Casa', "trim|required|min_length[10]|max_length[10]");
-        $this->form_validation->set_rules('UCorreo_electronico', 'Correo electr&oacute;nico', "trim|required|max_length[60]|valid_email");
-        $this->form_validation->set_rules('UEstado_civil', 'Estado civil', "trim|required|min_length[5]|max_length[13]");
-        $this->form_validation->set_rules('USexo', 'Sexo', "trim|required|min_length[5]|max_length[6]");
-        $this->form_validation->set_rules('UDTipo_Docente', 'Tipo Docente', "trim|required|min_length[1]|max_length[1]");
-        $this->form_validation->set_rules('UDFecha_ingreso', 'Fecha de Ingreso', "trim|required|max_length[10]");
-        $this->form_validation->set_rules('UDNombramiento', 'Nombramiento', "trim|required|min_length[1]|max_length[2]");
-        $this->form_validation->set_rules('UDNombramiento_file', 'Archivo Nombramiento', "trim|required|min_length[1]|max_length[250]");
-
-        $this->form_validation->set_rules('UDOficio_file', 'Oficio de Petición', "trim|required|min_length[1]|max_length[250]");
-        $this->form_validation->set_rules('UDCurriculum_file', 'Curriculum', "trim|required|min_length[1]|max_length[250]");
-        $this->form_validation->set_rules('UDCURP_file', 'CURP', "trim|required|min_length[1]|max_length[250]");
-
-    }
+    */
 
 }
 ?>

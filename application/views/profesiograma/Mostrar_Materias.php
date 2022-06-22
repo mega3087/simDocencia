@@ -1,4 +1,3 @@
-
 <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
 	<thead>
 		<tr>
@@ -33,7 +32,7 @@
 						</button>
 					</td>										
 				</tr>
-				<?php } ?>
-			<?php $i++; } ?>
+				<?php $i++; } ?>
+			<?php  } ?>
 	</tbody>
 </table>

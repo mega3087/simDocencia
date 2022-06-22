@@ -3,9 +3,11 @@
 		<thead>
 			<tr>
 				<th>Estudios</th>
-				<th>Carrera</th>
+				<th>Especialidad</th>
+				<th>Titulado</th>
+				<th>No. Cédula Profesional</th>
 				<th>Título Profesional</th>
-				<th>Cédula Profesional</th>
+				<th>Cédula Profesional</th>				
 				<th>Acción</th>
 			</tr>
 		</thead>
@@ -21,6 +23,8 @@
 			<tr>
 				<td><?php echo $list['ULNivel_estudio']; ?></td>
 				<td><?php echo $list['Licenciatura']; ?></td>
+				<td><?php echo $list['ULTitulado']; ?></td>
+				<td><?php echo $list['ULCedulaProf']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<td><?php echo nvl($UPCedula_file); ?></td>
 				<td>
@@ -35,9 +39,9 @@
 <script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
 <script type="text/javascript">
 	$(".quitarEstudios").click(function(e) {
-		UPClave = $(this).val();
+		ULClave = $(this).val();
 		var idUsuario = document.getElementById("UNCI_usuario").value;
-		var idPlantel = document.getElementById("CLPlantel").value;
+		var idPlantel = document.getElementById("UPlantel").value;
 
 		bootbox.confirm({
 		    message: "¿Desea eliminar los Estudios del Usuario?",
@@ -57,16 +61,16 @@
 		    		$.ajax({
 						type: "POST",
 						url: "<?php echo base_url("docente/deleteEstudios"); ?>",
-						data: {UPClave: UPClave, idUsuario : idUsuario, idPlantel : idPlantel},
+						data: {ULClave: ULClave, idUsuario : idUsuario, idPlantel : idPlantel},
 						dataType: "html",
 						beforeSend: function(){
 							//carga spinner
 							$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
 						},
 						success: function(data){
-							$(".msgArchivos").empty();
-							$(".resultArchivos").empty();
-							$(".resultArchivos").append(data);
+							$(".msgEstudios").empty();
+							$(".resultEstudios").empty();
+							$(".resultEstudios").append(data);
 							$(".loadingArchivo").empty();
 						}
 						

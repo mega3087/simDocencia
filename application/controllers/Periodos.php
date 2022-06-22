@@ -1,7 +1,7 @@
 <?php
 class Periodos extends CI_Controller {
-    public function __contruct (){
-       parent::__contruct();
+    public function __construct (){
+       parent::__construct();
        if (!is_login()) // Verificamos que el usuario este logeado
             redirect('login');
 
@@ -13,10 +13,11 @@ class Periodos extends CI_Controller {
         $data = array();
 
         $this->db->where('CPEStatus','1');
+        $this->db->order_by('CPEPeriodo','DESC');
+        $this->db->limit('10');
         $data["periodos"] = $this->periodos_model->find_all();
 
         foreach ($data["periodos"] as $k => $per) {
-
             $periodos = explode('-', $per['CPEPeriodo']);
             $fechaInicio = $per['CPEDiaInicio'].'/'.$per['CPEMesInicio'].'/'.$per['CPEAnioInicio'];
             $fechaFin = $per['CPEDiaFin'].'/'.$per['CPEMesFin'].'/'.$per['CPEAnioFin'];
