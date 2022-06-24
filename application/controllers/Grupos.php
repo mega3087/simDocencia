@@ -248,7 +248,7 @@ class Grupos extends CI_Controller {
         echo "</pre>";
         exit();*/
         
-        $this->load->library('dpdf');
+        $this->load->library('Dpdf');
         $data['subvista'] = 'grupos/Ver_pdf_view';
         $data['titulo'] = "<p style='font-size:10px;'><br>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA</p>";
 

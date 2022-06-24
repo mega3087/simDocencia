@@ -95,7 +95,7 @@
                 <div class="form-group">
                     <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
                     <div class="col-lg-9">
-                        <select name="GRPeriodo" id="PeriodoSemestre" class="form-control ValidarPeriodo">
+                        <select name="GRPeriodo" id="PeriodoSemestre" class="form-control ValidarPeriodo disabled">
                             <?php foreach ($periodos as $key => $listPeriodo) { ?>
                                 <option value="<?=$listPeriodo['CPEPeriodo']?>">
                                     <?=substr($listPeriodo['CPEPeriodo'],0,2)?>-<?=substr($listPeriodo['CPEPeriodo'],3,1)==1?'A':'B'?>
@@ -104,50 +104,107 @@
                         </select>
                     </div>
                 </div>
-                
                 <div class="form-group">
-                    <label class="col-lg-3 control-label" for="">Semestre: <em>*</em></label>
-                    <div class="col-lg-9">
-                        <select name="GRSemestre" id="Semestre" class="form-control">
-                            <option value="">- Semestre -</option>
-                            <option value="1" style="display:none;">1</option>
-                            <option value="2" style="display:none;">2</option>
-                            <option value="3" style="display:none;">3</option>
-                            <option value="4" style="display:none;">4</option>
-                            <option value="5" style="display:none;">5</option>
-                            <option value="6" style="display:none;">6</option>
-                        </select>
-                    </div>
-                </div>
+                    <table class="table table-striped table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>Periodo</th>
+                                <th>Semestre</th>
+                                <th>Turno</th>
+                                <th># de Grupos</th>
+                                <?php if( is_permitido(null,'grupos','save') ){ ?>
+                                <th >Acción</th>
+                                <?php } ?> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="2">
+                                    <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A':'B'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
+                                    <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
+                                </td>
+                                <td rowspan="2">
+                                    <?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'1':'2'; ?>
+                                    <input type="hidden" name="CPESemestre" id="CPESemestre" value="<?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'1':'2'; ?>" />
+                                </td>
+                                <td>
+                                    Matutino
+                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Matutino" />
+                                </td>
+                                <td>
+                                    <input type="number" name="NoGrupos" id="NoGrupos" class="form-group">
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Vespertino
+                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Vespertino" />
+                                </td>
+                                <td>
+                                    <input type="number" name="NoGrupos" id="NoGrupos" class="form-group">
+                                </td>
+                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                            </tr> 
+                            
+                            <tr>
+                                <td rowspan="2">
+                                    <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A':'B'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
+                                    <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
+                                </td>
+                                <td rowspan="2">
+                                    <?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'3':'4'; ?>
+                                    <input type="hidden" name="CPESemestre" id="CPESemestre" value="<?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'3':'4'; ?>" />
+                                </td>
+                                <td>
+                                    Matutino
+                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Matutino" />
+                                </td>
+                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
+                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Vespertino
+                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Vespertino" />
+                                </td>
+                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
+                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                            </tr> 
 
-                <div class="form-group">
-                    <label class="col-lg-3 control-label" for="">Grupo: <em>*</em></label>
-                    <div class="col-lg-9">
-                        <input type="text" id="GRGrupo" name="GRGrupo" value="" maxlength='3' class="form-control ValidarGrupo" />
-                    </div>
-                </div>  
-                <div id="error1"></div>
-                <div class="loading1"></div>
-
-                <div class="form-group" id="Resultado"></div>
-
-                <div class="form-group" id="Turnos" >
-                    <label class="col-lg-3 control-label" for="">Turno: <em>*</em></label>
-                    <div class="col-lg-3">
-                        <select name="GRTurno" id="GRTurno"  class="form-control">
-                            <option value="">- Turno -</option>
-                            <option value="1">Matutino</option>
-                            <option value="2">Vespertino</option>
-                        </select>
-                    </div>
-                    <label class="col-lg-3 control-label" for="">No. Alumnos: <em>*</em></label>
-                    <div class="col-lg-3">
-                        <input type="int" name="GRCupo" id="GRAlumnos" value="" class="form-control"  maxlength="2">
-                    </div>
+                            <tr>
+                                <td rowspan="2">
+                                    <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A':'B'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
+                                    <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
+                                </td>
+                                <td rowspan="2">
+                                    <?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'5':'6'; ?>
+                                    <input type="hidden" name="CPESemestre" id="CPESemestre" value="<?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'5':'6'; ?>" />
+                                </td>
+                                <td>
+                                    Matutino
+                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Matutino" />
+                                </td>
+                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
+                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Vespertino
+                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Vespertino" />
+                                </td>
+                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
+                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                            </tr> 
+                        </tbody>
+                    </table>
                 </div>
                 
                 <div id="error"></div>
                 <div class="loading"></div>
+                <br><br><br>
 				<div class="form-group">
                     <input type="hidden" name="GRCPlantel" id="idPlantel" value="">
                     <input type="hidden" name="CPLTipo" id="CPLTipo" value="">
@@ -245,134 +302,6 @@
 		
 	});//----->fin
 
-    /* Ventana modal */
-	$(document).on("click", ".open", function () {
-        //$('#FormGrupos')[0].reset();
-        $(this).removeData('modal');s
-
-        var idPlantel = $(this).data('pclave_plantel');
-        $(".modal-header #idPlantel").val( $(this).data('pclave_plantel') );
-
-        var tipoPlantel = $(this).data('ptipo_plantel');
-        $(".modal-header #CPLTipo").val( $(this).data('ptipo_plantel') );
-
-        var valor = $(this).data('pnombre_plantel');
-        document.getElementById("PNombre_plantel").innerHTML = valor;
-        var NoGrupos = $(this).data('pturnos');
-
-        if (NoGrupos == '1') {
-            $("#GRTurno").val(1).addClass('disabled');
-        } else {
-            $("#GRTurno").val('').removeClass('disabled');
-        }
-
-        $(document).on("change", ".ValidarGrupo", function () {
-        var valor = document.getElementById("GRGrupo").value;
-        var grup = valor.slice(0, 1)
-        
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("grupos/selectCap"); ?>",
-                data: {idPlantel: idPlantel, valorGrupo: grup, tipoPlantel: tipoPlantel},
-                dataType: "html",
-                beforeSend: function(){
-                    //carga spinner
-                    $(".loading1").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-                },
-                success: function(data){
-                    if(data =='OK'){
-                        $("#Resultado").show('slow');
-                    } else {
-                        $("#error1").empty();
-                        $("#error1").append(data);   
-                        $(".loading1").html(""); 
-                    }
-                    
-                }
-            });
-        });//----->fin
-
-        $(".msg").empty();
-        datosGrupos(idPlantel);
-
-        var valor = $("#PeriodoSemestre option:selected").val();  
-        abrirPeriodos(valor);
-
-    });//----->fin
-
-    function datosGrupos(idPlantel){
-        $.ajax({
-            type: "POST",
-            url: "<?php echo base_url("grupos/selectGrupos"); ?>",
-            data: "GRCPlantel=" + idPlantel,
-            dataType: "html",
-            beforeSend: function(){
-                //carga spinner
-                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-            },
-            success: function(data){
-                $(".result").empty();
-                $(".result").append(data);  
-                $(".loading").html("");
-            }
-        });
-    }//----->fin
-
-    $(".save").click(function() {
-        $.ajax({
-            type: "POST",
-            url: "<?php echo base_url("grupos/save"); ?>",
-            data: $(this.form).serialize(),
-            dataType: "html",
-            beforeSend: function(){
-                //carga spinner
-                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-            },
-            success: function(data){
-                var data = data.split(";");
-                if(data[0]==' OK'){
-                    $(".msg").empty();
-                    $(".msg").append(data[1]);
-                    datosGrupos( data[2] );
-                    $('#FormGrupos')[0].reset();
-                    $(".loading").html("");
-                }
-                else{
-                    $(".msg").empty();
-                    $(".msg").append(data[0]);  
-                    datosGrupos( data[1] );
-                    $(".loading").html(""); 
-                }
-                
-            }
-        });
-    });//----->fin
-
-    $(document).on("change", ".ValidarPeriodo", function (event) {
-        var valor = $("#PeriodoSemestre option:selected").val();  
-        abrirPeriodos(valor);       
-    });
-
-    function abrirPeriodos(valor) {
-        var sem = valor.split('-')[1];
-        if (sem == 2) {
-            document.FormGrupos.Semestre.options[1].style.display = 'block';
-            document.FormGrupos.Semestre.options[2].style.display = 'none';
-            document.FormGrupos.Semestre.options[3].style.display = 'block';
-            document.FormGrupos.Semestre.options[4].style.display = 'none';
-            document.FormGrupos.Semestre.options[5].style.display = 'block';
-            document.FormGrupos.Semestre.options[6].style.display = 'none';
-        } if (sem == 1) {
-            document.FormGrupos.Semestre.options[1].style.display = 'none';
-            document.FormGrupos.Semestre.options[2].style.display = 'block';
-            document.FormGrupos.Semestre.options[3].style.display = 'none';
-            document.FormGrupos.Semestre.options[4].style.display = 'block';
-            document.FormGrupos.Semestre.options[5].style.display = 'none';
-            document.FormGrupos.Semestre.options[6].style.display = 'block';
-        }
-        
-    }
-
     /* Ventana modal ver grupos*/
     $(document).on("click", ".openGrupos", function () {
         var valor = $(this).data('nombre_plantel');
@@ -421,5 +350,5 @@
             }
         });
     }
-    
+
 </script>

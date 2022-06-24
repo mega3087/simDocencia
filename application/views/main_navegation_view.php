@@ -82,8 +82,8 @@
 			</li>
 			<?php } ?>
 			
-			<?php if( is_permitido(null,'horasClase','index') or is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'grupos','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'nuevaplantilla','index')) { ?>
-			<li class="<?php if(nvl($modulo)=='horasClase' or nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='grupos' or nvl($modulo)=='plantilla' or nvl($modulo)=='nuevaplantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
+			<?php if( is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'docente','index') or is_permitido(null,'grupos','index') or is_permitido(null,'horasClase','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'nuevaplantilla','index')) { ?>
+			<li class="<?php if(nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='docente' or nvl($modulo)=='grupos' or nvl($modulo)=='horasClase' or nvl($modulo)=='plantilla' or nvl($modulo)=='nuevaplantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
 				<a href="#"><i class="fa fa-building-o"></i> <span class="nav-label">Docencia</span> <span class="fa arrow"></span></a>
 				<ul class="nav nav-second-level collapse" style="height: 0px;">
 					<?php if(is_permitido(null,'profesiograma','index')) { ?>
@@ -92,14 +92,14 @@
 					<?php if(is_permitido(null,'periodos','index')) { ?>
 					<li <?php if( nvl($modulo) == 'periodos' ) echo 'class="active"'; ?>><a href='<?php echo base_url("periodos");?>' >Periodo Escolar</a></li>
 					<?php } ?>
-					<?php if(is_permitido(null,'docente','index')) { ?>
-					<li <?php if( nvl($modulo) == 'docente' ) echo 'class="active"'; ?>><a href='<?php echo base_url("docente");?>' >Docentes</a></li>
-					<?php } ?>
 					<?php if(is_permitido(null,'grupos','index')) { ?>
 					<li <?php if( nvl($modulo) == 'grupos' ) echo 'class="active"'; ?>><a href='<?php echo base_url("grupos");?>' >Grupos</a></li>
 					<?php } ?>
 					<?php if(is_permitido(null,'horasClase','index')) { ?>
 					<li <?php if( nvl($modulo) == 'horasClase' ) echo 'class="active"'; ?>><a href='<?php echo base_url("horasClase");?>' >Horas Clase Asignadas</a></li>
+					<?php } ?>
+					<?php if(is_permitido(null,'docente','index')) { ?>
+					<li <?php if( nvl($modulo) == 'docente' ) echo 'class="active"'; ?>><a href='<?php echo base_url("docente");?>' >Docentes</a></li>
 					<?php } ?>
 					<?php if(is_permitido(null,'plantilla','index')) { ?>
 					<li <?php if( nvl($modulo) == 'plantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("plantilla");?>' >Plantilla</a></li>

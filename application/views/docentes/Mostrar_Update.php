@@ -10,6 +10,7 @@
 <link href="<?php echo base_url('assets/inspinia/css/plugins/jasny/jasny-bootstrap.min.css'); ?>" rel="stylesheet">
 
 <link href="<?php echo base_url('assets/inspinia/css/plugins/select2/select2.min.css'); ?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/plugins/datapicker/datepicker3.css'); ?>" rel="stylesheet" />
 <!--color boox-->
 <script type="text/javascript" src="<?php echo base_url("assets/colorbox/jquery.colorbox-min.js") ?>"></script>
 <link media="screen" rel="stylesheet" href="<?php echo base_url("assets/colorbox/colorbox.css") ?>" />
@@ -33,7 +34,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             
-                        <?php echo form_open('docente/Registrar', array('name' => 'FormRegistrar', 'id' => 'form', 'role' => 'form', 'class' => 'wizard-big', 'enctype' => 'multipart/form-data')); ?>
+                        <?php echo form_open('Docente/Registrar', array('name' => 'FormRegistrar', 'id' => 'form', 'role' => 'form', 'class' => 'wizard-big', 'enctype' => 'multipart/form-data')); ?>
                             <?php $idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); ?>
                                 <input type="hidden" id="UPlantel" name="UPlantel" value="<?php echo nvl($plantel[0]['CPLClave']); ?>" />
                                 <input type="hidden" id="UNCI_usuario" name="UNCI_usuario" value="<?php echo nvl($usuario[0]['UNCI_usuario']); ?>" />
@@ -63,7 +64,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Fecha de nacimiento: <em>*</em></label>
-                                                <input type="text" id="UFecha_nacimiento" placeholder="yyyy-mm-dd" name="UFecha_nacimiento" value="<?php echo nvl($usuario[0]['UFecha_nacimiento']); ?>" class="form-control date <?php if (nvl($usuario[0]['UFecha_nacimiento']))?> required" minlength="10" maxlength="10"/>
+                                                <input type="text" id="UFecha_nacimiento" placeholder="yyyy-mm-dd" name="UFecha_nacimiento" value="<?php echo nvl($usuario[0]['UFecha_nacimiento']); ?>" class="form-control date <?php if (nvl($usuario[0]['UFecha_nacimiento'])) echo "disabled";?> required" minlength="10" maxlength="10"/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Lugar de nacimiento: <em>*</em></label>
@@ -365,6 +366,8 @@
 <!-- Select2 -->
 <script src="<?php echo base_url('assets/inspinia/js/plugins/select2/select2.full.min.js'); ?>"></script>
 
+<script src="<?php echo base_url('assets/inspinia/js/plugins/datapicker/bootstrap-datepicker.js'); ?>"></script>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		/* Page-Level Scripts */
@@ -414,162 +417,6 @@
 		});
 
 
-        //Subir Archivo Nombramiento
-        $(document).on("click", ".douploadNombramiento", function () {
-                var idPlantel = document.getElementById("UPlantel").value;
-                var idUser = document.getElementById("UNCI_usuario").value;
-
-                let formData = new FormData(); 
-                    formData.append("file", UDNombramiento_file.files[0]);
-                    formData.append("idUsuario", idUser);
-                    formData.append("idPlantel", idPlantel);
-                    formData.append("tipoDoc", 'Nombramiento');
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                    data: formData,
-                    dataType: "html",
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(data){
-                        var data = data.split("::");
-                        alert(data[1]);
-                    }
-                });
-
-        });
-
-
-        //Subir Archivo Oficio
-        $(document).on("click", ".douploadOficio", function () {
-            var idPlantel = document.getElementById("UPlantel").value;
-            var idUser = document.getElementById("UNCI_usuario").value;
-
-            let formData = new FormData(); 
-                formData.append("file", UDOficio_file.files[0]);
-                formData.append("idUsuario", idUser);
-                formData.append("idPlantel", idPlantel);
-                formData.append("tipoDoc", 'OficioPeticion');
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                data: formData,
-                dataType: "html",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data){
-                    var data = data.split("::");
-                    alert(data[1]);
-                }
-            });
-
-        });
-
-        //Subir Archivo Curriculum
-        $(document).on("click", ".douploadCurriculum", function () {
-            var idPlantel = document.getElementById("Uplantel").value;
-            var idUser = document.getElementById("UNCI_usuario").value;
-
-            let formData = new FormData(); 
-                formData.append("file", UDCurriculum_file.files[0]);
-                formData.append("idUsuario", idUser);
-                formData.append("idPlantel", idPlantel);
-                formData.append("tipoDoc", 'Curriculum');
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                data: formData,
-                dataType: "html",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data){
-                    var data = data.split("::");
-                    alert(data[1]);
-                }
-            });
-
-        });
-
-        //Subir Archivo CURP
-        $(document).on("click", ".douploadCURP", function () {
-            var idPlantel = document.getElementById("UPlantel").value;
-            var idUser = document.getElementById("UNCI_usuario").value;
-
-            let formData = new FormData(); 
-                formData.append("file", UDCURP_file.files[0]);
-                formData.append("idUsuario", idUser);
-                formData.append("idPlantel", idPlantel);
-                formData.append("tipoDoc", 'CURP');
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                data: formData,
-                dataType: "html",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data){
-                    var data = data.split("::");
-                    alert(data[1]);
-                }
-            });
-
-        });
-
-        //Subir Archivo Titulo
-        $(document).on("click", ".douploadTitulo", function () {
-            var idPlantel = document.getElementById("UPlantel").value;
-            var idUser = document.getElementById("UNCI_usuario").value;
-
-            let formData = new FormData(); 
-                formData.append("file", UPDocTitulo_file.files[0]);
-                formData.append("idUsuario", idUser);
-                formData.append("idPlantel", idPlantel);
-                formData.append("tipoDoc", 'Titulo');
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                data: formData,
-                dataType: "html",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data){
-                    var data = data.split("::");
-                    alert(data[1]);
-                }
-            });
-
-        });
-
-        //Subir Archivo Cedula
-        $(document).on("click", ".douploadCedula", function () {
-            var idPlantel = document.getElementById("UPlantel").value;
-            var idUser = document.getElementById("UNCI_usuario").value;
-
-            let formData = new FormData(); 
-                formData.append("file", UPDocCedula_file.files[0]);
-                formData.append("idUsuario", idUser);
-                formData.append("idPlantel", idPlantel);
-                formData.append("tipoDoc", 'Cedula');
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
-                data: formData,
-                dataType: "html",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data){
-                    var data = data.split("::");
-                    alert(data[1]);
-                }
-            });  
-        });
-
         //Guardar Estudios del Docente 
 		$(document).on("click", ".saveEstudios", function () {
             var idUser = document.getElementById("UNCI_usuario").value;
@@ -591,7 +438,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "<?php echo base_url("docente/saveEstudios"); ?>",
+                url: "<?php echo base_url("Docente/saveEstudios"); ?>",
                 data: formData,
                 dataType: "html",
                 cache: false,
@@ -625,7 +472,7 @@
             var idPlantel = document.getElementById("UPlantel").value;
 			$.ajax({
 	            type: "POST",
-	            url: "<?php echo base_url("docente/mostrarEstudios"); ?>",
+	            url: "<?php echo base_url("Docente/mostrarEstudios"); ?>",
 	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
 	            dataType: "html",
 	            beforeSend: function(){
@@ -719,7 +566,7 @@
             onCanceled: function (event)
 			{
                 //recogemos la dirección del Proceso PHP
-				mensaje = "¿Estás seguro de cancelar?,<br /> ¡El proceso seguira pendiente!";
+				mensaje = "¿Estás seguro de cancelar?";
 				//colocamos fondo de pantalla
 				$('#wrapper').prop('class','bgtransparent');				
 				alertify.confirm(mensaje, function (e) {
@@ -745,7 +592,7 @@
     function save(form,finish){
 		$.ajax({
 			type: "POST",
-			url: "<?php echo base_url("docente/Save"); ?>",
+			url: "<?php echo base_url("Docente/Save"); ?>",
 			data: form.serialize(),
 			dataType: "html",
 			beforeSend: function(){
@@ -800,7 +647,7 @@
             var idPlantel = document.getElementById("UPlantel").value;
 			$.ajax({
 	            type: "POST",
-	            url: "<?php echo base_url("docente/mostrarEstudios"); ?>",
+	            url: "<?php echo base_url("Docente/mostrarEstudios"); ?>",
 	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
 	            dataType: "html",
 	            beforeSend: function(){

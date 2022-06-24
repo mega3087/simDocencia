@@ -21,7 +21,7 @@
 				<?php if( is_permitido(null,'docente','save') )
 				$idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); 
 				{ ?>
-					<a href="<?= base_url('docente/Update/'.$idPlantel); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Registrar Docente</button></a>
+					<a href="<?= base_url('Docente/Update/'.$idPlantel); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Registrar Docente</button></a>
 				<?php } ?>
 				</div>
 				<h3>&nbsp;</h3>
@@ -54,7 +54,7 @@
 											<td class="text-left"><?php echo $list['URFC']; ?></td>
 											<td class="text-left"><?php echo $list['UCURP']; ?></td>								
 											<td class="text-center">
-											<a href="<?= base_url('docente/Update/'.$idPlantel.'/'.$UNCI_usuario_skip); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Editar</button></a>
+											<a href="<?= base_url('Docente/Update/'.$idPlantel.'/'.$UNCI_usuario_skip); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Editar</button></a>
 											<?php echo $borrar; ?>
 											</td>
 										</tr>
@@ -118,7 +118,7 @@
 			    	if (result == true) {
 			    		$.ajax({
 							type: "POST",
-							url: "<?php echo base_url("docente/quitarDocente"); ?>",
+							url: "<?php echo base_url("Docente/quitarDocente"); ?>",
 							data: {UNCI_usuario_skip: UNCI_usuario_skip, PlantelId: PlantelId},
 							dataType: "html",
 							beforeSend: function(){

@@ -320,7 +320,7 @@ class Docente extends CI_Controller {
     public function saveDocumentos() {
         $data = post_to_array('_skip');
         $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
-        $directorio = "./Documentos/Docentes/".$_POST['UDUsuario']."/";
+        $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
         
             //Subir Nombramiento
             $nomNombramiento = 'Nombramiento';

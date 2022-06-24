@@ -43,7 +43,7 @@
 									<td class="text-left"><?php echo $list['CPLCorreo_electronico']; ?></td>
 									<td class="text-left"><?php echo $list['CPLDirector']; ?></td>								
 									<td>
-										<a href="<?= base_url()?>docente/mostrarDocentes/<?=$CPLClave_skip?>"><button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Docentes
+										<a href="<?= base_url()?>Docente/mostrarDocentes/<?=$CPLClave_skip?>"><button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Docentes
                                     </button></a>
 									</td>
 								</tr>

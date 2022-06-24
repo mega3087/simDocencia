@@ -52,7 +52,7 @@
 								?>
 								<tr>
 									<td class="text-left"><?php echo folio($cont); ?></td> 
-									<td class="text-left"><?php echo $list['CPEPeriodo'].'-'.$list['CPEPeriodoSem']; ?></td>								
+									<td class="text-left"><?php echo substr($list['CPEPeriodo'],0,2)?>-<?= substr($list['CPEPeriodoSem'],-1) == 1 ? 'A':'B'; ?></td>								
 									<td class="text-left"><?php echo $list['InicioPeriodo']; ?></td>
 									<td class="text-left"><?php echo $list['FinPeriodo']; ?></td>
                                     <td class="text-center">
@@ -99,7 +99,7 @@
                     <label class="col-lg-2 control-label" for="">Periodo: <em>*</em></label>
                     <div class="col-lg-5" id="CPEPeriodo">
                         <select name="CPEPeriodo" id="CPEPeriodo" class="form-control">
-                            <option value="">-Periodo-</option>
+                            <option value="">-Año-</option>
                             <?php for($i = date('y') + 1; $i >=(date('y') - 14); $i--){ ?>
                                 <option value="<?= setDia($i) ?>"><?= setDia($i) ?></option>
                             <?php } ?>
@@ -107,27 +107,24 @@
                     </div>
                     <div class="col-lg-5" id="CPEPeriodoSem">
                         <select name="CPEPeriodoSem" id="CPEPeriodoSem" class="form-control">
-                            <option value="">-Semestre-</option>
-                            <?php for($i='1';$i<='2';$i++){ ?>
-                                <option value="<?=$i?>"><?= $i ?></option>
-                            <?php } ?>
+                            <option value="">-Periodo-</option>
+                            <option value="1">A</option>
+                            <option value="2">B</option>
                         </select>
                     </div>
                 </div>
                 <br>
 
                 <div class="form-group">
-                    <label class="col-lg-4 control-label" for="">Inicio de Periodo: <em>*</em></label>
+                    <label class="col-lg-4 control-label" for="">Fecha de Inicio: <em>*</em></label>
                     <div class="col-lg-8">
-                        <input type="text" id="InicioPeriodo" name="InicioPeriodo" value="" maxlength='150' 
-                        class="form-control date" autocomplete="off"/>
+                        <input type="text" id="InicioPeriodo" name="InicioPeriodo" value="" minlength="10" maxlength='10' class="form-control date" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-4 control-label" for="">Fin de Periodo: <em>*</em></label>
+                    <label class="col-lg-4 control-label" for="">Fecha de Termino: <em>*</em></label>
                     <div class="col-lg-8">
-                        <input type="text" id="FinPeriodo" name="FinPeriodo" value="" maxlength='150' 
-                        class="form-control date" autocomplete="off"/>
+                        <input type="text" id="FinPeriodo" name="FinPeriodo" value="" minlength="10" maxlength='10' class="form-control date" autocomplete="off"/>
                     </div>
                 </div>                <div id="error"></div>
                 <div class="loading"></div>

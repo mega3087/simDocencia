@@ -60,7 +60,7 @@
 		    	if (result == true) {
 		    		$.ajax({
 						type: "POST",
-						url: "<?php echo base_url("docente/deleteEstudios"); ?>",
+						url: "<?php echo base_url("Docente/deleteEstudios"); ?>",
 						data: {ULClave: ULClave, idUsuario : idUsuario, idPlantel : idPlantel},
 						dataType: "html",
 						beforeSend: function(){
