@@ -12,7 +12,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		
+    <?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
 			<!--<div class="ibox-title">
 				<div class="pull-right">
@@ -69,7 +69,14 @@
                                         data-rclave_plantel="<?php echo $PClave_skip; ?>" 
                                         data-clave_plantel="<?php echo $list['CPLClave']; ?>" 
                                         data-nombre_plantel="<?php echo $list['CPLNombre']; ?>" 
-                                        ><i class="fa fa-eye"></i> Ver Grupos
+                                        ><i class="fa fa-plus"></i> Agregar Alumnos
+                                    </button>
+                                    <button class="btn btn-success btn-sm openReportes"
+                                        data-target="#modal_ver_Reportes" 
+                                        data-toggle="modal"
+                                        data-repclave_plantel="<?php echo $list['CPLClave']; ?>" 
+                                        data-repnombre_plantel="<?php echo $list['CPLNombre']; ?>" 
+                                        ><i class="fa fa-eye"></i> Ver Reportes
                                     </button>
 									</td>
 								</tr>
@@ -93,17 +100,17 @@
 				<h4 class="modal-title"><i class="fa fa-building-o"></i>&nbsp;&nbsp; PLANTEL Y/O CEMSAD: <div id="PNombre_plantel"></div> </h4><div class="border-bottom"><br /></div><br>
                 <?php echo form_open('grupos/save', array('name' => 'FormGrupos', 'id' => 'FormGrupos', 'role' => 'form', 'class' => 'form-horizontal panel-body')); ?>
                 <div class="form-group">
-                    <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
-                    <div class="col-lg-9">
-                        <select name="GRPeriodo" id="PeriodoSemestre" class="form-control ValidarPeriodo disabled">
-                            <?php foreach ($periodos as $key => $listPeriodo) { ?>
-                                <option value="<?=$listPeriodo['CPEPeriodo']?>">
-                                    <?=substr($listPeriodo['CPEPeriodo'],0,2)?>-<?=substr($listPeriodo['CPEPeriodo'],3,1)==1?'A':'B'?>
-                                </option>
-                            <?php } ?>
-                        </select>
+                        <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
+                        <div class="col-lg-9">
+                            <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control disabled">
+                                <?php foreach ($periodos as $key => $listPer) { ?>
+                                    <option value="<?php echo $listPer['CPEPeriodo']; ?>">
+                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
                 <div class="form-group">
                     <table class="table table-striped table-bordered table-hover dataTable">
                         <thead>
@@ -112,9 +119,6 @@
                                 <th>Semestre</th>
                                 <th>Turno</th>
                                 <th># de Grupos</th>
-                                <?php if( is_permitido(null,'grupos','save') ){ ?>
-                                <th >Acción</th>
-                                <?php } ?> 
                             </tr>
                         </thead>
                         <tbody>
@@ -124,79 +128,87 @@
                                     <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
                                 </td>
                                 <td rowspan="2">
-                                    <?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'1':'2'; ?>
-                                    <input type="hidden" name="CPESemestre" id="CPESemestre" value="<?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'1':'2'; ?>" />
+                                    <?php $sem = substr($periodos[0]['CPEPeriodo'],3,1)==1?'2':'1'; echo $sem; ?>
+                                    <input type="hidden" name="CPESemestre1" id="CPESemestre1" value="<?= substr($periodos[0]['CPEPeriodo'],3,1)==1?'1':'2'; ?>" />
                                 </td>
                                 <td>
                                     Matutino
-                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Matutino" />
+                                    <input type="hidden" name="CPETurnoMat1" id="CPETurnoMat1" value="Matutino" />
                                 </td>
                                 <td>
-                                    <input type="number" name="NoGrupos" id="NoGrupos" class="form-group">
+                                    <input type="number" min="0" max="10" value="0" name="NoGruposMat1" id="NoGruposMat1" class="form-group">
                                 </td>
-                                <td class="text-center">
+                                <!--<td class="text-center">
                                     <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
-                                </td>
+                                </td>-->
                             </tr>
                             <tr>
                                 <td>
                                     Vespertino
-                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Vespertino" />
+                                    <input type="hidden" name="CPETurnoVes1" id="CPETurnoVes1" value="Vespertino" />
                                 </td>
                                 <td>
-                                    <input type="number" name="NoGrupos" id="NoGrupos" class="form-group">
+                                    <input type="number" min="0" max="10" value="0" name="NoGruposVes1" id="NoGruposVes1" class="form-group">
                                 </td>
-                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                                <!--<td class="text-center">
+                                    <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
+                                </td>-->
                             </tr> 
                             
                             <tr>
                                 <td rowspan="2">
                                     <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A':'B'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
-                                    <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
                                 </td>
                                 <td rowspan="2">
-                                    <?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'3':'4'; ?>
-                                    <input type="hidden" name="CPESemestre" id="CPESemestre" value="<?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'3':'4'; ?>" />
+                                    <?php $sem1 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'4':'3'; echo $sem1;?>
+                                    <input type="hidden" name="CPESemestre2" id="CPESemestre2" value="<?= substr($periodos[0]['CPEPeriodo'],3,1)==1?'3':'4'; ?>" />
                                 </td>
                                 <td>
                                     Matutino
-                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Matutino" />
+                                    <input type="hidden" name="CPETurnoMat2" id="CPETurnoMat2" value="Matutino" />
                                 </td>
-                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
-                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                                <td><input type="number" min="0" max="10" value="0" name="NoGruposMat2" id="NoGruposMat2" class="form-group"></td>
+                                <!--<td class="text-center">
+                                    <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
+                                </td>-->
                             </tr>
                             <tr>
                                 <td>
                                     Vespertino
-                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Vespertino" />
+                                    <input type="hidden" name="CPETurnoVes2" id="CPETurnoVes2" value="Vespertino" />
                                 </td>
-                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
-                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                                <td><input type="number" min="0" max="10" value="0" name="NoGruposVes2" id="NoGruposVes2" class="form-group"></td>
+                                <!--<td class="text-center">
+                                    <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
+                                </td>-->
                             </tr> 
 
                             <tr>
                                 <td rowspan="2">
                                     <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A':'B'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
-                                    <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
                                 </td>
                                 <td rowspan="2">
-                                    <?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'5':'6'; ?>
-                                    <input type="hidden" name="CPESemestre" id="CPESemestre" value="<?= substr($listPeriodo['CPEPeriodo'],3,1)==1?'5':'6'; ?>" />
+                                    <?php $sem2 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'6':'5'; echo $sem2; ?>
+                                    <input type="hidden" name="CPESemestre3" id="CPESemestre3" value="<?= substr($periodos[0]['CPEPeriodo'],3,1)==1?'5':'6'; ?>" />
                                 </td>
                                 <td>
                                     Matutino
-                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Matutino" />
+                                    <input type="hidden" name="CPETurnoMat3" id="CPETurnoMat3" value="Matutino" />
                                 </td>
-                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
-                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                                <td><input type="number" min="0" max="10" value="0" name="NoGruposMat3" id="NoGruposMat3" class="form-group"></td>
+                                <!--<td class="text-center">
+                                    <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
+                                </td>-->
                             </tr>
                             <tr>
                                 <td>
                                     Vespertino
-                                    <input type="hidden" name="CPETurno" id="CPETurno" value="Vespertino" />
+                                    <input type="hidden" name="CPETurnoVes3" id="CPETurnoVes3" value="Vespertino" />
                                 </td>
-                                <td><input type="number" name="NoGrupos" id="NoGrupos" class="form-group"></td>
-                                <td class="text-center"><button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button></td>
+                                <td><input type="number" min="0" max="10" value="0" name="NoGruposVes3" id="NoGruposVes3" class="form-group"></td>
+                                <!--<td class="text-center">
+                                    <button type="button" class="btn btn-warning pull-center"> <i class="fa fa-pencil"></i> Editar</button>
+                                </td>-->
                             </tr> 
                         </tbody>
                     </table>
@@ -204,23 +216,17 @@
                 
                 <div id="error"></div>
                 <div class="loading"></div>
+                <div class="msg"></div>
                 <br><br><br>
+                <input type="hidden" name="GRCPlantel" id="idPlantel" value="">
+                <input type="hidden" name="CPLTipo" id="CPLTipo" value="">
 				<div class="form-group">
-                    <input type="hidden" name="GRCPlantel" id="idPlantel" value="">
-                    <input type="hidden" name="CPLTipo" id="CPLTipo" value="">
-					<div class="col-lg-offset-3 col-lg-9">
+                    <div class="col-lg-offset-3 col-lg-9">
                         <?php if( is_permitido(null,'grupos','save') ){ ?>
                         <button type="button" class="btn btn-primary pull-right save"> <i class="fa fa-save"></i> Guardar</button>
                         <?php } ?>
 					</div>
 				</div>
-
-                <div class="form-group">
-                    <form action="#" method='POST' name='grupos_datos' id='grupos_datos'>
-                        <div class="msg"></div>
-                        <div class="result"></div>
-                    </form>
-                </div>
 
 				<?php form_close(); ?>
 			</div>
@@ -242,7 +248,7 @@
                     <div class="form-group">
                         <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
                         <div class="col-lg-9">
-                            <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo">
+                            <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo disabled">
                                 <?php foreach ($periodos as $key => $listPer) { ?>
                                     <option value="<?php echo $listPer['CPEPeriodo']; ?>">
                                          <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
@@ -253,18 +259,67 @@
                     </div>
                     <br>
                     <div class="form-group">
-                        <form action="#" method='POST' name='perido_grupos' id='perido_grupos'>
-                            <div class="msgGrupos"></div>
-                            <div class="resultGrupos"></div>
-                        </form>
+                        <div class="msgGrupos"></div>
+                        <div class="resultGrupos"></div>                        
                     </div>
-                    <div class="loading"></div>
+
+                    <div class="loadingCap"></div>
+                    <div class="msgCap"></div>
+                    <div class="errorCap"></div>
+
+                    <!--<div class="form-group">
+                        <a href="" target="_blank" id="ImprimirGrupos" type="button" class="btn btn-success btn-sm pull-left"><i class="fa fa-print"></i> Imprimir</a>
+                    </div>-->
+            </div>
+        </div>
+    </div> 
+</div>
+<!--Fin de ventana ver grupos-->
+
+<!--Ventana modal de ver Reportes-->
+<div class="modal inmodal" id="modal_ver_Reportes" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content animated flipInY">
+            
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                <h4 class="modal-title"><i class="fa fa-building-o"></i>&nbsp;&nbsp; PLANTEL Y/O CEMSAD: <div id="PlantelReporte"></div> </h4><div class="border-bottom"><br /></div>
+                <input type="hidden" name="PlantelRep" id="PlantelRep">
+                <div class="row">    
                     <div class="form-group">
-                    <div class="col-lg-offset-3 col-lg-9">
+                        <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
+                        <div class="col-lg-9">
+                            <select name="semReportes" id="semReportes" class="form-control semReportes disabled">
+                                <?php foreach ($periodos as $key => $listPer) { ?>
+                                    <option value="<?php echo $listPer['CPEPeriodo']; ?>">
+                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="" target="_blank" id="ImprimirGrupos" type="button" class="btn btn-success btn-sm"><i class="fa fa-print"></i> Imprimir</a>
+                    <br><br><br>                    
+                    <div class="form-group">
+                        <div class="col-lg-4">
+                            <button class="btn btn-info btn-sm grupoAlumno"><i class="fa fa-eye"></i> Ver Grupos-Alumnos</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button class="btn btn-info btn-sm verHorarios"><i class="fa fa-eye"></i> Ver Horarios</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button class="btn btn-info btn-sm verReporte"><i class="fa fa-eye"></i> Ver Reporte</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="loadingReportes"></div>
+                        <div class="msgReportes"></div>
+                        <div class="resultReportes"></div>
+                    </div>
+
+                    <!--<div class="form-group">
+                        <a href="" target="_blank" id="ImprimirGrupos" type="button" class="btn btn-success btn-sm pull-left"><i class="fa fa-print"></i> Imprimir</a>
+                    </div>-->
                 </div>
             </div>
         </div>
@@ -302,6 +357,44 @@
 		
 	});//----->fin
 
+    $(document).on("click", ".open", function () {
+        var valor = $(this).data('pnombre_plantel');
+        document.getElementById("PNombre_plantel").innerHTML = valor;
+
+        var idPlantel = $(this).data('pclave_plantel');
+        $(".modal-header #idPlantel").val( $(this).data('pclave_plantel') );
+
+        var tipoPlantel = $(this).data('ptipo_plantel');
+        $(".modal-header #CPLTipo").val( $(this).data('ptipo_plantel') );
+    });//----->fin
+
+    $(".save").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("grupos/save"); ?>",
+            data: $(this.form).serialize(),
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                var data = data.split(";");
+                if(data[0]==' OK'){
+                    $(".msg").empty();
+                    $(".msg").append(data[1]);
+                    $('#FormGrupos')[0].reset();
+                    $(".loading").html("");
+                } else {
+                    $("#error").empty();
+                    $("#error").append(data);   
+                    $(".loading").html(""); 
+                }
+                
+            }
+        });
+    });//----->fin
+
     /* Ventana modal ver grupos*/
     $(document).on("click", ".openGrupos", function () {
         var valor = $(this).data('nombre_plantel');
@@ -322,17 +415,9 @@
     });
 
     function abrirReporte() {
-        var valorSem = $(".SemestrePeriodo option:selected").val();
-        var searchSem = window.btoa(unescape(encodeURIComponent(valorSem))).replace("=","").replace("=","");
-        var idPlantelRep = document.getElementById("ClavePlantelRep").value;
-        
         var valor = $(".SemestrePeriodo option:selected").val();
         var PlantelId = document.getElementById("PlantelId").value;
-        
 
-        $("#ImprimirGrupos").attr("href","<?php echo base_url("grupos/ImprimirGrupos"); ?>/"+idPlantelRep+"/"+searchSem);
-
-        var sem = valor.split('-')[1];
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("grupos/listaGrupos"); ?>",
@@ -351,4 +436,78 @@
         });
     }
 
+    $(document).on("click", ".openReportes", function () {
+        var valor = $(this).data('repnombre_plantel');
+        document.getElementById("PlantelReporte").innerHTML = valor;
+
+        $(".modal-header #PlantelRep").val( $(this).data('repclave_plantel'));
+        
+        $('.resultReportes').empty();
+    });
+
+    $(document).on("click", ".grupoAlumno", function () {
+        var periodo = $(".semReportes option:selected").val();
+        var PlantelId = document.getElementById("PlantelRep").value;
+        
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("grupos/listaGruposRep"); ?>",
+            data: {idPlantel: PlantelId, periodo: periodo},
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingReportes").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                $(".msgReportes").empty();
+                $(".resultReportes").empty();
+                $(".resultReportes").append(data);
+                $(".loadingReportes").empty();
+            }
+        });
+    });
+
+    $(document).on("click", ".verHorarios", function () {
+        var periodo = $(".semReportes option:selected").val();
+        var PlantelId = document.getElementById("PlantelRep").value;
+        
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("HorasClase/listaHoras"); ?>",
+            data: {idPlantel: PlantelId, periodo: periodo},
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingReportes").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                $(".msgReportes").empty();
+                $(".resultReportes").empty();
+                $(".resultReportes").append(data);
+                $(".loadingReportes").empty();
+            }
+        });
+    });
+
+    $(document).on("click", ".verReporte", function () {
+        var periodo = $(".semReportes option:selected").val();
+        var PlantelId = document.getElementById("PlantelRep").value;
+        
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("HorasClase/verReporte"); ?>",
+            data: {idPlantel: PlantelId, periodo: periodo},
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingReportes").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                $(".msgReportes").empty();
+                $(".resultReportes").empty();
+                $(".resultReportes").append(data);
+                $(".loadingReportes").empty();
+            }
+        });
+    });
 </script>

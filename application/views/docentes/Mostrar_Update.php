@@ -140,7 +140,7 @@
                                         <div class="col-lg-8">
                                             <div class="form-group">
                                                 <label>Tipo Docente:<em>*</em></label>
-                                                <select name="UTipo_Docente" id="UTipo_Docente" class="form-control <?php if (nvl($usuario[0]['UDTipo_Docente'])) echo "disabled";?> required" placeholder="Seleccionar Tipo Docente" >
+                                                <select name="UTipo_Docente" id="UTipo_Docente" class="form-control <?php if (nvl($usuario[0]['UDTipo_Docente']));?> required" placeholder="Seleccionar Tipo Docente" >
                                                     <option value="">- Seleccionar Tipo Docente -</option>
                                                     <?php foreach($tipoDocente as $key_t => $list_t){ ?>
                                                     <option <?php if( $list_t['TPClave'] == nvl($usuario[0]['UDTipo_Docente'])) echo"selected"; ?> value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
@@ -150,7 +150,7 @@
 
                                             <div class="form-group">
                                                 <label>Nombramiento:<em>*</em></label>
-                                                <select name="UNombramiento" id="UNombramiento" class="form-control <?php if (nvl($usuario[0]['UDNombramiento'])) echo "disabled";?> required" placeholder="Seleccionar Nombramiento" >
+                                                <select name="UNombramiento" id="UNombramiento" class="form-control <?php if (nvl($usuario[0]['UDNombramiento']));?> required" placeholder="Seleccionar Nombramiento" >
                                                     <option value="">- Seleccionar Nombramiento -</option>
                                                     <?php foreach($nombramiento as $key_n => $list_n){ ?>
                                                     <option <?php if( $list_n['PLClave'] == nvl($usuario[0]['UDNombramiento'])) echo"selected"; ?> value="<?=$list_n['PLClave'];?>"><?=$list_n['PLPuesto'];?></option>

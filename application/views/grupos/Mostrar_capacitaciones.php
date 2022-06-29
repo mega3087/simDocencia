@@ -1,11 +1,66 @@
-<?php 
-if ($valorGrupo == "3" || $valorGrupo == "4" || $valorGrupo == "5" || $valorGrupo == "6") { ?>
-        <label class="col-lg-3 control-label" for="">Capacitación: <em>*</em></label>
-        <?php foreach ($capacitaciones as $key => $listCap) { ?>
-            <div class='col-lg-12 form-group'>
-                <input type="radio" name="claves" id="CCAClave" value="<?= $listCap['CCAClave'] ?>" required> <?= $listCap['CCANombre'] ?>
-            </div>
-        <?php } 
-    } else { ?>
-            <input type="hidden" id="CCAClave" name="claves" value="" class="form-group">
-<?php }  ?>
+<br><h2 class="text-center">
+    <?php echo "FORMATO DE NÚMERO DE GRUPOS"; ?>
+</h2>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
+        <thead>
+            <tr>
+                <th class="text-center" rowspan="2">SEMESTRE</th>
+                <th class="text-center" rowspan="2">No. DE GRUPOS</th>
+                <th class="text-center" colspan="2">TURNO</th>
+                <th class="text-center" rowspan="2">CAPACITACIÓN</th>
+                <th class="text-center" rowspan="2">No. DE ALUMNOS POR GRUPO</th>
+                <!--<th class="text-center" rowspan="2">TOTAL</th>-->
+            </tr>   
+            <tr>
+                <th class="text-center">MATUTINO</th>
+                <th class="text-center">VESPERTINO</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($total as $key => $list){ ?>
+                <tr>
+                    <td class="text-center" rowspan="<?= $list['noGrupos'] + 1 ?>"><b><?php echo $list['GRSemestre']; ?>° SEMESTRE</b></td> 
+                </tr>
+                    <?php foreach ($list['grupos'] as $keys => $listG) { ?>
+                        <tr>
+                            <td class="text-center"><?php echo $listG['GRGrupo']; ?></td>
+                            <?php if ($listG['GRTurno'] == '1') { ?>
+                                <td class="text-center">1</td><td></td>
+                            <?php } else { ?>
+                                <td></td><td class="text-center">1</td>
+                            <?php } 
+                            if ($listG['CCANombre'] != '') {
+                            ?>
+                            <td class="text-left">
+                                <?php 
+                                echo $listG['CCANombre'];
+                                ?>
+                            </td>
+                            <?php } else { ?>
+                                <td class="text-center"></td>
+                            <?php } ?>
+                            <td class="text-center"><?php echo $listG['GRCupo']; ?></td>
+                        </tr>                                
+                    <?php } ?>
+                        <!--<tr>
+                            <td class="text-center" rowspan="<?= $list['noGrupos'] +1 ?>"><b><?= $list['noGrupos']; ?></b></td> 
+                        </tr>-->
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <a href="" target="_blank" id="ImprimirGrupos" type="button" class="btn btn-success btn-sm"><i class="fa fa-print"></i> Imprimir</a>
+</div>
+<script>
+$(document).ready(function() {
+    var periodo = $(".semReportes option:selected").val();
+    var PlantelId = document.getElementById("PlantelRep").value;
+
+    var Plantel = window.btoa(unescape(encodeURIComponent(PlantelId))).replace("=","").replace("=",""); 
+    var search = window.btoa(unescape(encodeURIComponent(periodo))).replace("=","").replace("=",""); 
+    $("#ImprimirGrupos").attr("href","<?php echo base_url("grupos/ImprimirGrupos"); ?>/"+Plantel+"/"+search);
+});//----->fin
+</script>

@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class HorasClase extends CI_Controller {
-    public function __contruct () {
-       parent::__contruct();
+    public function __construct () {
+       parent::__construct();
        if (!is_login()) // Verificamos que el usuario este logeado
             redirect('login');
 
@@ -50,6 +50,10 @@ class HorasClase extends CI_Controller {
         $idPlantel = $this->input->post('idPlantel');
         $Periodo = $this->input->post('periodo');
 
+        $selectPlantel = ('CPLClave, CPLTipo');
+        $this->db->where('CPLClave',$idPlantel);
+        $data['plantel'] = $this->plantel_model->find_all(null, $selectPlantel);
+        
         $selectCap = 'GRCPlantel, CCANombre, PCCapacitacion';
         $this->db->join('noplancap','GRCPlantel = PCPlantel');
         $this->db->join('noccapacitacion','PCCapacitacion = CCAClave');
@@ -83,9 +87,9 @@ class HorasClase extends CI_Controller {
     }
 
    public function imprimirHoras( $idPlantel = null, $periodo = null) {
-
-        $idPlantel = $this->encrypt->decode($idPlantel);
+        $idPlantel = base64_decode($idPlantel);
         $Periodo = base64_decode($periodo);
+        //$idPlantel = $this->encrypt->decode($idPlantel);
 
         $selectNom = "CPLClave, CPLNombre";
         $this->db->where('CPLClave', $idPlantel);
@@ -182,8 +186,9 @@ class HorasClase extends CI_Controller {
     }
 
     public function imprimirReporte($idPlantel = null, $periodo = null) {
-        $idPlantel = $this->encrypt->decode($idPlantel);
+        $idPlantel = base64_decode($idPlantel);
         $GRPeriodo = base64_decode($periodo);
+        //$idPlantel = $this->encrypt->decode($idPlantel);
 
         $data['semestre'] = $GRPeriodo;
 

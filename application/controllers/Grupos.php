@@ -14,49 +14,60 @@ class Grupos extends CI_Controller {
     public function index() {
         $data = array();
         
-        if( is_permitido(null,'grupos','ver_grupos')) {
-            $this->db->where('CPLTipo', '35');
-            $this->db->or_where('CPLTipo', '36');            
-        } elseif( is_permitido(null,'grupos','ver_grupos_plantel')) { 
-            $this->db->join('nousuario', 'UPlantel = CPLClave', 'left');
-            $this->db->where('UNCI_usuario',get_session('UNCI_usuario'));
-        }
+        $this->db->where('CPLTipo',35);
+        $this->db->or_where('CPLTipo',36);
+        $this->db->where('CPLActivo',1);
+        $this->db->order_by('CPLClave','ASC');
         
         $data["planteles"] = $this->plantel_model->find_all();
-
-        foreach ($data['planteles'] as $key => $listP) {
-            $select = 'PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
-            $this->db->join('noplancap', 'CPLClave = PCPlantel','left');
-            $this->db->join('noccapacitacion', 'PCCapacitacion = CCAClave','left');
-            $this->db->where('PCPlantel',$listP['CPLClave']);
-            $data['planteles'][$key]['capacitaciones'] = $this->plantel_model->find_all(null,$select);
-        }
-        
-        $this->db->where('CPEStatus','1');
 
         $this->db->where('CPEStatus','1');
         $this->db->order_by('CPEPeriodo','DESC');
         $this->db->limit('10');
         $data['periodos'] = $this->periodos_model->find_all();
-        
+
+
+        foreach ($data['planteles'] as $key => $listP) {
+            $select = 'PCPlantel, PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
+            $this->db->join('noplancap', 'CPLClave = PCPlantel','left');
+            $this->db->join('noccapacitacion', 'PCCapacitacion = CCAClave','left');
+            $this->db->where('PCPlantel',$listP['CPLClave']);
+            $data["plan"][$key]['capacitaciones'] = $this->plantel_model->find_all(null,$select);
+
+        }
+
         $data['modulo'] = $this->router->fetch_class();
         $data['subvista'] = 'grupos/Mostrar_view';
 
         $this->load->view('plantilla_general', $data);
     }
 
-    public function selectCap() {
+    public function listaGruposRep() {
         $data = array();
-        $idPlantel = $this->input->post('idPlantel');
-        $data['valorGrupo'] = $this->input->post('valorGrupo');
+        $GRCPlantel = $this->input->post('idPlantel');
+        $GRPeriodo = $this->input->post('periodo');
         
-        $select = 'PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
-        $this->db->join('noplancap', 'CPLClave = PCPlantel','left');
-        $this->db->join('noccapacitacion', 'PCCapacitacion = CCAClave','left');
-        $this->db->where('PCPlantel',$idPlantel);
         
-        $data['capacitaciones'] = $this->plantel_model->find_all(null,$select);
-
+        $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
+        $this->db->where('GRCPlantel', $GRCPlantel);
+        $this->db->where('GRPeriodo', $GRPeriodo);
+        $this->db->group_by('GRSemestre');
+        $data['total'] = $this->grupos_model->find_all(null, $select);
+        
+        foreach ($data['total'] as $key => $listTot) {
+            $select = "GRClave, GRGrupo, GRSemestre, CCANombre, CCAAbrev, GRCClave, GRCupo, GRTurno";
+            $this->db->join('noccapacitacion', 'CCAClave = GRCClave','left');
+            //$this->db->join('nomaterias', 'CCAAbrev = MATAbrev','left');
+            if($listTot['GRSemestre'] > 2) {
+                $this->db->where('GRSemestre', $listTot['GRSemestre']);
+            } 
+            $this->db->where('GRPeriodo', $GRPeriodo);
+            $this->db->where('GRSemestre', $listTot['GRSemestre']);
+            $this->db->where('GRCPlantel', $GRCPlantel);
+            $this->db->group_by('GRClave');
+            $data['total'][$key]['grupos'] = $this->grupos_model->find_all(null, $select);
+        }
+        
         $this->load->view('grupos/Mostrar_capacitaciones', $data);
 
     }
@@ -67,93 +78,155 @@ class Grupos extends CI_Controller {
                 
         $data= post_to_array('_skip');
         
-        //$this->_set_rules(); //validamos los datos
-        $this->form_validation->set_rules('GRPeriodo', 'Periodo Escolar', "trim|required|min_length[4]|max_length[4]");
-        $this->form_validation->set_rules('GRSemestre', 'Semestre', "trim|required|min_length[1]|max_length[1]");
-        $this->form_validation->set_rules('GRGrupo', 'Grupo', "trim|required|min_length[3]|max_length[3]");
-        $this->form_validation->set_rules('GRTurno', 'Turno', "trim|required|min_length[1]|max_length[1]");
-        $this->form_validation->set_rules('GRCupo', 'No. de Alumnos', "trim|required|min_length[1]|max_length[2]");
-        
-        if ($data['GRSemestre'] > 2) {
-            $this->form_validation->set_rules('claves', 'Capacitación', "trim|required|min_length[1]|max_length[1]");  
-        }
-        if($this->form_validation->run() === FALSE) {
-            set_mensaje(validation_errors());
-            muestra_mensaje();
-        } else {
-            $result = array();
-            $grupos = array();
-            if (substr($data['GRPeriodo'], -1) == 2) {
-                if ($data['GRSemestre'] == 1 || $data['GRSemestre'] == 3 || $data['GRSemestre'] == 5) {
-                    if ($data['GRSemestre'] == $data['GRGrupo'][0]) {
-                            $insert['GRCClave'] = $data['claves'];
-                        
-                        if ($data['CPLTipo'] == '35') {
-                            $insert['GRPMat'] = '7';
-                        } elseif ($data['CPLTipo'] == '36') {
-                            $insert['GRPMat'] = '9';
-                        }
-                        
-                        $insert['GRPeriodo'] = $data['GRPeriodo'];
-                        $insert['GRSemestre'] = $data['GRSemestre'];
-                        $insert['GRGrupo'] = $data['GRGrupo'];                        
-                        $insert['GRTurno'] = $data['GRTurno'];
-                        $insert['GRCupo'] = $data['GRCupo'];
-                        $insert['GRCPlantel'] = $data['GRCPlantel'];
-                        $insert['GRStatus'] = "1";
-                        $insert['GRFechaRegistro'] = date('Y-m-d H:i:s');
-                        $insert['GRUsuarioRegistro'] = get_session('UNCI_usuario');
-                        
-                        $this->grupos_model->insert($insert);
-
-                        set_mensaje("El nuevo grupo se agrego con correctamente",'success::');
-                        echo "OK;";
-                        muestra_mensaje();
-                    } else {
-                        set_mensaje("El grupo no es correcto al semestre.");
-                        muestra_mensaje(); 
-                    }
-                } else {
-                    set_mensaje("El semestre no corresponde al periodo correcto.");
-                    muestra_mensaje(); 
-                }
-            } 
-            if (substr($data['GRPeriodo'], -1) == 1) {
-                if ($data['GRSemestre'] == 2 || $data['GRSemestre'] == 4 || $data['GRSemestre'] == 6) {
-                    if ($data['GRSemestre'] == $data['GRGrupo'][0]) {
-                            $insert['GRCClave'] = $data['claves'];
-                        
-                        if ($data['CPLTipo'] == '35') {
-                            $insert['GRPMat'] = '7';
-                        } elseif ($data['CPLTipo'] == '36') {
-                            $insert['GRPMat'] = '9';
-                        }
-
-                        $insert['GRPeriodo'] = $data['GRPeriodo'];
-                        $insert['GRSemestre'] = $data['GRSemestre'];
-                        $insert['GRGrupo'] = $data['GRGrupo'];                        
-                        $insert['GRTurno'] = $data['GRTurno'];
-                        $insert['GRCupo'] = $data['GRCupo'];
-                        $insert['GRCPlantel'] = $data['GRCPlantel'];
-                        $insert['GRStatus'] = "1";
-                        $insert['GRFechaRegistro'] = date('Y-m-d H:i:s');
-                        $insert['GRUsuarioRegistro'] = get_session('UNCI_usuario');
-                        
-                        $id = $this->grupos_model->insert($insert);
-                        set_mensaje("El nuevo grupo se agrego con correctamente",'success::');
-                        echo "OK;";
-                        muestra_mensaje();
-                    } else {
-                        set_mensaje("El grupo no es correcto al semestre.");
-                        muestra_mensaje(); 
-                    }
-                } else {
-                    set_mensaje("El semestre no corresponde al periodo correcto.");
-                    muestra_mensaje(); 
+        if ($data['CPESemestre1'] == 1 || $data['CPESemestre1'] == 2) {
+            //Grupos Matutino
+            if ($data['NoGruposMat1'] != '0') {
+                
+                for ($i = 1; $i <= $data['NoGruposMat1']; $i++) {
+                    $datos['GRCPlantel'] = $data['GRCPlantel'];
+                    if ($data['CPLTipo'] == '35') {
+                        $datos['GRPMat'] = '7';
+                    } elseif ($data['CPLTipo'] == '36') {
+                        $datos['GRPMat'] = '9';
+                    }   
+    
+                    $datos['GRPeriodo'] = $data['CPEPeriodo'];
+                    $datos['GRSemestre'] = $data['CPESemestre1'];
+                    $datos['GRGrupo'] = $data['CPESemestre1'].'0'.$i;            
+                    $datos['GRTurno'] = '1';
+                    $datos['GRStatus'] = "1";
+                    $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
+                    $datos['GRUsuarioRegistro'] = get_session('UNCI_usuario');
+                    
+                    $this->grupos_model->insert($datos);
                 }
             }
+
+            //Grupos Vespertino
+            if ($data['NoGruposVes1'] != '0') {
+                
+                for ($v = 1; $v <= $data['NoGruposVes1']; $v++) {
+                    $datos['GRCPlantel'] = $data['GRCPlantel'];
+                    if ($data['CPLTipo'] == '35') {
+                        $datos['GRPMat'] = '7';
+                    } elseif ($data['CPLTipo'] == '36') {
+                        $datos['GRPMat'] = '9';
+                    }   
+    
+                    $datos['GRPeriodo'] = $data['CPEPeriodo'];
+                    $datos['GRSemestre'] = $data['CPESemestre1'];
+                    $datos['GRGrupo'] = $data['CPESemestre1'].'0'.$v;            
+                    $datos['GRTurno'] = '2';
+                    $datos['GRStatus'] = "1";
+                    $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
+                    $datos['GRUsuarioRegistro'] = get_session('UNCI_usuario');
+                    
+                    $this->grupos_model->insert($datos);  
+                }
+            }
+            
+        } 
+        
+        if ($data['CPESemestre2'] == 3 || $data['CPESemestre2'] == 4) {
+            //Grupos Matutino
+            if ($data['NoGruposMat2'] != '0') {
+                
+                for ($i = 1; $i <= $data['NoGruposMat2']; $i++) {
+                    $datos['GRCPlantel'] = $data['GRCPlantel'];
+                    if ($data['CPLTipo'] == '35') {
+                        $datos['GRPMat'] = '7';
+                    } elseif ($data['CPLTipo'] == '36') {
+                        $datos['GRPMat'] = '9';
+                    }   
+
+                    $datos['GRPeriodo'] = $data['CPEPeriodo'];
+                    $datos['GRSemestre'] = $data['CPESemestre2'];
+                    $datos['GRGrupo'] = $data['CPESemestre2'].'0'.$i;            
+                    $datos['GRTurno'] = '1';
+                    $datos['GRStatus'] = "1";
+                    $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
+                    $datos['GRUsuarioRegistro'] = get_session('UNCI_usuario');                
+                    
+                    $this->grupos_model->insert($datos);  
+                }
+            }
+
+            //Grupos Vespertino
+            if ($data['NoGruposVes2'] != '0') {
+                
+                for ($v = 1; $v <= $data['NoGruposVes2']; $v++) {
+                    $datos['GRCPlantel'] = $data['GRCPlantel'];
+                    if ($data['CPLTipo'] == '35') {
+                        $datos['GRPMat'] = '7';
+                    } elseif ($data['CPLTipo'] == '36') {
+                        $datos['GRPMat'] = '9';
+                    }   
+    
+                    $datos['GRPeriodo'] = $data['CPEPeriodo'];
+                    $datos['GRSemestre'] = $data['CPESemestre2'];
+                    $datos['GRGrupo'] = $data['CPESemestre2'].'0'.$v;            
+                    $datos['GRTurno'] = '2';
+                    $datos['GRStatus'] = "1";
+                    $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
+                    $datos['GRUsuarioRegistro'] = get_session('UNCI_usuario');
+
+                    $this->grupos_model->insert($datos);  
+                }
+            }
+
+        } 
+        if ($data['CPESemestre3'] == 5 || $data['CPESemestre3'] == 6) {
+            //Grupos Matutino
+            if ($data['NoGruposMat3'] != '0') {
+                
+                for ($i = 1; $i <= $data['NoGruposMat3']; $i++) {
+                    $datos['GRCPlantel'] = $data['GRCPlantel'];
+                    if ($data['CPLTipo'] == '35') {
+                        $datos['GRPMat'] = '7';
+                    } elseif ($data['CPLTipo'] == '36') {
+                        $datos['GRPMat'] = '9';
+                    }   
+    
+                    $datos['GRPeriodo'] = $data['CPEPeriodo'];
+                    $datos['GRSemestre'] = $data['CPESemestre3'];
+                    $datos['GRGrupo'] = $data['CPESemestre3'].'0'.$i;            
+                    $datos['GRTurno'] = '1';
+                    $datos['GRStatus'] = "1";
+                    $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
+                    $datos['GRUsuarioRegistro'] = get_session('UNCI_usuario');   
+                    
+                    $this->grupos_model->insert($datos);  
+                }
+            }
+
+            //Grupos Vespertino
+            if ($data['NoGruposVes3'] != '0') {
+                
+                for ($v = 1; $v <= $data['NoGruposVes3']; $v++) {
+                    $datos['GRCPlantel'] = $data['GRCPlantel'];
+                    if ($data['CPLTipo'] == '35') {
+                        $datos['GRPMat'] = '7';
+                    } elseif ($data['CPLTipo'] == '36') {
+                        $datos['GRPMat'] = '9';
+                    }   
+    
+                    $datos['GRPeriodo'] = $data['CPEPeriodo'];
+                    $datos['GRSemestre'] = $data['CPESemestre3'];
+                    $datos['GRGrupo'] = $data['CPESemestre3'].'0'.$v;            
+                    $datos['GRTurno'] = '2';
+                    $datos['GRStatus'] = "1";
+                    $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
+                    $datos['GRUsuarioRegistro'] = get_session('UNCI_usuario');
+
+                    $this->grupos_model->insert($datos);  
+                }
+            }            
+
+            set_mensaje("Los Grupos se Agregarón Correctamente",'success::');
+            echo "OK;";
+            muestra_mensaje();
         }
-        echo ";".$data['GRCPlantel'];
+       
     }
 
     public function selectGrupos() {
@@ -186,10 +259,10 @@ class Grupos extends CI_Controller {
 
     public function listaGrupos() {
         $data = array();
+
         $GRCPlantel = $this->input->post('idPlantel');
         $GRPeriodo = $this->input->post('periodo');
-        
-        
+                
         $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
         $this->db->where('GRCPlantel', $GRCPlantel);
         $this->db->where('GRPeriodo', $GRPeriodo);
@@ -209,20 +282,42 @@ class Grupos extends CI_Controller {
             $this->db->group_by('GRClave');
             $data['total'][$key]['grupos'] = $this->grupos_model->find_all(null, $select);
         }
-        
+
+        $select = 'PCPlantel, PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
+        $this->db->join('noplancap', 'CPLClave = PCPlantel','left');
+        $this->db->join('noccapacitacion', 'PCCapacitacion = CCAClave','left');
+        $this->db->where('PCPlantel',$GRCPlantel);
+        $data['capacitaciones'] = $this->plantel_model->find_all(null,$select);
+
         $this->load->view('grupos/Mostrar_periodo_grupos', $data);
     }
 
+    public function saveCap() {
+        $data= post_to_array('_skip');
+        foreach($data as $k  => $val){
+            $datos = array( 
+                'GRCClave' => $val[0],
+                'GRCupo' => $val[1],
+            );
+            $this->grupos_model->update($k,$datos);
+        }
+        
+        set_mensaje("Los Grupos se Agregarón Correctamente",'success::');
+        echo "OK;";
+        muestra_mensaje();
+    }
+
     public function ImprimirGrupos($idPlantel = null, $periodo = null) {
-        $GRCPlantel = $this->encrypt->decode($idPlantel);
+        $idPlantel = base64_decode($idPlantel);
         $GRPeriodo = base64_decode($periodo);
+        //$GRCPlantel = $this->encrypt->decode($idPlantel);
         
         $selectNom = "CPLClave, CPLNombre";
-        $this->db->where('CPLClave', $GRCPlantel);
+        $this->db->where('CPLClave', $idPlantel);
         $data['plantel'] = $this->plantel_model->find_all(null, $selectNom);
 
         $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
-        $this->db->where('GRCPlantel', $GRCPlantel);
+        $this->db->where('GRCPlantel', $idPlantel);
         $this->db->where('GRPeriodo', $GRPeriodo);
         $this->db->group_by('GRSemestre');
         $data['total'] = $this->grupos_model->find_all(null, $select);
@@ -238,16 +333,11 @@ class Grupos extends CI_Controller {
             }
             $this->db->where('GRPeriodo', $GRPeriodo); 
             $this->db->where('GRSemestre', $listTot['GRSemestre']);
-            $this->db->where('GRCPlantel', $GRCPlantel);
+            $this->db->where('GRCPlantel', $idPlantel);
             $this->db->group_by('GRClave');
             $data['total'][$key]['grupos'] = $this->grupos_model->find_all(null, $select);
         }
 
-        /*echo "<pre align='left'>";
-        print_r($data);
-        echo "</pre>";
-        exit();*/
-        
         $this->load->library('Dpdf');
         $data['subvista'] = 'grupos/Ver_pdf_view';
         $data['titulo'] = "<p style='font-size:10px;'><br>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA</p>";

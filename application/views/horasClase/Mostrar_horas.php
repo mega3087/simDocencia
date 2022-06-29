@@ -1,4 +1,10 @@
-<?php $Horas1_2 = 31; $Horas3_4 = 35;   $Horas5 = 30;   $Horas6 = 34;  $totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0; ?>
+<?php 
+$totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0;
+if($plantel[0]['CPLTipo'] == '35') {
+    $Horas1_2 = 31; $Horas3_4 = 35;   $Horas5 = 30;   $Horas6 = 34;
+} else {
+    $Horas1_2 = 26; $Horas3_4 = 30;   $Horas5 = 25;   $Horas6 = 29;
+}  ?>
 <br>
 <h2>NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
 <div class="table responsive">
@@ -141,3 +147,17 @@
         </tr>
     </table>	
 </div>
+
+<div class="modal-footer">
+    <a href="" target="_blank" id="ImpromirHoras" type="button" class="btn btn-success btn-sm"><i class="fa fa-print"></i> Imprimir</a>
+</div>
+<script>
+$(document).ready(function() {
+    var periodo = $(".semReportes option:selected").val();
+    var PlantelId = document.getElementById("PlantelRep").value;
+
+    var Plantel = window.btoa(unescape(encodeURIComponent(PlantelId))).replace("=","").replace("=",""); 
+    var search = window.btoa(unescape(encodeURIComponent(periodo))).replace("=","").replace("=",""); 
+    $("#ImpromirHoras").attr("href","<?php echo base_url("HorasClase/imprimirHoras"); ?>/"+Plantel+"/"+search);
+});//----->fin
+</script>
