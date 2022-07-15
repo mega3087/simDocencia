@@ -6,7 +6,7 @@
 <div class="row">
 	<div class="ibox float-e-margins">
 		<div class="ibox-content">
-			<h3>Planteles</h3>
+			<h3>Docentes</h3>
 		</div>
 	</div>
 </div>
@@ -17,8 +17,7 @@
 			<div class="ibox-title">
 				<h3>&nbsp;</h3>
 			</div> 
-			<div class="ibox-content">
-				
+			<div class="ibox-content">				
 				<div class="table-responsive">
 					<table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
 						<thead>
@@ -33,9 +32,12 @@
 						</thead>
 						<tbody>
 							<?php 
-								foreach($planteles as $key => $list){
-									$CPLClave_skip = $this->encrypt->encode($list['CPLClave']);						
-								?>
+							foreach ($planteles as $key => $list) {
+								$CPLClave_skip = $this->encrypt->encode($list['CPLClave']);
+								$base = $this->encrypt->encode('1');
+								$idoneo = $this->encrypt->encode('2');
+								$externo = $this->encrypt->encode('3');
+							?>
 								<tr>
 									<td class="text-left"><?php echo $list['CPLClave']; ?></td> 
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
@@ -43,8 +45,15 @@
 									<td class="text-left"><?php echo $list['CPLCorreo_electronico']; ?></td>
 									<td class="text-left"><?php echo $list['CPLDirector']; ?></td>								
 									<td>
-										<a href="<?= base_url()?>Docente/mostrarDocentes/<?=$CPLClave_skip?>"><button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Docentes
-                                    </button></a>
+									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $base?>">
+										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Base</button>
+									</a>
+									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $idoneo?>">
+										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Idoneos</button>
+									</a>
+									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $externo?>">
+										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Externos</button>
+									</a>
 									</td>
 								</tr>
 							<?php } ?>
@@ -62,9 +71,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		
 		/* Page-Level Scripts */
-		
 		$('.dataTables-example').DataTable({
 			"language": {
 				"url": "<?php echo base_url("assets/datatables_es.json"); ?>"

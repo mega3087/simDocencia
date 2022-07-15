@@ -68,7 +68,13 @@
     		<td>
     			<table style="width:100%;" class="no-border-bottom no-border-top no-border-left no-border-right">
     				<?php for ($c=0; $c < count($total[$x]['grupos']); $c++) { ?>
-    					<tr><td class="text-center"><?= $total[$x]['grupos'][$c]['GRCupo']; ?></td></tr>
+    					<tr>
+							<?php if ($total[$x]['grupos'][$c]['GRCupo'] != ''){ ?>
+							<td class="text-center"><?= $total[$x]['grupos'][$c]['GRCupo']; ?></td>
+							<?php } else { ?>
+								<td class="text-center">0</td>
+							<?php } ?>
+						</tr>
 		    		<?php } ?>
     			</table>
     		</td>

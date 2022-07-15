@@ -51,7 +51,7 @@
 				<div class="col-lg-1">
 					<button type="button" class="btn btn-success pull-right buscar"> <i class="fa fa-search"></i> Buscar</button>
 				</div>
-
+				<?php if (is_permitido(null,'profesiograma','save')) { ?>
 				<div class="pull-right">
 					<button 
 					class="btn btn-primary open"
@@ -61,6 +61,7 @@
 					data-unci_usuario_skip=""
 					><i class="fa fa-plus"></i> Agregar Licenciatura</button>
 				</div>
+				<?php } ?>
 				<h3>&nbsp;</h3>
 			</div> 
 			<div id="loadMat"></div>
@@ -74,7 +75,9 @@
 								<th>Materia</th>
 								<th>Semestre</th>
 								<th>Licenciatura(s) </th>
+								<?php if (is_permitido(null,'profesiograma','save')) { ?>
 								<th width="130px">Acción</th>
+								<?php } ?>
 							</tr>	
 						</thead>
 						<tbody>
@@ -88,6 +91,7 @@
 										<td class="text-left"><?php echo $mat['materia'].' '.$mat['modulo']; ?></td>
 										<td class="text-left"><?= $mat['semmat']; ?></td>
 										<td class="text-left"><?php echo $prof['LGradoEstudio'].' en '.$prof['Licenciatura']; ?></td>
+										<?php if (is_permitido(null,'profesiograma','save')) { ?>
 										<td class="text-center">
 											<button class="btn btn-default btn-sm openEditar" 
 												data-target="#modal_Editar"
@@ -100,7 +104,8 @@
 												data-toggle="modal">
 												<i class="fa fa-pencil"></i> Editar
 											</button>
-										</td>										
+										</td>
+										<?php } ?>										
 									</tr>
 								<?php } ?>
 							<?php $i++; } ?>

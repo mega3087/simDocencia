@@ -41,7 +41,11 @@
                             <?php } else { ?>
                                 <td class="text-center"></td>
                             <?php } ?>
-                            <td class="text-center"><?php echo $listG['GRCupo']; ?></td>
+                            <?php if ($listG['GRCupo'] != '') { ?>
+                                <td class="text-center"><?php echo $listG['GRCupo']; ?></td>
+                            <?php } else { ?>
+                                <td class="text-center">0</td>
+                            <?php } ?>
                         </tr>                                
                     <?php } ?>
                         <!--<tr>

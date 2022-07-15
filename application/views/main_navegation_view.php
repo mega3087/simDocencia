@@ -98,6 +98,16 @@
 					<?php if(is_permitido(null,'Docente','index')) { ?>
 					<li <?php if( nvl($modulo) == 'Docente' ) echo 'class="active"'; ?>><a href='<?php echo base_url("Docente");?>' >Docentes</a></li>
 					<?php } ?>
+					<?php if(is_permitido(null,'Docente','ver_planteles') && get_session('URol') == '6') { ?>
+					<li <?php if( nvl($modulo) == 'Docente' ) echo 'class="active"'; ?>>
+						<a href="#">Docentes <span class="fa arrow"></span></a>
+						<ul class="nav nav-third-level">
+							<li><a href="<?= base_url()?>Docente/ver_planteles/<?php echo $this->encrypt->encode(get_session('UPlantel')); ?>/<?php echo $this->encrypt->encode('1'); ?>">Base</a></li>
+							<li><a href="<?= base_url()?>Docente/ver_planteles/<?php echo $this->encrypt->encode(get_session('UPlantel')); ?>/<?php echo $this->encrypt->encode('2'); ?>">Ideoneos</a></li>
+							<li><a href="<?= base_url()?>Docente/ver_planteles/<?php echo $this->encrypt->encode(get_session('UPlantel')); ?>/<?php echo $this->encrypt->encode('3'); ?>">Externos</a></li>
+						</ul>
+					</li>
+					<?php } ?>
 					<?php if(is_permitido(null,'plantilla','index')) { ?>
 					<li <?php if( nvl($modulo) == 'plantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("plantilla");?>' >Plantilla</a></li>
 					<?php } ?>

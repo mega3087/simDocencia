@@ -10,17 +10,15 @@ class Docente extends CI_Controller {
         if (!is_login()) // Verificamos que el usuario este logeado
             redirect('login');
 
-        /*if (!is_permitido()) //  Verificamos que el usuario tenga permisos
-            redirect('usuario/negar_acceso');*/
+        if (!is_permitido()) //  Verificamos que el usuario tenga permisos
+            redirect('usuario/negar_acceso');
     }
 
     public function index() {
-        if(!is_permitido(null,'docente','ver_planteles')){
-            redirect('docente/mostrarDocentes');
-        }
         $data = array();
-        if (is_permitido(null,'docente', 'index')) {
-        }
+        /*if(is_permitido(null,'Docente','ver_planteles') && get_session('URol') == '6') {
+            redirect('Docente/mostrarDocentes');
+        }*/
 
         $select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
         $this->db->where('CPLTipo',35);
@@ -36,29 +34,27 @@ class Docente extends CI_Controller {
         $this->load->view('plantilla_general', $data);
     }
 
-    public function mostrarDocentes($idPlantel = null) {
+    public function ver_planteles($idPlantel = null, $tipoDocente = null) {
         $data = array();
         $idPlantel = $this->encrypt->decode($idPlantel);
         if (!$idPlantel) {
             $idPlantel = get_session('UPlantel');
         }        
+        $data['tipoDoc'] = $this->encrypt->decode($tipoDocente);
         
         $selectP = 'CPLClave, CPLNombre, CPLTipo';
         $this->db->where('CPLClave',$idPlantel);
-        
         $data['plantel'] = $this->plantel_model->find_all(null, $selectP);
         
         $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro";
         $this->db->join('nocrol','URol = CROClave');
         $this->db->where("CROClave NOT IN ('3','10','12')");
         $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
-        //$this->db->where('UTipoDocente','D');
         $this->db->order_by('UNombre', 'ASC');
         $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
         
         foreach ($data['docentes'] as $k => $doc) {
-            $selectD = '`UDClave`, `UDTipo_Docente`, `UDActivo`, TPClave, `TPNombre`, `UDNombramiento`, PLPuesto,
-            `UDNombramiento_file`, `UDOficio_file`, `UDCurriculum_file`, `UDCURP_file`';
+            $selectD = '`UDClave`, `UDTipo_Docente`, `UDActivo`, TPClave, `TPNombre`, `UDNombramiento`, PLPuesto, `UDNombramiento_file`, `UDOficio_file`, `UDCurriculum_file`, `UDCURP_file`';
 
             $this->db->join('noctipopersonal','UDTipo_Docente = TPClave', 'LEFT');
             $this->db->join('noplaza','PLClave = UDNombramiento', 'LEFT');

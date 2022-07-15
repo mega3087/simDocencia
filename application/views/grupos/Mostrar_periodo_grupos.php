@@ -38,12 +38,16 @@
                             </td>
                             <?php } else { ?>
                                 <td class="text-left">
+
+                                <select name="<?= $listG['GRClave']; ?>[]" id="GRCClave" class="form-control">
+                                <option value="">- Seleccionar Capacitación -</option>
                                 <?php foreach ($capacitaciones as $c => $cap) { ?>
-                                    <input type="radio" id="GRCClave" name="<?= $listG['GRClave']; ?>[]" value="<?= $cap['CCAClave']; ?>"> <label><?= $cap['CCANombre']; ?></label><br>
-                                <?php } ?> 
+                                    <option <?php if( $cap['CCAClave'] == nvl($listG['GRCClave'])) echo"selected"; ?> value="<?=$cap['CCAClave'];?>"><?= $cap['CCANombre']; ?></option>
+                                <?php } ?>
+                            </select>
                                 </td>
                             <?php } ?>
-                            <td class="text-center"><input type="number" min="0" max="99" value="0" name="<?= $listG['GRClave']; ?>[]" id="GRCupo" class="form-group"></td>
+                            <td class="text-center"><input type="number" min="0" max="99" value="<?php echo nvl($listG['GRCupo']); ?>" name="<?= $listG['GRClave']; ?>[]" id="GRCupo" class="form-group <?php if (nvl($listG['GRCupo'])) echo "disabled";?>" required></td>
                         </tr>                                
                     <?php } ?>
                         <!--<tr>
@@ -54,7 +58,7 @@
     </table>
 </div>
 <div class="modal-footer">
-    <?php if( is_permitido(null,'grupos','save') ){ ?>
+    <?php if( is_permitido(null,'grupos','saveCapAlumnos') ){ ?>
         <button type="button" class="btn btn-primary pull-right saveCap"> <i class="fa fa-save"></i> Guardar</button>
     <?php } ?>
 </div>
@@ -64,7 +68,7 @@ $(document).ready(function() {
     $(".saveCap").click(function() {
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("grupos/saveCap"); ?>",
+            url: "<?php echo base_url("grupos/saveCapAlumnos"); ?>",
             data: $(this.form).serialize(),
             dataType: "html",
             beforeSend: function(){

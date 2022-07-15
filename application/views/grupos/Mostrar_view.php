@@ -100,17 +100,17 @@
 				<h4 class="modal-title"><i class="fa fa-building-o"></i>&nbsp;&nbsp; PLANTEL Y/O CEMSAD: <div id="PNombre_plantel"></div> </h4><div class="border-bottom"><br /></div><br>
                 <?php echo form_open('grupos/save', array('name' => 'FormGrupos', 'id' => 'FormGrupos', 'role' => 'form', 'class' => 'form-horizontal panel-body')); ?>
                 <div class="form-group">
-                        <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
-                        <div class="col-lg-9">
-                            <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control disabled">
-                                <?php foreach ($periodos as $key => $listPer) { ?>
-                                    <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
+                    <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
+                    <div class="col-lg-9">
+                        <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control disabled">
+                            <?php foreach ($periodos as $key => $listPer) { ?>
+                                <option value="<?php echo $listPer['CPEPeriodo']; ?>">
+                                        <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
+                                </option>
+                            <?php } ?>
+                        </select>
                     </div>
+                </div>
                 <div class="form-group">
                     <table class="table table-striped table-bordered table-hover dataTable">
                         <thead>
@@ -129,7 +129,7 @@
                                 </td>
                                 <td rowspan="2">
                                     <?php $sem = substr($periodos[0]['CPEPeriodo'],3,1)==1?'2':'1'; echo $sem; ?>
-                                    <input type="hidden" name="CPESemestre1" id="CPESemestre1" value="<?= substr($periodos[0]['CPEPeriodo'],3,1)==1?'1':'2'; ?>" />
+                                    <input type="hidden" name="CPESemestre1" id="CPESemestre1" value="<?= substr($periodos[0]['CPEPeriodo'],3,1) == 2?'1':'2'; ?>" />
                                 </td>
                                 <td>
                                     Matutino
@@ -161,7 +161,7 @@
                                 </td>
                                 <td rowspan="2">
                                     <?php $sem1 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'4':'3'; echo $sem1;?>
-                                    <input type="hidden" name="CPESemestre2" id="CPESemestre2" value="<?= substr($periodos[0]['CPEPeriodo'],3,1)==1?'3':'4'; ?>" />
+                                    <input type="hidden" name="CPESemestre2" id="CPESemestre2" value="<?= substr($periodos[0]['CPEPeriodo'],3,1) == 2?'3':'4'; ?>" />
                                 </td>
                                 <td>
                                     Matutino
@@ -189,7 +189,7 @@
                                 </td>
                                 <td rowspan="2">
                                     <?php $sem2 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'6':'5'; echo $sem2; ?>
-                                    <input type="hidden" name="CPESemestre3" id="CPESemestre3" value="<?= substr($periodos[0]['CPEPeriodo'],3,1)==1?'5':'6'; ?>" />
+                                    <input type="hidden" name="CPESemestre3" id="CPESemestre3" value="<?= substr($periodos[0]['CPEPeriodo'],3,1) == 2?'5':'6'; ?>" />
                                 </td>
                                 <td>
                                     Matutino
@@ -241,35 +241,31 @@
         <div class="modal-content animated flipInY">
             
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
-                <h4 class="modal-title"><i class="fa fa-building-o"></i>&nbsp;&nbsp; PLANTEL Y/O CEMSAD: <div id="PlantelNombre"></div> </h4><div class="border-bottom"><br /></div>
-                <input type="hidden" name="PlantelId" id="PlantelId">
-                <input type="hidden" name="ClavePlantelRep" id="ClavePlantelRep">
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
-                        <div class="col-lg-9">
-                            <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo disabled">
-                                <?php foreach ($periodos as $key => $listPer) { ?>
-                                    <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+            <h4 class="modal-title"><i class="fa fa-building-o"></i>&nbsp;&nbsp; PLANTEL Y/O CEMSAD: <div id="PlantelNombre"></div> </h4><div class="border-bottom"><br /></div>
+            <input type="hidden" name="PlantelId" id="PlantelId">
+            <input type="hidden" name="ClavePlantelRep" id="ClavePlantelRep">
+                <div class="form-group">
+                    <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
+                    <div class="col-lg-9">
+                        <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo disabled">
+                            <?php foreach ($periodos as $key => $listPer) { ?>
+                                <option value="<?php echo $listPer['CPEPeriodo']; ?>">
+                                        <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
+                                </option>
+                            <?php } ?>
+                        </select>
                     </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="msgGrupos"></div>
-                        <div class="resultGrupos"></div>                        
-                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <div class="msgGrupos"></div>
+                    <div class="resultGrupos"></div>                        
+                </div>
 
-                    <div class="loadingCap"></div>
-                    <div class="msgCap"></div>
-                    <div class="errorCap"></div>
-
-                    <!--<div class="form-group">
-                        <a href="" target="_blank" id="ImprimirGrupos" type="button" class="btn btn-success btn-sm pull-left"><i class="fa fa-print"></i> Imprimir</a>
-                    </div>-->
+                <div class="loadingCap"></div>
+                <div class="msgCap"></div>
+                <div class="errorCap"></div>
             </div>
         </div>
     </div> 
@@ -316,10 +312,6 @@
                         <div class="msgReportes"></div>
                         <div class="resultReportes"></div>
                     </div>
-
-                    <!--<div class="form-group">
-                        <a href="" target="_blank" id="ImprimirGrupos" type="button" class="btn btn-success btn-sm pull-left"><i class="fa fa-print"></i> Imprimir</a>
-                    </div>-->
                 </div>
             </div>
         </div>

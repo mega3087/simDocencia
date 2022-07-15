@@ -46,7 +46,7 @@
 
                                             <div class="form-group">
                                                 <label>CURP.: <em>*</em></label>
-                                                <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario[0]['UCURP']); ?>" type="text" class="form-control <?php if (nvl($usuario['UCURP'])) echo "disabled";?> required"  minlength="18" maxlength="18"/>
+                                                <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario[0]['UCURP']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UCURP'])) echo "disabled";?> required"  minlength="18" maxlength="18"/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Nombre(s) / Apellido Paterno / Apellido Materno: <em>*</em></label>
@@ -573,7 +573,7 @@
 					//aqui introducimos lo que haremos tras cerrar la alerta.
 					$('#wrapper').prop('class','');
 					if (e){
-                        window.location.href = "<?= base_url("Docente/mostrarDocentes/$idPlantel"); ?>";
+                        window.location.href = "<?= base_url("Docente/ver_planteles/$idPlantel"); ?>";
 					}
 				});     					
 			}
@@ -605,7 +605,7 @@
 				$("#result").html(data[0]);
 				$(".loading").html('');
 				if(finish && data[2]=="OK"){
-					location.href ='<?php echo base_url("Docente/mostrarDocentes/$idPlantel"); ?>';
+					location.href ='<?php echo base_url("Docente/ver_planteles/$idPlantel"); ?>';
 				}
 			}
 		});

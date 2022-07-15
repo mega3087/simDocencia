@@ -18,12 +18,12 @@ class HorasClase extends CI_Controller {
             $this->db->where('CPLClave',get_session('UPlantel'));
         }
         
-        /*if( is_permitido(null,'horasClase','ver_horarios') ) {
+        if(is_permitido(null,'horasClase','ver_horarios') ) {
 				
         } else if( is_permitido(null,'horasClase','ver_horarios_plantel')) {
             $this->db->join('nousuario', 'UPlantel = CPLClave', 'left');
             $this->db->where('UNCI_usuario',get_session('UNCI_usuario'));
-        }*/
+        }
 
         $this->db->where('CPLTipo!= 37');
         $data["planteles"] = $this->plantel_model->find_all();
