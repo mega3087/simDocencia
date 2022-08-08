@@ -1,7 +1,7 @@
 <?php
 	defined('BASEPATH') OR exit('No direct script access allowed');
 	
-	class NuevaPlantilla extends CI_Controller {
+	class GenerarPlantilla extends CI_Controller {
 		function __construct() {
 			parent::__construct();
 			
@@ -20,7 +20,7 @@
 			if( is_permitido(null,'personal','ver_todos') ){
 			}elseif( is_permitido(null,'personal','ver_plantel') ){
 				$this->db->where("PPlantel IN(".get_session('UPlanteles').")");
-			}*/
+			}
 			
 			//contar todos los registros sin limit
 			if( is_permitido(null,'personal','ver_todos') ){
@@ -31,7 +31,15 @@
                 $this->db->where('CPLTipo != 37');
 				$this->db->order_by('CPLNombre','ASC');
 				$data['planteles'] = $this->plantel_model->find_all("CPLClave IN(".get_session('UPlanteles').") and CPLActivo = '1'");
-			}
+			}*/
+
+			$select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
+			$this->db->where('CPLTipo',35);
+			$this->db->or_where('CPLTipo',36);
+			$this->db->where('CPLActivo',1);
+			$this->db->order_by('CPLClave','ASC');
+			
+        	$data['planteles'] = $this->plantel_model->find_all(null, $select);
 			
 			$data['modulo'] = $this->router->fetch_class();
 			$data['subvista'] = 'plantilla/Mostrar_view2';			

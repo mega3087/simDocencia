@@ -128,11 +128,9 @@
 									<div class="col-lg-9">
 										<select name="UGradoEstudio" id="UGradoEstudio" class="form-control">
 											<option value="">- Grado Estudio -</option>
-											<option value="Certificaciones">Certificaciones</option>
-											<option value="Ingeniería">Ingeniería</option>
-											<option value="Licenciatura">Licenciatura</option>
-											<option value="Perfil">Perfil</option>
-											<option value="Posgrado">Posgrado</option>
+											<?php foreach ($GradoEstudio as $g => $listG) { ?>
+												<option value="<?= $listG['LGradoEstudio']?>"><?= $listG['LGradoEstudio']?></option>	
+											<?php } ?>s
 										</select>
 									</div>
 								</div>
@@ -198,11 +196,9 @@
 									<div class="col-lg-9">
 										<select name="UGradoEstudio" id="UGradoEstudio" class="form-control">
 											<option value="">- Grado Estudio -</option>
-											<option value="Certificacines">Certificacines</option>
-											<option value="Ingeniería">Ingeniería</option>
-											<option value="Licenciatura">Licenciatura</option>
-											<option value="Perfil">Perfil</option>
-											<option value="Posgrado">Posgrado</option>
+											<?php foreach ($GradoEstudio as $g => $listG) { ?>
+												<option value="<?= $listG['LGradoEstudio']?>"><?= $listG['LGradoEstudio']?></option>	
+											<?php } ?>s
 										</select>
 									</div>
 								</div>

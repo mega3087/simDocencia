@@ -14,8 +14,10 @@
 	<div class="col-lg-12">
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
-			<div class="ibox-content">
-				
+			<div class="ibox-title">
+				<h3>&nbsp;</h3>
+			</div> 
+			<div class="ibox-content">				
 				<div class="table-responsive">
 					<table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
 						<thead>
@@ -29,19 +31,19 @@
 						</thead>
 						<tbody>
 							<?php 
-                            $i = 1;
-								foreach($planteles as $key => $list) { 
-                                    $PClave_skip = $this->encrypt->encode($list['CPLClave']);	
-                                    $urlCrear = base_url("NuevaPlantilla/crear/".$this->encrypt->encode($list['CPLClave'])."");	    
-                                ?>
+							$i = 1;
+							foreach ($planteles as $key => $list) {
+								$PClave_skip = $this->encrypt->encode($list['CPLClave']);	
+                                $urlCrear = base_url("GenerarPlantilla/crear/".$this->encrypt->encode($list['CPLClave'])."");
+							?>
 								<tr>
-									<td class="text-left"><?php echo $i; ?></td>
+								<td class="text-left"><?php echo $i; ?></td>
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
 									<td class="text-left"><a href='<?=$urlCrear?>' target='_blank'>Crear Plantilla</a></td>							
 									<td>
-										<?php if( is_permitido(null,'NuevaPlantilla','verPlantilla') ){ ?>
-											<a href="<?php echo base_url("plantilla/delete/$PClave_skip"); ?>" class="btn btn-default btn-sm delete"><i class="fa fa-times"></i> Ver Plantilla</a>
+										<?php if( is_permitido(null,'GenerarPlantilla','verPlantilla') ){ ?>
+											<a href="<?php echo base_url("GenerarPlantilla/delete/$PClave_skip"); ?>" class="btn btn-default btn-sm delete"><i class="fa fa-times"></i> Ver Plantilla</a>
 										<?php } ?>
 									</td>
 								</tr>
@@ -55,20 +57,16 @@
 	</div>
 </div>
 
-
 <script src="<?php echo base_url('assets/inspinia/js/plugins/dataTables/datatables.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/inspinia/js/plugins/chosen/chosen.jquery.js'); ?>"></script>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		
 		/* Page-Level Scripts */
-		
 		$('.dataTables-example').DataTable({
 			"language": {
-				"url": "<?php echo base_url('assets/datatables_es.json'); ?>"
+				"url": "<?php echo base_url("assets/datatables_es.json"); ?>"
 			},
-			"order":[ 2, 'desc' ],
 			dom: '<"html5buttons"B>lTfgitp',
 			"lengthMenu": [ [20,50,100, -1], [20,50,100, "Todos"] ],
 			buttons: [
@@ -85,42 +83,5 @@
 			]
 		});	
 
-		$(document).on("click", ".open", function () {
-			$(".modal-content #PClave_skip").val( $(this).data('pclave_skip') );
-			$(".modal-content #PPeriodo").val( $(this).data('pperiodo') );
-			$(".modal-content #PPlantel").val( $(this).data('pplantel') );
-			$(".modal-content #PPlantilla").val( $(this).data('pplantilla') );
-			if( $(this).data('pplantilla') ){
-				$("#ver_archivo_PPlantilla").attr( "href", $(this).data('pplantilla_skip') ).attr("display" , 'block').attr("style",'display:block');
-			}else{
-				$("#ver_archivo_PPlantilla").attr( "href",'#' ).attr("display" , 'none').attr("style",'display:none');
-			}
-		});
-
-		$("#FormPlantilla").submit(function(e) {
-			e.preventDefault();
-			$.ajax({
-				type: "POST",
-				url: "<?php echo base_url('plantilla/load'); ?>",
-				data: $(this).serialize(),
-				dataType: "html",
-				beforeSend: function(){
-					$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-				},
-				success: function(data){
-					if(data==' OK'){
-						//location.href ="<?php echo base_url("dashboard"); ?>";
-						location.reload();
-					}
-					else{
-						$("#error").empty();
-						$("#error").append(data);
-						$(".loading").html("");
-					}
-					
-				}
-			});
-		});//----->fin		
-		
 	});
 </script>

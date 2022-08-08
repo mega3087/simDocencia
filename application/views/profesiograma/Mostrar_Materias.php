@@ -36,3 +36,28 @@
 			<?php  } ?>
 	</tbody>
 </table>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		/* Page-Level Scripts */
+		$('.dataTables-example').DataTable({
+			"language": {
+				"url": "<?php echo base_url("assets/datatables_es.json"); ?>"
+			},
+			dom: '<"html5buttons"B>lTfgitp',
+			"lengthMenu": [ [20,50,100, -1], [20,50,100, "Todos"] ],
+			buttons: [
+			{extend: 'copy'},
+			{extend: 'csv'},
+			{extend: 'pdf'},
+			{extend: 'print',
+				customize: function (win){
+					$(win.document.body).addClass('white-bg');
+					$(win.document.body).css('font-size', '10px');
+					$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+				}
+			}
+			]
+		});
+	});
+</script>

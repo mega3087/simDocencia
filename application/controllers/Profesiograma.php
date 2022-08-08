@@ -19,6 +19,7 @@ class Profesiograma extends CI_Controller {
         
         $selectGrado = 'LGradoEstudio';
         $this->db->group_by('LGradoEstudio');
+        $this->db->order_by('LIdentificador','ASC');
         $data['GradoEstudio'] = $this->licenciaturas_model->find_all(null, $selectGrado);;
 
         $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';

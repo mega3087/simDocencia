@@ -35,7 +35,10 @@
                         <div class="col-lg-12">
                             
                         <?php echo form_open('Docente/Registrar', array('name' => 'FormRegistrar', 'id' => 'form', 'role' => 'form', 'class' => 'wizard-big', 'enctype' => 'multipart/form-data')); ?>
-                            <?php $idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); ?>
+                            <?php 
+                            $idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); 
+                            $tipoDoc = $this->encrypt->encode($tipoDoce);
+                            ?>
                                 <input type="hidden" id="UPlantel" name="UPlantel" value="<?php echo nvl($plantel[0]['CPLClave']); ?>" />
                                 <input type="hidden" id="UNCI_usuario" name="UNCI_usuario" value="<?php echo nvl($usuario[0]['UNCI_usuario']); ?>" />
                                 <h1>Información Personal</h1>
@@ -119,10 +122,6 @@
                                                     <option <?php if( 'Mujer' == nvl($usuario[0]['USexo'])) echo"selected"; ?> value="Mujer">Mujer</option>
                                                 </select>
                                             </div>
-                                            <div class="form-group">
-                                                <label>Fecha de Ingreso: <em>*</em></label>
-                                                <input type="text" placeholder="yyyy-mm-dd" class="form-control date <?php if (nvl($usuario[0]['UFecha_ingreso']))?> required" id="UFecha_ingreso" name="UFecha_ingreso" value="<?php echo nvl($usuario[0]['UFecha_ingreso']); ?>" minlength="10" maxlength="10">
-                                            </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="text-center">
@@ -134,43 +133,93 @@
                                     </div>
 
                                 </fieldset>
-                                <h1>Datos de Nombramiento</h1>
+                                <h1>Datos de la Plaza</h1>
                                 <fieldset>
                                     <div class="row">
-                                        <div class="col-lg-8">
+                                        <div class="col-lg-10">
+                                            <div class="form-group">
+                                                <label>Fecha de Ingreso: <em>*</em></label>
+                                                <input type="text" placeholder="yyyy-mm-dd" class="form-control date" id="UDFecha_ingreso" name="UDFecha_ingreso" value="" minlength="10" maxlength="10">
+                                            </div>
                                             <div class="form-group">
                                                 <label>Tipo Docente:<em>*</em></label>
-                                                <select name="UTipo_Docente" id="UTipo_Docente" class="form-control <?php if (nvl($usuario[0]['UDTipo_Docente']));?> required" placeholder="Seleccionar Tipo Docente" >
+                                                <select name="UDTipo_Docente" id="UDTipo_Docente" class="form-control <?php if (nvl($tipoDoce)) echo 'disabled';?>" placeholder="Seleccionar Tipo Docente" >
                                                     <option value="">- Seleccionar Tipo Docente -</option>
                                                     <?php foreach($tipoDocente as $key_t => $list_t){ ?>
-                                                    <option <?php if( $list_t['TPClave'] == nvl($usuario[0]['UDTipo_Docente'])) echo"selected"; ?> value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
+                                                    <option <?php if($tipoDoce == nvl($list_t['TPClave'])) echo"selected"; ?> value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
                                                     <?php } ?>
                                                 </select>                                                
                                             </div>
 
-                                            <div class="form-group">
+                                            <!--<div class="form-group">
                                                 <label>Nombramiento:<em>*</em></label>
-                                                <select name="UNombramiento" id="UNombramiento" class="form-control <?php if (nvl($usuario[0]['UDNombramiento']));?> required" placeholder="Seleccionar Nombramiento" >
+                                                <select name="UDPlaza" id="UDPlaza" class="form-control <?php if (nvl($usuario[0]['UDPlaza']));?> required" placeholder="Seleccionar Nombramiento" >
                                                     <option value="">- Seleccionar Nombramiento -</option>
                                                     <?php foreach($nombramiento as $key_n => $list_n){ ?>
-                                                    <option <?php if( $list_n['PLClave'] == nvl($usuario[0]['UDNombramiento'])) echo"selected"; ?> value="<?=$list_n['PLClave'];?>"><?=$list_n['PLPuesto'];?></option>
+                                                    <option <?php if( $list_n['PLClave'] == nvl($usuario[0]['UDPlaza'])) echo"selected"; ?> value="<?=$list_n['PLClave'];?>"><?=$list_n['PLPuesto'];?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>-->
+                                            <div class="form-group">
+                                                <label>Plaza:<em>*</em></label>
+                                                <select name="UDPlaza" id="UDPlaza" class="form-control">
+                                                    <option value="">- Seleccionar Plaza -</option>
+                                                    <?php foreach($plazas as $key_p => $list_p){ ?>
+                                                    <option value="<?=$list_p['idPlaza'];?>"><?=$list_p['nomplaza'];?></option>
                                                     <?php } ?>
                                                 </select>
                                             </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label>Horas Frente Grupo: <em>*</em></label>
+                                                        <input id="UDHorasGrupo" name="UDHorasGrupo" value="" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Horas Apoyo Docencia : <em>*</em></label>
+                                                        <input id="UDHorasApoyo" name="UDHorasApoyo" value="" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Horas Adicionales : <em>*</em></label>
+                                                        <input type="text" class="form-control" id="UDHorasAdicionales" name="UDHorasAdicionales" value="" minlength="1" maxlength="2">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Tipo de Materias:<em>*</em></label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <select name="UDTipo_materia" id="UDTipo_materia" class="form-control">
+                                                            <option value="">- Seleccionar Tipo de Materias -</option>                                                    
+                                                            <option value="Curriculares">Curriculares</option>
+                                                            <option value="Cocurriculares">Cocurriculares</option>                                                    
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>No. de Oficio: <em>*</em></label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="10" maxlength="10">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
                                             <br>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <label class="col-lg-3">Documento Nombramiento: </label>
                                                     <div class="col-lg-6">
                                                         <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Nombramiento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDNombramiento_file" id="UDNombramiento_file" accept="application/pdf"></span>
+                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Nombramiento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDPlaza_file" id="UDPlaza_file" accept="application/pdf"></span>
                                                             <span class="fileinput-filename"></span>
                                                             <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-3">
-                                                    <?php if (nvl($usuario[0]['UDNombramiento_file'])) { ?>
-                                                    <a href='<?= base_url($usuario[0]['UDNombramiento_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
+                                                    <?php if (nvl($usuario[0]['UDPlaza_file'])) { ?>
+                                                    <a href='<?= base_url($usuario[0]['UDPlaza_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
                                                     <!--<button type='button' class='btn btn-sm btn-danger douploadNombramiento'> Subir Nombramiento</button>-->
                                                     <?php } ?>
                                                     </div>
@@ -236,8 +285,17 @@
                                                 </div>
                                             </div>
 
-                                        </div>
-                                        <div class="col-lg-4">
+                                            <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
+
+                                            <div class="form-group col-lg-12">
+                                                <div class="loadingPlazas"></div>
+                                                <div class="msgPlazas"></div>
+                                                <div class="resultPlazas"></div>
+                                            </div>
+                                            
+                                        </div>                                       
+
+                                        <div class="col-lg-2">
                                             <div class="text-center">
                                                 <div style="margin-top: 20px">
                                                     <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
@@ -325,15 +383,12 @@
                                         </div>
                                         <br>
                                     </div>
-                                        <button type='button' class='btn btn-sm btn-success saveEstudios'> Guardar Estudios</button>
+                                        <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
 
-                                        <div class="msgArchivo"></div>
-                                        <div class="loadingArchivo"></div>
-                                        <div class="form-group">
-                                            <form action="#" method='POST' name='estudios_form' id='estudios_form'>
+                                        <div class="form-group col-lg-12">
+                                                <div class="loadingEstudios"></div>
                                                 <div class="msgEstudios"></div>
                                                 <div class="resultEstudios"></div>
-                                            </form>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -401,7 +456,7 @@
             
         	$.ajax({
 	            type: "POST",
-	            url: "<?php echo base_url("NuevaPlantilla/MostrarCarreras"); ?>",
+	            url: "<?php echo base_url("Docente/mostrarCarreras"); ?>",
 	            data: {tipo : selectNivel},
 	            dataType: "html",
 	            beforeSend: function(){
@@ -415,6 +470,85 @@
 	            }
 	        });
 		});
+
+        //Guardar Plaza del Docente 
+		$(document).on("click", ".savePlazas", function () {
+            var idUser = document.getElementById("UNCI_usuario").value;
+            var idPlantel = document.getElementById("UPlantel").value;
+
+            var UDFecha_ingreso = document.getElementById("UDFecha_ingreso").value;
+            var UDTipo_Docente = document.getElementById("UDTipo_Docente").value;
+            var UDPlaza = document.getElementById("UDPlaza").value;
+            var UDTipo_materia = document.getElementById("UDTipo_materia").value;
+            var UDNumOficio = document.getElementById("UDNumOficio").value;
+            var UDHorasAdicionales = document.getElementById("UDHorasAdicionales").value;
+                        
+            let formData = new FormData(); 
+            formData.append("UDUsuario", idUser);
+            formData.append("UDPlantel", idPlantel);
+
+            formData.append("UDFecha_ingreso", UDFecha_ingreso);
+            formData.append("UDTipo_Docente", UDTipo_Docente);
+            formData.append("UDPlaza", UDPlaza);
+            formData.append("UDTipo_materia", UDTipo_materia);
+            formData.append("UDNumOficio", UDNumOficio);
+            formData.append("UDHorasAdicionales", UDHorasAdicionales);
+
+            formData.append("UDPlaza_file", UDPlaza_file.files[0]);
+            formData.append("UDOficio_file", UDOficio_file.files[0]);
+            formData.append("UDCurriculum_file", UDCurriculum_file.files[0]);
+            formData.append("UDCURP_file", UDCURP_file.files[0]);
+
+            $.ajax({
+                type: "POST",
+                url: "<?php echo base_url("Docente/savePlazas"); ?>",
+                data: formData,
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data){
+	                var data = data.split("::");
+                    if(data[1]=='OK'){
+	                    $(".msgPlazas").empty();
+	                    $(".msgPlazas").append(data[0]);
+	                    datosPlazas(data[2]);
+	                    FormRegistrar.UDFecha_ingreso.value = "";
+						FormRegistrar.UDPlaza.value = "";
+						FormRegistrar.UDTipo_materia.value = "";
+						FormRegistrar.UDNumOficio.value = "";
+                        FormRegistrar.UDHorasAdicionales.value = "";
+
+                        FormRegistrar.UDPlaza_file.value = "";
+                        FormRegistrar.UDOficio_file.value = "";
+                        FormRegistrar.UDCurriculum_file.value = "";
+                        FormRegistrar.UDCURP_file.value = "";
+	                    $(".loadingPlazas").html("");
+	                }
+	            } 
+            }); 
+            
+		});//----->fin
+
+        function datosPlazas(idUsuario){
+			var idUsuario = idUsuario;
+            var idPlantel = document.getElementById("UPlantel").value;
+			$.ajax({
+	            type: "POST",
+	            url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
+	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
+	            dataType: "html",
+	            beforeSend: function(){
+	                //carga spinner
+	                $(".loadingPlazas").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+	            },
+	            success: function(data){
+	                $(".resultPlazas").empty();
+	                $(".resultPlazas").append(data);  
+	                $(".loadingPlazas").html("");
+	            }
+	        });
+	    }
 
 
         //Guardar Estudios del Docente 
@@ -447,19 +581,19 @@
                 success: function(data){
 	                var data = data.split(";");
 	                if(data[0]==' OK'){
-	                    $(".msgArchivo").empty();
-	                    $(".msgArchivo").append(data[1]);
+	                    $(".msgEstudios").empty();
+	                    $(".msgEstudios").append(data[1]);
 	                    datosArchivos( data[2]);
 	                    FormRegistrar.ULNivel_estudio.value = "";
 						FormRegistrar.ULLicenciatura.value = "";
 						FormRegistrar.UPDocTitulo_file.value = "";
 						FormRegistrar.UPDocCedula_file.value = "";
-	                    $(".loadingArchivo").html("");
+	                    $(".loadingEstudios").html("");
 	                } else {
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[0]);  
 	                    datosArchivos( data[1]);
-	                    $(".loadingArchivo").html(""); 
+	                    $(".loadingEstudios").html(""); 
 	                }
 	                
 	            } 
@@ -529,11 +663,12 @@
 
                     if(newIndex == '1'){
 						save(form);
+                        var idUsuario = document.getElementById("UNCI_usuario").value;
+                        mostrarPlazas(idUsuario);
 					}
 
                     if(newIndex == '2'){
-						saveDocumentos();
-                        var idUsuario = document.getElementById("UNCI_usuario").value;
+						var idUsuario = document.getElementById("UNCI_usuario").value;
                         datosEstudios(idUsuario);
 					}
 
@@ -573,7 +708,7 @@
 					//aqui introducimos lo que haremos tras cerrar la alerta.
 					$('#wrapper').prop('class','');
 					if (e){
-                        window.location.href = "<?= base_url("Docente/ver_planteles/$idPlantel"); ?>";
+                        window.location.href = "<?= base_url("Docente/ver_planteles/$idPlantel/$tipoDoc"); ?>";
 					}
 				});     					
 			}
@@ -605,62 +740,51 @@
 				$("#result").html(data[0]);
 				$(".loading").html('');
 				if(finish && data[2]=="OK"){
-					location.href ='<?php echo base_url("Docente/ver_planteles/$idPlantel"); ?>';
+					location.href ='<?php echo base_url("Docente/ver_planteles/$idPlantel/$tipoDoc"); ?>';
 				}
 			}
 		});
 	}
 
-    function saveDocumentos(){
-        var idUser = document.getElementById("UNCI_usuario").value;
+    function mostrarPlazas(idUsuario){
+        var idUsuario = idUsuario;
         var idPlantel = document.getElementById("UPlantel").value;
-        var UTipo_Docente = document.getElementById("UTipo_Docente").value;
-        var UNombramiento = document.getElementById("UNombramiento").value;
-        
-        let formData = new FormData();
-        formData.append("UDUsuario", idUser);
-        formData.append("UDPlantel", idPlantel);
-        formData.append("UDTipo_Docente", UTipo_Docente);
-        formData.append("UDNombramiento", UNombramiento);
-        
-        formData.append("UDNombramiento_file", UDNombramiento_file.files[0]);
-        formData.append("UDOficio_file", UDOficio_file.files[0]);
-        formData.append("UDCurriculum_file", UDCurriculum_file.files[0]);
-        formData.append("UDCURP_file", UDCURP_file.files[0]);
-		$.ajax({
+        $.ajax({
             type: "POST",
-            url: "<?php echo base_url("Docente/saveDocumentos"); ?>",
-            data: formData,
+            url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
+            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
             dataType: "html",
-            cache: false,
-            contentType: false,
-            processData: false,
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingPlazas").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
             success: function(data){
-                var data = data.split("::");
-                $("#FClave_skip").val(data[1]);
+                $(".resultPlazas").empty();
+                $(".resultPlazas").append(data);  
+                $(".loadingPlazas").html("");
             }
         });
     }
 
     function datosEstudios(idUsuario){
-			var idUsuario = idUsuario;
-            var idPlantel = document.getElementById("UPlantel").value;
-			$.ajax({
-	            type: "POST",
-	            url: "<?php echo base_url("Docente/mostrarEstudios"); ?>",
-	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
-	            dataType: "html",
-	            beforeSend: function(){
-	                //carga spinner
-	                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-	            },
-	            success: function(data){
-	                $(".resultEstudios").empty();
-	                $(".resultEstudios").append(data);  
-	                $(".loading").html("");
-	            }
-	        });
-	    }
+        var idUsuario = idUsuario;
+        var idPlantel = document.getElementById("UPlantel").value;
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("Docente/mostrarEstudios"); ?>",
+            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                $(".resultEstudios").empty();
+                $(".resultEstudios").append(data);  
+                $(".loading").html("");
+            }
+        });
+    }
     
 });
 </script>

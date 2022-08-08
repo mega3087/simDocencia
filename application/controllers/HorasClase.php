@@ -144,14 +144,24 @@ class HorasClase extends CI_Controller {
         $this->db->where('GRPeriodo', $GRPeriodo);
         $this->db->where('GRStatus',1);
         $this->db->group_by('GRSemestre');
+
         $data['datos'] = $this->grupos_model->find_all(null, $select);
             foreach ($data['datos'] as $key => $list) {
-                $selectT = 'GRSemestre, GRTurno, COUNT(GRTurno) TotalTurno';
+                $selectMat = 'GRSemestre, GRTurno, COUNT(GRTurno) TotalTurno';
                 $this->db->where('GRCPlantel', $idPlantel);
                 $this->db->where('GRSemestre', $list['GRSemestre']);
+                $this->db->where('GRTurno', 1);
                 $this->db->where('GRStatus',1);
                 $this->db->group_by('GRTurno');
-                $data['datos'][$key]['turnos'] = $this->grupos_model->find_all(null, $selectT); 
+                $data['datos'][$key]['turnoMat'] = $this->grupos_model->find_all(null, $selectMat); 
+                
+                $selectVes = 'GRSemestre, GRTurno, COUNT(GRTurno) TotalTurno';
+                $this->db->where('GRCPlantel', $idPlantel);
+                $this->db->where('GRSemestre', $list['GRSemestre']);
+                $this->db->where('GRTurno', 2);
+                $this->db->where('GRStatus',1);
+                $this->db->group_by('GRTurno');
+                $data['datos'][$key]['turnoVes'] = $this->grupos_model->find_all(null, $selectVes); 
 
                 $selectCap = 'GRCPlantel, CCAClave, CCANombre';
                 $this->db->join('noplancap','GRCPlantel = PCPlantel');
@@ -173,6 +183,8 @@ class HorasClase extends CI_Controller {
 
             }
         }
+        //echo json_encode($data['datos']);
+        //exit;
 
         $selectCap = 'GRCPlantel, CCAClave, CCANombre, CCAAbrev';
         $this->db->join('noplancap','GRCPlantel = PCPlantel');
@@ -199,12 +211,21 @@ class HorasClase extends CI_Controller {
         $this->db->group_by('GRSemestre');
         $data['datos'] = $this->grupos_model->find_all(null, $select);
             foreach ($data['datos'] as $key => $list) {
-                $selectT = 'GRSemestre, GRTurno, COUNT(GRTurno) TotalTurno';
+                $selectMat = 'GRSemestre, GRTurno, COUNT(GRTurno) TotalTurno';
                 $this->db->where('GRCPlantel', $idPlantel);
                 $this->db->where('GRSemestre', $list['GRSemestre']);
+                $this->db->where('GRTurno', 1);
                 $this->db->where('GRStatus',1);
                 $this->db->group_by('GRTurno');
-                $data['datos'][$key]['turnos'] = $this->grupos_model->find_all(null, $selectT); 
+                $data['datos'][$key]['turnoMat'] = $this->grupos_model->find_all(null, $selectMat); 
+                
+                $selectVes = 'GRSemestre, GRTurno, COUNT(GRTurno) TotalTurno';
+                $this->db->where('GRCPlantel', $idPlantel);
+                $this->db->where('GRSemestre', $list['GRSemestre']);
+                $this->db->where('GRTurno', 2);
+                $this->db->where('GRStatus',1);
+                $this->db->group_by('GRTurno');
+                $data['datos'][$key]['turnoVes'] = $this->grupos_model->find_all(null, $selectVes); 
 
                 $selectCap = 'GRCPlantel, CCAClave, CCANombre';
                 $this->db->join('noplancap','GRCPlantel = PCPlantel');

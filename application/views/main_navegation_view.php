@@ -82,8 +82,8 @@
 			</li>
 			<?php } ?>
 			
-			<?php if( is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'Docente','index') or is_permitido(null,'grupos','index') or is_permitido(null,'horasClase','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'nuevaplantilla','index')) { ?>
-			<li class="<?php if(nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='Docente' or nvl($modulo)=='grupos' or nvl($modulo)=='horasClase' or nvl($modulo)=='plantilla' or nvl($modulo)=='nuevaplantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
+			<?php if( is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'Docente','index') or is_permitido(null,'grupos','index') or is_permitido(null,'horasClase','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'GenerarPlantilla','index')) { ?>
+			<li class="<?php if(nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='Docente' or nvl($modulo)=='grupos' or nvl($modulo)=='horasClase' or nvl($modulo)=='plantilla' or nvl($modulo)=='GenerarPlantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
 				<a href="#"><i class="fa fa-building-o"></i> <span class="nav-label">Docencia</span> <span class="fa arrow"></span></a>
 				<ul class="nav nav-second-level collapse" style="height: 0px;">
 					<?php if(is_permitido(null,'profesiograma','index')) { ?>
@@ -111,8 +111,8 @@
 					<?php if(is_permitido(null,'plantilla','index')) { ?>
 					<li <?php if( nvl($modulo) == 'plantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("plantilla");?>' >Plantilla</a></li>
 					<?php } ?>
-					<?php if(is_permitido(null,'nuevaplantilla','index')) { ?>
-					<li <?php if( nvl($modulo) == 'nuevaplantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("nuevaplantilla");?>' >Nueva Plantilla</a></li>
+					<?php if(is_permitido(null,'GenerarPlantilla','index')) { ?>
+					<li <?php if( nvl($modulo) == 'GenerarPlantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("GenerarPlantilla");?>' >Generar Plantilla</a></li>
 					<?php } ?>
 				</ul>
 			</li>

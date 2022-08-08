@@ -15,7 +15,11 @@
 <link href="<?php echo base_url('assets/inspinia/css/plugins/dropzone/dropzone.css'); ?>" rel="stylesheet">
 
 <link href="<?php echo base_url('assets/inspinia/css/plugins/select2/select2.min.css'); ?>" rel="stylesheet">
-<link href="<?php echo base_url('assets/inspinia/css/css/plugins/chosen/bootstrap-chosen.css'); ?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/plugins/dataTables/datatables.min.css');?>" rel="stylesheet">
+
+<!-- FooTable -->
+<link href="<?php echo base_url('assets/inspinia/css/plugins/footable/footable.core.css');?>" rel="stylesheet">
+
 <div class="row">
 	<div class="ibox float-e-margins">
 		<div class="ibox-content">
@@ -37,7 +41,7 @@
 									<h2>GENERAR PLANTILLA</h2>
 								</div>
 								<div class="ibox-content">
-                                <form action="<?php echo base_url("NuevaPlantilla/save"); ?>" name="form" id="form" method="POST" class="wizard-big form-horizontal" enctype="multipart/form-data" >
+                                <form action="<?php echo base_url("GenerarPlantilla/save"); ?>" name="form" id="form" method="POST" class="wizard-big form-horizontal" enctype="multipart/form-data" >
                                 <input type="hidden" name="plantel" id="plantel" value="<?= $plantel; ?>" />    
                                 <input type="hidden" name="FClave_skip" id="FClave_skip" value="<?= nvl($usuario); ?>"/>
                                 <h1>USUARIOS</h1>
@@ -49,39 +53,41 @@
                                     <div class="col-lg-1"><input type="radio" id="usernew" name="usernew" value="No" checked><label>No</label></div>
                                     </div>
                                         <div class="row">
-                                            <div class="col-lg-8">
-                                                <div class="table-responsive">
-                                                <table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>Docente</th>
-                                                            <th>Correo Electrónico</th>
-                                                            <th>RFC</th>
-                                                            <th>CURP</th>
-                                                            <th width="130px">Seleccionar</th>
-                                                        </tr>	
-                                                    </thead>
-                                                    <tbody>
-                                                    <?php 
-                                                        $i = 1;
-                                                        foreach($docentes as $key => $list){
-                                                        
-                                                        //$borrar = "<button type='button' value=".$UNCI_usuario_skip." class='btn btn-sm btn-danger quitarDocente'><i class='fa fa-trash'></i> Quitar</button>"; ?>
-                                                            <tr>
-                                                                <td class="text-center"><?php echo $i; ?></td> 
-                                                                <td class="text-left"><?php echo $list['UNombre']." ".$list['UApellido_pat']." ".$list['UApellido_mat']; ?></td>
-                                                                <td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
-                                                                <td class="text-left"><?php echo $list['URFC']; ?></td>
-                                                                <td class="text-left"><?php echo $list['UCURP']; ?></td>								
-                                                                <td class="text-center"><input type="checkbox" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>" class="only-one"></td>
-                                                            </tr>
-                                                    <?php $i++; } ?>
-                                                    </tbody>
-                                                </table>
+                                            <div class="col-lg-10 ibox">
+                                                <div class="ibox-content">
+                                                    <div class="table-responsive">
+                                                    <!--<table class="footable2 table table-stripped" data-page-size="20" data-filter=#filter>-->
+                                                        <table class="table table-striped table-bordered table-hover dataTables-example" >
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>#</th>
+                                                                    <th>Docente</th>
+                                                                    <th>Correo Electrónico</th>
+                                                                    <th>RFC</th>
+                                                                    <th>CURP</th>
+                                                                    <th width="130px">Seleccionar</th>
+                                                                </tr>	
+                                                            </thead>
+                                                            <tbody>
+                                                            <?php 
+                                                                $i = 1;
+                                                                foreach($docentes as $key => $list){
+                                                                //$borrar = "<button type='button' value=".$UNCI_usuario_skip." class='btn btn-sm btn-danger quitarDocente'><i class='fa fa-trash'></i> Quitar</button>"; ?>
+                                                                    <tr>
+                                                                        <td class="text-center"><?php echo $i; ?></td> 
+                                                                        <td class="text-left"><?php echo $list['UNombre']." ".$list['UApellido_pat']." ".$list['UApellido_mat']; ?></td>
+                                                                        <td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
+                                                                        <td class="text-left"><?php echo $list['URFC']; ?></td>
+                                                                        <td class="text-left"><?php echo $list['UCURP']; ?></td>								
+                                                                        <td class="text-center"><input type="checkbox" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>" class="only-one"></td>
+                                                                    </tr>
+                                                            <?php $i++; } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-2">
                                                 <div class="text-center">
                                                     <div style="margin-top: 20px">
                                                         <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
@@ -95,7 +101,7 @@
                                     <fieldset>
                                         <h2>Información del Usuario</h2>
                                         <div class="row">
-                                            <div class="col-lg-8">
+                                            <div class="col-lg-10">
                                                 <div class="form-group">
                                                     <label>CURP.: <em>*</em></label>
                                                     <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario['UCURP']); ?><?php echo nvl($fump['FCURP']); ?>" type="text" class="form-control "  minlength="18" maxlength="18" />
@@ -126,7 +132,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-2">
                                                 <div class="text-center">
                                                     <div style="margin-top: 20px">
                                                         <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
@@ -140,7 +146,7 @@
                                         <fieldset>
                                             <h2>Grado de Estudios</h2>
                                             <div class="row">
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-10">
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-lg-4">
@@ -227,7 +233,7 @@
                                                     
                                                     <div class="loadingArchivo"></div>
                                                 </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-2">
                                                     <div class="text-center">
                                                         <div style="margin-top: 20px">
                                                             <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
@@ -241,7 +247,7 @@
                                         <fieldset>
                                             <h2>ASIGNACIÓN DE MATERIAS</h2>
                                             <div class="row">
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-10">
                                                     <div class="form-group">
                                                         <label>Semestre: <em>*</em></label>
                                                         <select name="GRSemestre" id="GRSemestre" class="form-control semLic">
@@ -282,7 +288,6 @@
 <!-- DROPZONE -->
 <script src="<?php echo base_url('assets/inspinia/js/plugins/dropzone/dropzone.js'); ?>"></script>
 
-<script src="<?php echo base_url('assets/inspinia/js/popper.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/inspinia/js/bootstrap.js'); ?>"></script>
 <script src="<?php echo base_url('assets/inspinia/js/plugins/metisMenu/jquery.metisMenu.js'); ?>"></script>
 <script src="<?php echo base_url('assets/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js'); ?>"></script>
@@ -303,10 +308,12 @@
 <!-- Data picker -->
 <script src="<?php echo base_url('assets/inspinia/js/plugins/datapicker/bootstrap-datepicker.js'); ?> "></script>
 
-    
-<script>
+<script src="<?php echo base_url('assets/inspinia/js/plugins/dataTables/datatables.min.js'); ?>"></script>
+<!-- FooTable -->
+<script src="<?php echo base_url('assets/inspinia/js/plugins/footable/footable.all.min.js'); ?>"></script>
+
+<script>    
     $(document).ready(function(){
-        
         $("#form").steps({
             bodyTag: "fieldset",
             /* Labels */
@@ -390,7 +397,7 @@
 					//aqui introducimos lo que haremos tras cerrar la alerta.
 					$('#wrapper').prop('class','');
 					if (e){
-                        window.location.href = "<?= base_url("NuevaPlantilla/crear/$PClave_skip"); ?>";
+                        window.location.href = "<?= base_url("GenerarPlantilla/crear/$PClave_skip"); ?>";
 					}
 				});     					
 			}
@@ -468,7 +475,7 @@
                 formData.append("idPlantel", idPlantel);
             $.ajax({
                 type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
+                url: "<?php echo base_url("GenerarPlantilla/uploads"); ?>",
                 data: formData,
                 dataType: "html",
                 cache: false,
@@ -492,7 +499,7 @@
                 formData.append("idPlantel", idPlantel);
             $.ajax({
                 type: "POST",
-                url: "<?php echo base_url("NuevaPlantilla/uploads"); ?>",
+                url: "<?php echo base_url("GenerarPlantilla/uploads"); ?>",
                 data: formData,
                 dataType: "html",
                 cache: false,
@@ -533,7 +540,7 @@
                 if (idUser !='') {
                     $.ajax({
                     type: "POST",
-                    url: "<?php echo base_url("NuevaPlantilla/MostrarCarreras"); ?>",
+                    url: "<?php echo base_url("GenerarPlantilla/MostrarCarreras"); ?>",
                     data: {tipo : idUser},
                     dataType: "html",
                     beforeSend: function(){
@@ -557,7 +564,7 @@
         function save(form,finish){
 		$.ajax({
 			type: "POST",
-			url: "<?php echo base_url("NuevaPlantilla/save"); ?>",
+			url: "<?php echo base_url("GenerarPlantilla/save"); ?>",
 			data: form.serialize(),
 			dataType: "html",
 			beforeSend: function(){
@@ -571,7 +578,7 @@
 				$("#result").html(data[0]);
 				$(".loading").html('');
 				if(finish && data[3]=="OK"){
-					location.href ='<?php echo base_url("NuevaPlantilla/crear/$PClave_skip"); ?>';
+					location.href ='<?php echo base_url("GenerarPlantilla/crear/$PClave_skip"); ?>';
 				}
 			}
 		});
@@ -587,7 +594,7 @@
             
         	$.ajax({
 	            type: "POST",
-	            url: "<?php echo base_url("NuevaPlantilla/MostrarCarreras"); ?>",
+	            url: "<?php echo base_url("GenerarPlantilla/MostrarCarreras"); ?>",
 	            data: {tipo : selectNivel},
 	            dataType: "html",
 	            beforeSend: function(){
@@ -603,6 +610,21 @@
 		});
     })
 </script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		/* Page-Level Scripts */
+		$('.dataTables-example').DataTable({
+			"language": {
+				"url": "<?php echo base_url("assets/datatables_es.json"); ?>"
+			},
+			dom: '<"html5buttons"B>lTfgitp',
+			"lengthMenu": [ [20,50,100, -1], [20,50,100, "Todos"] ],
+			buttons: []
+		});	
+
+	});
+</script>
+
 <style type="text/css">
 .wizard .content .body {
     position: relative;

@@ -266,7 +266,7 @@ class Grupos extends CI_Controller {
                         $datos['GRPMat'] = '7';
                     } elseif ($data['CPLTipo'] == '36') {
                         $datos['GRPMat'] = '9';
-                    }   
+                    }
     
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];
                     $datos['GRSemestre'] = $data['CPESemestre3'];
@@ -291,7 +291,7 @@ class Grupos extends CI_Controller {
                     $this->grupos_model->insert($datos);  
                 }
             }
-
+            
             //Grupos Vespertino
             if ($data['NoGruposVes3'] != '0') { 
                 

@@ -26,16 +26,24 @@ $noCap = count($Capacitaciones);
         foreach ($datos as $k => $list) {   $totalGrupos += $list['noGrupos']; ?>
             <tr>
                 <th style="text-align:center;"><?= $list['GRSemestre'] ?>°</th>
-                <?php foreach ($list['turnos'] as $ke => $listG) { 
-                    if ($listG['GRTurno'] == 1) {
-                        $totalMat += $listG['TotalTurno'];
-                    } else {
-                        $totalVes += $listG['TotalTurno'];
-                    }
-                    ?>
-                    <td style="text-align:center;"><?= $listG['TotalTurno'] ?></td>
-                <?php } 
-                    foreach ($list['Capacitaciones'] as $y => $listCap) {
+                
+                <?php if (count($list['turnoMat']) != 0) {
+                foreach ($list['turnoMat'] as $m => $listMat) { $totalMat += $listMat['TotalTurno']; ?> 
+                    <td style="text-align:center;"><?= $listMat['TotalTurno'] ?></td>
+                <?php } } else { ?>
+                <td style="text-align:center;">0</td>
+                <?php }?>
+
+                <?php 
+                if (count($list['turnoVes']) != 0) {
+                foreach ($list['turnoVes'] as $m => $listVes) { 
+                    $totalVes += $listVes['TotalTurno']; ?> 
+                    <td style="text-align:center;"><?= $listVes['TotalTurno'] ?></td>
+                <?php } } else { ?>
+                    <td style="text-align:center;">0</td>
+                <?php }?>
+
+                <?php foreach ($list['Capacitaciones'] as $y => $listCap) {
                         if ($list['GRSemestre'] > 2) {
                         echo "<td style='text-align:center;'>";
                             if (count($listCap['totalCap']) != 0) {
