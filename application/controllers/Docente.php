@@ -41,8 +41,7 @@ class Docente extends CI_Controller {
             $idPlantel = get_session('UPlantel');
         }        
         $data['tipoDoc'] = $this->encrypt->decode($tipoDocente);
-        //	ADOLFO ROMO GONZÁLEZ
-        
+                
         $selectP = 'CPLClave, CPLNombre, CPLTipo';
         $this->db->where('CPLClave',$idPlantel);
         $data['plantel'] = $this->plantel_model->find_all(null, $selectP);
@@ -56,6 +55,7 @@ class Docente extends CI_Controller {
         
         $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro";
         $this->db->join('nocrol','URol = CROClave');
+        $this->db->where("UEstado",'Activo');
         $this->db->where("CROClave NOT IN ('3','10','12')");
         $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
         $this->db->order_by('UNombre', 'ASC');
@@ -155,72 +155,82 @@ class Docente extends CI_Controller {
 
     public function savePlazas() {
         $data = post_to_array('_skip');
+        echo json_encode($data);
+        exit;
+        if ($data['UDFecha_ingreso'] == '' || $data['UDTipo_Docente'] == '' || $data['UDPlaza'] == '' || $data['UDNumOficio'] == '') {
+            set_mensaje("Favor de ingresar todos los datos requeridos.");
+            muestra_mensaje();
+        } else {
+            $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
+            $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
         
-        $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
-        $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
-    
-        //Subir Nombramiento
-        $nomNombramiento = 'Nombramiento';
-        $fileNombramiento = $nomNombramiento.$nom;
-        $targetFileNombramiento = $directorio . $fileNombramiento;
+            //Subir Nombramiento
+            $nomNombramiento = 'Nombramiento';
+            $fileNombramiento = $nomNombramiento.$nom;
+            $targetFileNombramiento = $directorio . $fileNombramiento;
+            
+            //Subir Oficio de Petición
+            $nomOficio = 'Oficio';
+            $fileOficio = $nomOficio.$nom;
+            $targetFileOficio = $directorio . $fileOficio;
+
+            //Subir Curriculum
+            $nomCurriculum = 'Curriculum';
+            $fileCurriculum = $nomCurriculum.$nom;
+            $targetFileCurriculum = $directorio . $fileCurriculum;
+
+            //Subir CURP
+            $nomCURP = 'CURP';
+            $fileCURP = $nomCURP.$nom;
+            $targetFileCURP = $directorio . $fileCURP;
+
+            if (!file_exists($directorio)) {
+                mkdir($directorio, 0777, true);
+            }
+
+            $datos['UDUsuario'] = $data['UDUsuario'];
+            $datos['UDPlantel'] = $data['UDPlantel'];
+            $datos['UDFecha_ingreso'] = $data['UDFecha_ingreso'];
+            $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
+            $datos['UDTipo_materia'] = $data['UDTipo_materia'];
+            $datos['UDHoras_grupo'] = $data['UDHoras_grupo'];
+            $datos['UDHoras_apoyo'] = $data['UDHoras_apoyo'];
+            $datos['UDHorasAdicionales'] = $data['UDHorasAdicionales'];
+            $datos['UDPlaza'] = $data['UDPlaza'];
+            $datos['UDNumOficio'] = $data['UDNumOficio'];
+
+            if(isset($_FILES["UDPlaza_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDPlaza_file"]["tmp_name"], $targetFileNombramiento);
+                $datos['UDPlaza_file'] = $targetFileNombramiento;
+            }
+            if(isset($_FILES["UDOficio_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDOficio_file"]["tmp_name"], $targetFileOficio);
+                $datos['UDOficio_file'] = $targetFileOficio;
+            }
+            if(isset($_FILES["UDCurriculum_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDCurriculum_file"]["tmp_name"], $targetFileCurriculum);
+                $datos['UDCurriculum_file'] = $targetFileCurriculum;
+            }
+            if(isset($_FILES["UDCURP_file"])){
+                //Con datos
+                move_uploaded_file($_FILES["UDCURP_file"]["tmp_name"], $targetFileCURP);
+                $datos['UDCURP_file'] = $targetFileCURP;
+            }
+            
+            $datos['UDActivo'] = '1';
+            $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
+            $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
+            $this->usuariodatos_model->insert($datos);
+            set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
+            muestra_mensaje();
+            echo "::OK";
+            echo "::".$data['UDUsuario'];
+        }
         
-        //Subir Oficio de Petición
-        $nomOficio = 'Oficio';
-        $fileOficio = $nomOficio.$nom;
-        $targetFileOficio = $directorio . $fileOficio;
-
-        //Subir Curriculum
-        $nomCurriculum = 'Curriculum';
-        $fileCurriculum = $nomCurriculum.$nom;
-        $targetFileCurriculum = $directorio . $fileCurriculum;
-
-        //Subir CURP
-        $nomCURP = 'CURP';
-        $fileCURP = $nomCURP.$nom;
-        $targetFileCURP = $directorio . $fileCURP;
-
-        if (!file_exists($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-
-        $datos['UDUsuario'] = $data['UDUsuario'];
-        $datos['UDPlantel'] = $data['UDPlantel'];
-        $datos['UDFecha_ingreso'] = $data['UDFecha_ingreso'];
-        $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
-        $datos['UDTipo_materia'] = $data['UDTipo_materia'];
-        $datos['UDHorasAdicionales'] = $data['UDHorasAdicionales'];
-        $datos['UDPlaza'] = $data['UDPlaza'];
-        $datos['UDNumOficio'] = $data['UDNumOficio'];
-
-        if(isset($_FILES["UDPlaza_file"])){
-            //Con datos
-            move_uploaded_file($_FILES["UDPlaza_file"]["tmp_name"], $targetFileNombramiento);
-            $datos['UDPlaza_file'] = $targetFileNombramiento;
-        }
-        if(isset($_FILES["UDOficio_file"])){
-            //Con datos
-            move_uploaded_file($_FILES["UDOficio_file"]["tmp_name"], $targetFileOficio);
-            $datos['UDOficio_file'] = $targetFileOficio;
-        }
-        if(isset($_FILES["UDCurriculum_file"])){
-            //Con datos
-            move_uploaded_file($_FILES["UDCurriculum_file"]["tmp_name"], $targetFileCurriculum);
-            $datos['UDCurriculum_file'] = $targetFileCurriculum;
-        }
-        if(isset($_FILES["UDCURP_file"])){
-            //Con datos
-            move_uploaded_file($_FILES["UDCURP_file"]["tmp_name"], $targetFileCURP);
-            $datos['UDCURP_file'] = $targetFileCURP;
-        }
         
-        $datos['UDActivo'] = '1';
-        $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
-        $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
-        $this->usuariodatos_model->insert($datos);
-        set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
-        muestra_mensaje();
-        echo "::OK";
-        echo "::".$data['UDUsuario'];
 
         /*$this->db->where('UDPlantel', $data['UDPlantel']);
         $this->db->where('UDUsuario', $data['UDUsuario']);
@@ -423,7 +433,7 @@ class Docente extends CI_Controller {
         } 
     }
 
-    public function quitarDocente() {
+    public function delete() {
         $data = array();
         $UNCI_usuario = $this->encrypt->decode($this->input->post('UNCI_usuario_skip'));
         $UNCI_plantel = $this->input->post('PlantelId');
@@ -435,7 +445,7 @@ class Docente extends CI_Controller {
         foreach ($datos as $k => $listP) {
         $ids = explode(',', $listP['UPlantel']);
             if (count($ids) == 1 ) {
-                $data['UPlantel'] = '';
+                //$data['UPlantel'] = '';
                 $data['UEstado'] = "Inactivo";
                 } else {
                 foreach ($ids as $y => $ids) {
@@ -484,6 +494,18 @@ class Docente extends CI_Controller {
         <?php foreach ($data['carreras']  as $k => $listCar) { ?>
             <option value="<?= $listCar['IdLicenciatura']; ?>"><?= $listCar['Licenciatura']; ?></option>    
         <?php } 
+    }
+
+    public function datosnombramiento_skip() {
+        $datos = array();
+        $idPlaza =  $this->input->post('idPlaza');
+        
+        $this->db->where('idPlaza',$idPlaza);
+        $datos = $this->plazadocente_model->find_all();
+
+        echo '::'.$datos[0]['horas_grupo'];
+        echo '::'.$datos[0]['horas_apoyo'];
+        echo '::'.$datos[0]['tipo_materia'];
     }
 
 }

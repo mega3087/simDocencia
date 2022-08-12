@@ -4,7 +4,7 @@
 	class Licenciaturas_model extends My_Model
 	{
 		protected $_table = 'nolicenciaturas';
-		protected $primary_key = 'IdLicenciarura';
+		protected $primary_key = 'IdLicenciatura';
 
 		function __construct()
 		{

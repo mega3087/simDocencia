@@ -26,7 +26,6 @@
 								<th>Plantel</th>
 								<th>CCT</th>
 								<th>Correo</th>
-								<th>Director</th>
 								<th width="130px">Acción</th> 
 							</tr>	
 						</thead>
@@ -43,7 +42,6 @@
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCorreo_electronico']; ?></td>
-									<td class="text-left"><?php echo $list['CPLDirector']; ?></td>								
 									<td>
 									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $base?>">
 										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Base</button>

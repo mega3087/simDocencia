@@ -42,8 +42,8 @@ class Grupos extends CI_Controller {
         $this->load->view('plantilla_general', $data);
     }
 
-    public function listaGruposRep() {
-        if ( is_permitido(null,'grupos','listaGruposRep') )
+    public function listaGruposRep_skip() {
+        if ( is_permitido(null,'grupos','listaGruposRep_skip') )
         $data = array();
         $GRCPlantel = $this->input->post('idPlantel');
         $GRPeriodo = $this->input->post('periodo');
@@ -52,6 +52,7 @@ class Grupos extends CI_Controller {
         $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
         $this->db->where('GRCPlantel', $GRCPlantel);
         $this->db->where('GRPeriodo', $GRPeriodo);
+        $this->db->where('GRStatus', '1');
         $this->db->group_by('GRSemestre');
         $data['total'] = $this->grupos_model->find_all(null, $select);
         
@@ -65,6 +66,7 @@ class Grupos extends CI_Controller {
             $this->db->where('GRPeriodo', $GRPeriodo);
             $this->db->where('GRSemestre', $listTot['GRSemestre']);
             $this->db->where('GRCPlantel', $GRCPlantel);
+            $this->db->where('GRStatus', '1');
             $this->db->group_by('GRClave');
             $this->db->order_by('GRTurno','ASC');
             $this->db->order_by('GRGrupo','ASC');
@@ -339,17 +341,10 @@ class Grupos extends CI_Controller {
         }
     }
 
-    public function selectGrupos() {
-        $GRCPlantel = $this->input->post('GRCPlantel');
-        $this->db->where('GRCPlantel',$GRCPlantel);
-        $this->db->where('GRStatus','1');
-        
-        $data['data'] = $this->grupos_model->find_all();
-        $this->load->view('grupos/Mostrar_grupos', $data);
-    }
 
-    public function deleteGrupo() {
+    public function delete() {
         $GRClave = $this->encrypt->decode($this->input->post('GRClave'));
+        
         $data = array(
             'GRStatus' => '0',
             'GRFechaInactivo' => date('Y-m-d H:i:s'),
@@ -359,24 +354,54 @@ class Grupos extends CI_Controller {
         set_mensaje("EL grupo se elimino con éxito",'success::');
         muestra_mensaje();
         
-        $GRCPlantel = $this->input->post('PlantelId');
-        $this->db->where('GRCPlantel',$GRCPlantel);
-        $this->db->where('GRStatus','1');
-        $data['data'] = $this->grupos_model->find_all();            
-        $this->load->view('grupos/Mostrar_grupos', $data);
-
-    }
-
-    public function listaGrupos() {
-        $data = array();
-        if ( is_permitido(null,'grupos','listaGrupos') )
-
-        $GRCPlantel = $this->input->post('idPlantel');
+        $idPlantel = $this->input->post('idPlantel');
         $GRPeriodo = $this->input->post('periodo');
                 
         $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
+        $this->db->where('GRCPlantel', $idPlantel);
+        $this->db->where('GRPeriodo', $GRPeriodo);
+        $this->db->where('GRStatus', '1');
+        $this->db->group_by('GRSemestre');
+        $data['total'] = $this->grupos_model->find_all(null, $select);
+        
+        foreach ($data['total'] as $key => $listTot) {
+            $select = "GRClave, GRGrupo, GRSemestre, CCANombre, CCAAbrev, GRCClave, GRCupo, GRTurno";
+            $this->db->join('noccapacitacion', 'CCAClave = GRCClave','left');
+            //$this->db->join('nomaterias', 'CCAAbrev = MATAbrev','left');
+            if($listTot['GRSemestre'] > 2) {
+                $this->db->where('GRSemestre', $listTot['GRSemestre']);
+            } 
+            $this->db->where('GRPeriodo', $GRPeriodo);
+            $this->db->where('GRSemestre', $listTot['GRSemestre']);
+            $this->db->where('GRCPlantel', $idPlantel);
+            $this->db->where('GRStatus', '1');
+            $this->db->group_by('GRClave');
+            $this->db->order_by('GRTurno','ASC');
+            $this->db->order_by('GRGrupo','ASC');
+            $data['total'][$key]['grupos'] = $this->grupos_model->find_all(null, $select);
+        }
+
+        $select = 'PCPlantel, PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
+        $this->db->join('noplancap', 'CPLClave = PCPlantel','left');
+        $this->db->join('noccapacitacion', 'PCCapacitacion = CCAClave','left');
+        $this->db->where('PCPlantel',$idPlantel);
+        $data['capacitaciones'] = $this->plantel_model->find_all(null,$select);
+        
+        $this->load->view('grupos/Mostrar_periodo_grupos', $data);
+
+    }
+
+    public function listaGrupos_skip() {
+        $data = array();
+        if ( is_permitido(null,'grupos','listaGrupos_skip') )
+
+        $GRCPlantel = $this->input->post('idPlantel');
+        $GRPeriodo = $this->input->post('periodo');
+        
+        $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
         $this->db->where('GRCPlantel', $GRCPlantel);
         $this->db->where('GRPeriodo', $GRPeriodo);
+        $this->db->where('GRStatus', '1');
         $this->db->group_by('GRSemestre');
         $data['total'] = $this->grupos_model->find_all(null, $select);
         
@@ -390,6 +415,7 @@ class Grupos extends CI_Controller {
             $this->db->where('GRPeriodo', $GRPeriodo);
             $this->db->where('GRSemestre', $listTot['GRSemestre']);
             $this->db->where('GRCPlantel', $GRCPlantel);
+            $this->db->where('GRStatus', '1');
             $this->db->group_by('GRClave');
             $this->db->order_by('GRTurno','ASC');
             $this->db->order_by('GRGrupo','ASC');
@@ -420,7 +446,7 @@ class Grupos extends CI_Controller {
         muestra_mensaje();
     }
 
-    public function ImprimirGrupos($idPlantel = null, $periodo = null) {
+    public function ImprimirGrupos_skip($idPlantel = null, $periodo = null) {
         $idPlantel = base64_decode($idPlantel);
         $GRPeriodo = base64_decode($periodo);
         //$GRCPlantel = $this->encrypt->decode($idPlantel);
@@ -436,17 +462,16 @@ class Grupos extends CI_Controller {
         $data['total'] = $this->grupos_model->find_all(null, $select);
         
         foreach ($data['total'] as $key => $listTot) {
-            //$select = "GRClave, GRGrupo, GRSemestre, GRCClave, MATSemmat, MATNombre, GRCupo, GRTurno";
             $select = "GRClave, GRGrupo, GRSemestre, CCANombre, CCAAbrev, GRCClave, GRCupo, GRTurno";
             $this->db->join('noccapacitacion', 'CCAClave = GRCClave','left');
-            //$this->db->join('nomaterias', 'CCAAbrev = MATAbrev','left');
+            
             if($listTot['GRSemestre'] > 2) {
                 $this->db->where('GRSemestre', $listTot['GRSemestre']);
-                //$this->db->where('MATSemmat', $listTot['GRSemestre']);
             }
             $this->db->where('GRPeriodo', $GRPeriodo); 
             $this->db->where('GRSemestre', $listTot['GRSemestre']);
             $this->db->where('GRCPlantel', $idPlantel);
+            $this->db->where('GRStatus', '1');
             $this->db->order_by('GRTurno','ASC');
             $this->db->order_by('GRGrupo','ASC');
             $data['total'][$key]['grupos'] = $this->grupos_model->find_all(null, $select);

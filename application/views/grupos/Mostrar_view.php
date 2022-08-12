@@ -102,7 +102,8 @@
                 <div class="form-group">
                     <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
                     <div class="col-lg-9">
-                        <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control disabled">
+                    <!--<select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control disabled">-->
+                        <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control">
                             <?php foreach ($periodos as $key => $listPer) { ?>
                                 <option value="<?php echo $listPer['CPEPeriodo']; ?>">
                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
@@ -248,7 +249,8 @@
                 <div class="form-group">
                     <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
                     <div class="col-lg-9">
-                        <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo disabled">
+                        <!--<select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo disabled">-->
+                        <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo">
                             <?php foreach ($periodos as $key => $listPer) { ?>
                                 <option value="<?php echo $listPer['CPEPeriodo']; ?>">
                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
@@ -259,13 +261,12 @@
                 </div>
                 <br>
                 <div class="form-group">
+                    <div class="loadingGrupos"></div>
                     <div class="msgGrupos"></div>
+                    <div class="errorGrupos"></div>
                     <div class="resultGrupos"></div>                        
                 </div>
-
-                <div class="loadingCap"></div>
-                <div class="msgCap"></div>
-                <div class="errorCap"></div>
+                
             </div>
         </div>
     </div> 
@@ -285,7 +286,8 @@
                     <div class="form-group">
                         <label class="col-lg-3 control-label" for="">Periodo Escolar: <em>*</em></label>
                         <div class="col-lg-9">
-                            <select name="semReportes" id="semReportes" class="form-control semReportes disabled">
+                        <!--<select name="semReportes" id="semReportes" class="form-control semReportes disabled">-->    
+                            <select name="semReportes" id="semReportes" class="form-control semReportes">
                                 <?php foreach ($periodos as $key => $listPer) { ?>
                                     <option value="<?php echo $listPer['CPEPeriodo']; ?>">
                                          <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A':'B'?>
@@ -412,7 +414,7 @@
 
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("grupos/listaGrupos"); ?>",
+            url: "<?php echo base_url("grupos/listaGrupos_skip"); ?>",
             data: {idPlantel: PlantelId, periodo: valor},
             dataType: "html",
             beforeSend: function(){
@@ -443,7 +445,7 @@
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("grupos/listaGruposRep"); ?>",
+            url: "<?php echo base_url("grupos/listaGruposRep_skip"); ?>",
             data: {idPlantel: PlantelId, periodo: periodo},
             dataType: "html",
             beforeSend: function(){
@@ -465,7 +467,7 @@
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("HorasClase/listaHoras"); ?>",
+            url: "<?php echo base_url("HorasClase/listaHoras_skip"); ?>",
             data: {idPlantel: PlantelId, periodo: periodo},
             dataType: "html",
             beforeSend: function(){
@@ -487,7 +489,7 @@
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("HorasClase/verReporte"); ?>",
+            url: "<?php echo base_url("HorasClase/verReporte_skip"); ?>",
             data: {idPlantel: PlantelId, periodo: periodo},
             dataType: "html",
             beforeSend: function(){

@@ -208,7 +208,7 @@
         var sem = valor.split('-')[1];
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("HorasClase/listaHoras"); ?>",
+            url: "<?php echo base_url("HorasClase/listaHoras_skip"); ?>",
             data: {idPlantel: PlantelId, periodo: valor},
             dataType: "html",
             beforeSend: function(){
@@ -250,12 +250,12 @@
         var PlantelId = document.getElementById("RClave_plantel").value;
         
 
-        $("#ImprimirRep").attr("href","<?php echo base_url("HorasClase/imprimirReporte"); ?>/"+idPlantelRep+"/"+searchSem);
+        $("#ImprimirRep").attr("href","<?php echo base_url("HorasClase/imprimirReporte_skip"); ?>/"+idPlantelRep+"/"+searchSem);
 
         var sem = valor.split('-')[1];
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("HorasClase/verReporte"); ?>",
+            url: "<?php echo base_url("HorasClase/verReporte_skip"); ?>",
             data: {idPlantel: PlantelId, periodo: valor},
             dataType: "html",
             beforeSend: function(){

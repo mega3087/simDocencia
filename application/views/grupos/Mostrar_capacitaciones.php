@@ -65,6 +65,6 @@ $(document).ready(function() {
 
     var Plantel = window.btoa(unescape(encodeURIComponent(PlantelId))).replace("=","").replace("=",""); 
     var search = window.btoa(unescape(encodeURIComponent(periodo))).replace("=","").replace("=",""); 
-    $("#ImprimirGrupos").attr("href","<?php echo base_url("grupos/ImprimirGrupos"); ?>/"+Plantel+"/"+search);
+    $("#ImprimirGrupos").attr("href","<?php echo base_url("grupos/ImprimirGrupos_skip"); ?>/"+Plantel+"/"+search);
 });//----->fin
 </script>

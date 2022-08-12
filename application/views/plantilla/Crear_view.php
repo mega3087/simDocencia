@@ -47,11 +47,11 @@
                                 <h1>USUARIOS</h1>
                                     <fieldset>
                                     <div class="col-lg-6"><h2>Usuarios del <?php if ($planteles[0]['CPLTipo'] == '35') { echo "Plantel"; } else { echo "CEMSAD"; }  ?></h2></div>
-                                    <div class="col-lg-6">
-                                    <div class="col-lg-3 text-left"><label>Usuario Nuevo: </label> <!--<input type="radio" name="nuevo" id="nuevo" value="Si">--></div>
+                                    <!--<div class="col-lg-6">
+                                    <div class="col-lg-3 text-left"><label>Usuario Nuevo: </label> <!--<input type="radio" name="nuevo" id="nuevo" value="Si">--</div>
                                     <div class="col-lg-1"><input type="radio" id="usernew" name="usernew" value="Si"><label>Si</label></div>
                                     <div class="col-lg-1"><input type="radio" id="usernew" name="usernew" value="No" checked><label>No</label></div>
-                                    </div>
+                                    </div>-->
                                         <div class="row">
                                             <div class="col-lg-10 ibox">
                                                 <div class="ibox-content">
@@ -99,38 +99,11 @@
                                 
                                 <h1>DATOS DEL USUARIO</h1>
                                     <fieldset>
-                                        <h2>Información del Usuario</h2>
+                                        <h2>Asignación de Materias</h2>
                                         <div class="row">
                                             <div class="col-lg-10">
-                                                <div class="form-group">
-                                                    <label>CURP.: <em>*</em></label>
-                                                    <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario['UCURP']); ?><?php echo nvl($fump['FCURP']); ?>" type="text" class="form-control "  minlength="18" maxlength="18" />
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Nombre(s) / Apellido Paterno / Apellido Materno: <em>*</em></label>
-                                                    <div class="row">
-                                                        <div class="col-lg-4">
-                                                            <input id="UNombre" name="UNombre" value="" type="text" class="form-control ">
-                                                        </div>
-                                                        <div class="col-lg-4">
-                                                            <input id="UApellido_pat" name="UApellido_pat" value="" type="text" class="form-control ">
-                                                        </div>
-                                                        <div class="col-lg-4">
-                                                            <input id="UApellido_mat" name="UApellido_mat" value="" type="text" class="form-control ">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>R.F.C.: <em>*</em></label>
-                                                    <input id="URFC" name="URFC" value="<?php echo nvl($usuario['URFC']); ?><?php echo nvl($fump['URFC']); ?>" type="text" class="form-control "  minlength="13" maxlength="13" />
-                                                </div>
-                                                <div class="form-group" id="data_2">
-                                                    <label>Fecha de Ingreso: <em>*</em></label>
-                                                    <div class="input-group date">
-                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                        <input type="text" class="form-control fecha" id="UFecha_ingreso" name="UFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UFecha_registro'])); ?><?php echo fecha_format(nvl($fump['UFecha_registro'])); ?>" minlength="10" maxlength="10">
-                                                    </div>
-                                                </div>
+                                                
+                                                
                                             </div>
                                             <div class="col-lg-2">
                                                 <div class="text-center">
@@ -142,7 +115,7 @@
                                         </div>
 
                                     </fieldset>
-                                        <h1>ESTUDIOS</h1>
+                                        <!--<h1>ESTUDIOS</h1>
                                         <fieldset>
                                             <h2>Grado de Estudios</h2>
                                             <div class="row">
@@ -240,7 +213,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>-
                                         </fieldset>
                                         
                                         <h1>MATERIAS</h1>
@@ -262,7 +235,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </fieldset>
+                                        </fieldset>-->
 
                                         <h1>Finish</h1>
                                         <fieldset>
@@ -483,7 +456,7 @@
                 processData: false,
                 success: function(data){
                     var data = data.split("::");
-                    alert(data[1]);
+                    //alert(data[1]);
                 }
             });
 
@@ -507,7 +480,7 @@
                 processData: false,
                 success: function(data){
                     var data = data.split("::");
-                    alert(data[1]);
+                    //alert(data[1]);
                 }
             });  
         });
@@ -573,7 +546,7 @@
 			},
 			success: function(data){
 				var data = data.split("::");
-                alert(data);
+                //alert(data);
                 $("#FClave_skip").val(data[1]);
 				$("#result").html(data[0]);
 				$(".loading").html('');

@@ -11,7 +11,7 @@
                 <th class="text-center" colspan="2">TURNO</th>
                 <th class="text-center" rowspan="2" width="380px">CAPACITACIÓN</th>
                 <th class="text-center" rowspan="2">No. DE ALUMNOS POR GRUPO</th>
-                <!--<th class="text-center" rowspan="2">TOTAL</th>-->
+                <th class="text-center" rowspan="2">ACCIÓN</th>
             </tr>   
             <tr>
                 <th class="text-center">MATUTINO</th>
@@ -24,7 +24,10 @@
                 <tr>
                     <td class="text-center" rowspan="<?= $list['noGrupos'] + 1 ?>"><b><?php echo $list['GRSemestre']; ?>° SEMESTRE</b></td> 
                 </tr>
-                    <?php foreach ($list['grupos'] as $keys => $listG) { ?>
+                    <?php foreach ($list['grupos'] as $keys => $listG) { 
+                        $idGrupo = $this->encrypt->encode($listG['GRClave']); 
+                        $borrar = "<button type='button' value=".$this->encrypt->encode($listG['GRClave'])." class='btn btn-sm btn-danger quitarGrupo' title='Borrar' ><i class='fa fa-trash'></i></button>";
+                        ?>
                         <tr>
                             <td class="text-center"><?php echo $listG['GRGrupo']; ?></td>
                             
@@ -48,6 +51,7 @@
                                 </td>
                             <?php } ?>
                             <td class="text-center"><input type="number" min="0" max="99" value="<?php echo nvl($listG['GRCupo']); ?>" name="<?= $listG['GRClave']; ?>[]" id="GRCupo" class="form-group <?php if (nvl($listG['GRCupo'])) echo "disabled";?>" required></td>
+                            <td class="text-center"><?= $borrar; ?></td>
                         </tr>                                
                     <?php } ?>
                         <!--<tr>
@@ -63,6 +67,8 @@
     <?php } ?>
 </div>
 <?php form_close(); ?>
+
+<script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     $(".saveCap").click(function() {
@@ -91,5 +97,47 @@ $(document).ready(function() {
             }
         });
     });
+
+    //Borrar Grupo
+	$(".quitarGrupo").click(function(e) {
+		var GRClave = $(this).val();
+        var idPlantel = document.getElementById("PlantelId").value;
+        var periodo = $(".SemestrePeriodo option:selected").val();
+
+		bootbox.confirm({
+			message: "<div class='text-center'>¿Realmente desea Borrar el Grupo del Plantel?</div>",
+			size: 'small',
+			buttons: {
+				confirm: {
+					label: 'Si',
+					className: 'btn-primary'
+				},
+				cancel: {
+					label: 'No',
+					className: 'btn-danger'
+				}
+			},
+			callback: function (result) {
+				if (result == true) {
+					$.ajax({
+						type: "POST",
+						url: "<?php echo base_url("grupos/delete"); ?>",
+						data: {GRClave: GRClave, idPlantel : idPlantel, periodo : periodo},
+						dataType: "html",
+						beforeSend: function(){
+							//carga spinner
+							$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+						},
+						success: function(data){
+							$(".msgGrupos").empty();
+							$(".resultGrupos").empty();
+							$(".resultGrupos").append(data);
+							$(".loadingGrupos").empty();
+						}
+					});
+				}
+			}
+		});
+	});
 });//----->fin
 </script>

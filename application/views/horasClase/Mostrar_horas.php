@@ -158,6 +158,6 @@ $(document).ready(function() {
 
     var Plantel = window.btoa(unescape(encodeURIComponent(PlantelId))).replace("=","").replace("=",""); 
     var search = window.btoa(unescape(encodeURIComponent(periodo))).replace("=","").replace("=",""); 
-    $("#ImpromirHoras").attr("href","<?php echo base_url("HorasClase/imprimirHoras"); ?>/"+Plantel+"/"+search);
+    $("#ImpromirHoras").attr("href","<?php echo base_url("HorasClase/imprimirHoras_skip"); ?>/"+Plantel+"/"+search);
 });//----->fin
 </script>

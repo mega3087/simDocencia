@@ -27,7 +27,7 @@
 				</td>
 				<td><?php echo $list['GRCupo']; ?></td>
 				<td>
-					<?php if( is_permitido(null,'grupos','deleteGrupo') ) {
+					<?php if( is_permitido(null,'grupos','delete') ) {
 					echo nvl($borrar); 
 					} ?>
 					<!--<button type="button" class="btn btn-sm btn-success editarGrupo" data-bb-example-key="custom-dialog-init" title="Editar"><i class='fa fa-pencil'></i></button>-->
@@ -60,7 +60,7 @@
 		    	if (result == true) {
 		    		$.ajax({
 						type: "POST",
-						url: "<?php echo base_url("grupos/deleteGrupo"); ?>",
+						url: "<?php echo base_url("grupos/delete"); ?>",
 						data: {GRClave: GRClave, PlantelId: PlantelId},
 						dataType: "html",
 						beforeSend: function(){

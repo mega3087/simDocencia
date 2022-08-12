@@ -3,6 +3,7 @@
 		<thead>
 			<tr>
 				<th>Tipo Docente</th>
+				<th>Fecha Ingreso</th>
 				<th>Plaza</th>
 				<th>Tipo Materias</th>
 				<th>No. de Oficio</th>
@@ -24,9 +25,10 @@
             if($UDCURP_file = $list['UDCURP_file']) {
 				$UDCURP_file="<a href='".base_url($UDCURP_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver CURP</button></a>";
 			}
-			$borrar = "<button type='button' value=".$this->encrypt->encode($list['UDClave'])." class='btn btn-sm btn-danger quitarEstudios' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
+			$borrar = "<button type='button' value=".$this->encrypt->encode($list['UDClave'])." class='btn btn-sm btn-danger quitarPlaza' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
 				<td><?php echo $list['TPNombre']; ?></td>
+				<td><?php echo $list['UDFecha_ingreso']; ?></td>
 				<td><?php echo $list['nomplaza']; ?></td>
 				<td><?php echo $list['UDTipo_materia']; ?></td>
 				<td><?php echo $list['UDNumOficio']; ?></td>
@@ -47,7 +49,7 @@
 
 <script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
 <script type="text/javascript">
-	$(".quitarEstudios").click(function(e) {
+	$(".quitarPlaza").click(function(e) {
 		UDClave = $(this).val();
 		var idUsuario = document.getElementById("UNCI_usuario").value;
 		var idPlantel = document.getElementById("UPlantel").value;

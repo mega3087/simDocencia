@@ -137,13 +137,20 @@
                                 <fieldset>
                                     <div class="row">
                                         <div class="col-lg-10">
-                                            <div class="form-group">
+                                            <!--<div class="form-group">
                                                 <label>Fecha de Ingreso: <em>*</em></label>
                                                 <input type="text" placeholder="yyyy-mm-dd" class="form-control date" id="UDFecha_ingreso" name="UDFecha_ingreso" value="" minlength="10" maxlength="10">
-                                            </div>
+                                            </div>-->
+                                            <div class="form-group" id="data_2">
+                                                    <label>Fecha de Ingreso: <em>*</em></label>
+                                                    <div class="input-group date">
+                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                        <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?><?php echo fecha_format(nvl($fump['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
+                                                    </div>
+                                                </div>
                                             <div class="form-group">
                                                 <label>Tipo Docente:<em>*</em></label>
-                                                <select name="UDTipo_Docente" id="UDTipo_Docente" class="form-control <?php if (nvl($tipoDoce)) echo 'disabled';?>" placeholder="Seleccionar Tipo Docente" >
+                                                <select name="UDTipo_Docente" id="UDTipo_Docente" class="form-control " placeholder="Seleccionar Tipo Docente" >
                                                     <option value="">- Seleccionar Tipo Docente -</option>
                                                     <?php foreach($tipoDocente as $key_t => $list_t){ ?>
                                                     <option <?php if($tipoDoce == nvl($list_t['TPClave'])) echo"selected"; ?> value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
@@ -160,9 +167,10 @@
                                                     <?php } ?>
                                                 </select>
                                             </div>-->
+
                                             <div class="form-group">
                                                 <label>Plaza:<em>*</em></label>
-                                                <select name="UDPlaza" id="UDPlaza" class="form-control">
+                                                <select name="UDPlaza" id="UDPlaza" class="form-control datosnombramiento">
                                                     <option value="">- Seleccionar Plaza -</option>
                                                     <?php foreach($plazas as $key_p => $list_p){ ?>
                                                     <option value="<?=$list_p['idPlaza'];?>"><?=$list_p['nomplaza'];?></option>
@@ -173,11 +181,11 @@
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <label>Horas Frente Grupo: <em>*</em></label>
-                                                        <input id="UDHorasGrupo" name="UDHorasGrupo" value="" type="text" class="form-control">
+                                                        <input id="UDHorasGrupo" name="UDHorasGrupo" value="" type="text" class="form-control UDHorasGrupo">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label>Horas Apoyo Docencia : <em>*</em></label>
-                                                        <input id="UDHorasApoyo" name="UDHorasApoyo" value="" type="text" class="form-control">
+                                                        <input id="UDHorasApoyo" name="UDHorasApoyo" value="" type="text" class="form-control UDHorasApoyo">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label>Horas Adicionales : <em>*</em></label>
@@ -186,14 +194,10 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label>Tipo de Materias:<em>*</em></label>
+                                                <label>Tipo de Materias: <em>*</em></label>
                                                 <div class="row">
                                                     <div class="col-lg-4">
-                                                        <select name="UDTipo_materia" id="UDTipo_materia" class="form-control">
-                                                            <option value="">- Seleccionar Tipo de Materias -</option>                                                    
-                                                            <option value="Curriculares">Curriculares</option>
-                                                            <option value="Cocurriculares">Cocurriculares</option>                                                    
-                                                        </select>
+                                                        <input type="text" class="form-control disabled" id="UDTipo_materia" name="UDTipo_materia" value="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -289,6 +293,7 @@
 
                                             <div class="form-group col-lg-12">
                                                 <div class="loadingPlazas"></div>
+                                                <div id="errorPlazas"></div>
                                                 <div class="msgPlazas"></div>
                                                 <div class="resultPlazas"></div>
                                             </div>
@@ -481,6 +486,8 @@
             var UDPlaza = document.getElementById("UDPlaza").value;
             var UDTipo_materia = document.getElementById("UDTipo_materia").value;
             var UDNumOficio = document.getElementById("UDNumOficio").value;
+            var UDHorasGrupo = document.getElementById("UDHorasGrupo").value;
+            var UDHorasApoyo = document.getElementById("UDHorasApoyo").value;
             var UDHorasAdicionales = document.getElementById("UDHorasAdicionales").value;
                         
             let formData = new FormData(); 
@@ -492,6 +499,8 @@
             formData.append("UDPlaza", UDPlaza);
             formData.append("UDTipo_materia", UDTipo_materia);
             formData.append("UDNumOficio", UDNumOficio);
+            formData.append("UDHoras_grupo", UDHorasGrupo);
+            formData.append("UDHoras_apoyo", UDHorasApoyo);
             formData.append("UDHorasAdicionales", UDHorasAdicionales);
 
             formData.append("UDPlaza_file", UDPlaza_file.files[0]);
@@ -517,6 +526,8 @@
 						FormRegistrar.UDPlaza.value = "";
 						FormRegistrar.UDTipo_materia.value = "";
 						FormRegistrar.UDNumOficio.value = "";
+                        FormRegistrar.UDHorasGrupo.value = "";
+                        FormRegistrar.UDHorasApoyo.value = "";
                         FormRegistrar.UDHorasAdicionales.value = "";
 
                         FormRegistrar.UDPlaza_file.value = "";
@@ -524,32 +535,15 @@
                         FormRegistrar.UDCurriculum_file.value = "";
                         FormRegistrar.UDCURP_file.value = "";
 	                    $(".loadingPlazas").html("");
-	                }
+	                } else {
+                        $("#errorPlazas").empty();
+                        $("#errorPlazas").append(data);   
+                        $(".loadingPlazas").html(""); 
+                    }
 	            } 
             }); 
             
 		});//----->fin
-
-        function datosPlazas(idUsuario){
-			var idUsuario = idUsuario;
-            var idPlantel = document.getElementById("UPlantel").value;
-			$.ajax({
-	            type: "POST",
-	            url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
-	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
-	            dataType: "html",
-	            beforeSend: function(){
-	                //carga spinner
-	                $(".loadingPlazas").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-	            },
-	            success: function(data){
-	                $(".resultPlazas").empty();
-	                $(".resultPlazas").append(data);  
-	                $(".loadingPlazas").html("");
-	            }
-	        });
-	    }
-
 
         //Guardar Estudios del Docente 
 		$(document).on("click", ".saveEstudios", function () {
@@ -583,7 +577,7 @@
 	                if(data[0]==' OK'){
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[1]);
-	                    datosArchivos( data[2]);
+	                    datosEstudios( data[2]);
 	                    FormRegistrar.ULNivel_estudio.value = "";
 						FormRegistrar.ULLicenciatura.value = "";
 						FormRegistrar.UPDocTitulo_file.value = "";
@@ -592,7 +586,7 @@
 	                } else {
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[0]);  
-	                    datosArchivos( data[1]);
+	                    datosEstudios( data[1]);
 	                    $(".loadingEstudios").html(""); 
 	                }
 	                
@@ -601,33 +595,6 @@
             
 		});//----->fin
 
-        function datosArchivos(idUsuario){
-			var idUsuario = idUsuario;
-            var idPlantel = document.getElementById("UPlantel").value;
-			$.ajax({
-	            type: "POST",
-	            url: "<?php echo base_url("Docente/mostrarEstudios"); ?>",
-	            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
-	            dataType: "html",
-	            beforeSend: function(){
-	                //carga spinner
-	                $(".loadingArchivo").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-	            },
-	            success: function(data){
-	                $(".resultEstudios").empty();
-	                $(".resultEstudios").append(data);  
-	                $(".loadingArchivo").html("");
-	            }
-	        });
-	    }
-
-    });
-</script>
-<script>
-
-</script>
-<script>
-    $(document).ready(function(){
         $("#form").steps({
             bodyTag: "fieldset",
             /* Labels */
@@ -664,7 +631,7 @@
                     if(newIndex == '1'){
 						save(form);
                         var idUsuario = document.getElementById("UNCI_usuario").value;
-                        mostrarPlazas(idUsuario);
+                        datosPlazas(idUsuario);
 					}
 
                     if(newIndex == '2'){
@@ -745,33 +712,34 @@
 			}
 		});
 	}
+	
 
-    function mostrarPlazas(idUsuario){
-        var idUsuario = idUsuario;
-        var idPlantel = document.getElementById("UPlantel").value;
-        $.ajax({
-            type: "POST",
-            url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
-            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
-            dataType: "html",
-            beforeSend: function(){
-                //carga spinner
-                $(".loadingPlazas").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-            },
-            success: function(data){
-                $(".resultPlazas").empty();
-                $(".resultPlazas").append(data);  
-                $(".loadingPlazas").html("");
-            }
-        });
-    }
+	function datosPlazas(idUsuario){
+		var idUsuario = idUsuario;
+		var idPlantel = document.getElementById("UPlantel").value;
+		$.ajax({
+			type: "POST",
+			url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
+			data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
+			dataType: "html",
+			beforeSend: function(){
+				//carga spinner
+				$(".loadingPlazas").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+			},
+			success: function(data){
+				$(".resultPlazas").empty();
+				$(".resultPlazas").append(data);  
+				$(".loadingPlazas").html("");
+			}
+		});
+	}
 
     function datosEstudios(idUsuario){
         var idUsuario = idUsuario;
         var idPlantel = document.getElementById("UPlantel").value;
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("Docente/mostrarEstudios"); ?>",
+            url: "<?php echo base_url("docente/mostrarEstudios"); ?>",
             data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
             dataType: "html",
             beforeSend: function(){
@@ -785,7 +753,47 @@
             }
         });
     }
-    
+
+    $(document).on("change", ".datosnombramiento", function (event) {
+        var idPlaza = $("#UDPlaza option:selected").val();
+
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("docente/datosnombramiento_skip"); ?>",
+            data: {idPlaza: idPlaza},
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data) {
+                var data = data.split("::");
+                $("#UDHorasGrupo").val(data[1]);
+                if(data[1] != ''){
+                    $(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+                } else {
+                    $(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
+                }
+                $("#UDHorasApoyo").val(data[2]);
+                if(data[2] != ''){
+                    $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+                } else {
+                    $(".UDHorasApoyo").removeClass("disabled").attr("disabled", false);
+                }
+                $("#UDTipo_materia").val(data[3]);
+
+            }
+        });
+    });
+
+    $('#data_2 .input-group.date').datepicker({
+        startView: 1,
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true,
+        format: "yyyy-mm-dd"
+    });
 });
 </script>
 <style>

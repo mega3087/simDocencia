@@ -121,7 +121,7 @@ $(document).ready(function() {
 				if (result == true) {
 					$.ajax({
 						type: "POST",
-						url: "<?php echo base_url("Docente/quitarDocente"); ?>",
+						url: "<?php echo base_url("Docente/delete"); ?>",
 						data: {UNCI_usuario_skip: UNCI_usuario_skip, PlantelId: PlantelId},
 						dataType: "html",
 						beforeSend: function(){

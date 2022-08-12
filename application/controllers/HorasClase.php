@@ -11,41 +11,7 @@ class HorasClase extends CI_Controller {
             redirect('usuario/negar_acceso');
     }
 
-    public function index() {
-        $data = array();
-
-        if(!is_permitido(null,'docente','ver_planteles')){
-            $this->db->where('CPLClave',get_session('UPlantel'));
-        }
-        
-        if(is_permitido(null,'horasClase','ver_horarios') ) {
-				
-        } else if( is_permitido(null,'horasClase','ver_horarios_plantel')) {
-            $this->db->join('nousuario', 'UPlantel = CPLClave', 'left');
-            $this->db->where('UNCI_usuario',get_session('UNCI_usuario'));
-        }
-
-        $this->db->where('CPLTipo!= 37');
-        $data["planteles"] = $this->plantel_model->find_all();
-
-        foreach ($data['planteles'] as $plantel => $listPlan) {
-            $select = 'CPLClave, PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
-            $this->db->join('noplancap', 'CPLClave = PCPlantel','left');
-            $this->db->join('noccapacitacion', 'PCCapacitacion = CCAClave','left');
-            $this->db->where('CPLClave', $listPlan['CPLClave']);
-            $data['planteles'][$plantel]['modulos'] = $this->plantel_model->find_all(null,$select);
-            
-        }
-
-        $this->db->where('CPEStatus','1');
-        $data['periodos'] = $this->periodos_model->find_all();
-        
-        $data['modulo'] = $this->router->fetch_class();
-        $data['subvista'] = 'horasClase/Mostrar_view';
-        $this->load->view('plantilla_general', $data);
-    }
-
-    public function listaHoras () {
+    public function listaHoras_skip () {
         $data = array();
         $idPlantel = $this->input->post('idPlantel');
         $Periodo = $this->input->post('periodo');
@@ -86,7 +52,7 @@ class HorasClase extends CI_Controller {
         $this->load->view('horasClase/Mostrar_horas', $data);
     }
 
-   public function imprimirHoras( $idPlantel = null, $periodo = null) {
+   public function imprimirHoras_skip( $idPlantel = null, $periodo = null) {
         $idPlantel = base64_decode($idPlantel);
         $Periodo = base64_decode($periodo);
         //$idPlantel = $this->encrypt->decode($idPlantel);
@@ -133,7 +99,7 @@ class HorasClase extends CI_Controller {
         $this->dpdf->stream("HorasClase.pdf",array("Attachment"=>false));
     }
 
-    public function verReporte() {
+    public function verReporte_skip() {
         $data = array();
         $GRPeriodo = $this->input->post('periodo');
         $idPlantel = $this->input->post('idPlantel');
@@ -183,8 +149,6 @@ class HorasClase extends CI_Controller {
 
             }
         }
-        //echo json_encode($data['datos']);
-        //exit;
 
         $selectCap = 'GRCPlantel, CCAClave, CCANombre, CCAAbrev';
         $this->db->join('noplancap','GRCPlantel = PCPlantel');
@@ -197,7 +161,7 @@ class HorasClase extends CI_Controller {
         $this->load->view('horasClase/Mostrar_reporte', $data);
     }
 
-    public function imprimirReporte($idPlantel = null, $periodo = null) {
+    public function imprimirReporte_skip($idPlantel = null, $periodo = null) {
         $idPlantel = base64_decode($idPlantel);
         $GRPeriodo = base64_decode($periodo);
         //$idPlantel = $this->encrypt->decode($idPlantel);

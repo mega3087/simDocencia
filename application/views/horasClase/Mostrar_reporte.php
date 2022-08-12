@@ -92,6 +92,6 @@ $(document).ready(function() {
 
     var Plantel = window.btoa(unescape(encodeURIComponent(PlantelId))).replace("=","").replace("=",""); 
     var search = window.btoa(unescape(encodeURIComponent(periodo))).replace("=","").replace("=",""); 
-    $("#ImprimirRep").attr("href","<?php echo base_url("HorasClase/imprimirReporte"); ?>/"+Plantel+"/"+search);
+    $("#ImprimirRep").attr("href","<?php echo base_url("HorasClase/imprimirReporte_skip"); ?>/"+Plantel+"/"+search);
 });//----->fin
 </script>

@@ -35,20 +35,35 @@ class Profesiograma extends CI_Controller {
         $this->db->order_by('semmat','ASC');
         $data['materias'] = $this->materias_model->find_all(null, $selectMat); 
         
-        foreach ($data['materias'] as $m => $mat) {
-            
+        foreach ($data['materias'] as $m => $mat) {            
             $selectLic = '*';
             $this->db->where("FIND_IN_SET('".$mat["id_materia"]."',LIdmateria) != ''");
             $data['materias'][$m]['lics'] = $this->licenciaturas_model->find_all(null, $selectLic);
-            
         }
+
+        /*$selectLic = '*';
+        $this->db->where("LIdmateria != ''");
+        $data['lics'] = $this->licenciaturas_model->find_all(null, $selectLic);
+        foreach ($data['lics'] as $l => $lics) {   
+            for ($i=0; $i <= count($lics['LIdmateria']); $i++) { 
+                $idMat = explode(',',$lics['LIdmateria']);
+                
+                $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
+                $this->db->where('id_materia',$idMat[$i]);
+                $this->db->where('activo','1');
+                $this->db->order_by('semmat','ASC');
+                $data['lics'][$l]['materias'][$i] = $this->materias_model->find_all(null, $selectMat);
+            }
+
+        }*/
+
         $data['modulo'] = $this->router->fetch_class();
         $data['subvista'] = 'profesiograma/Mostrar_view';
 
         $this->load->view('plantilla_general', $data);        
     }
 
-    public function mostrarBusqueda() {
+    public function mostrarBusqueda_skip() {
         $data = array();
         $plantel = $_POST['plantel'];
         $sem = $_POST['sem'];
@@ -82,7 +97,7 @@ class Profesiograma extends CI_Controller {
         $this->load->view('profesiograma/Mostrar_Materias', $data);      
     }
 
-    public function mostrarMat () {
+    public function mostrarMat_skip () {
         $sem = $this->input->post('sem');
         $plantel = $_POST['plantel'];
 
@@ -112,8 +127,10 @@ class Profesiograma extends CI_Controller {
     }
 
     //Agregar Profesión Nueva
-    public function mostrarMaterias () {
+    public function mostrarMaterias_skip () {
         $GPSemestre =  $this->input->post('sem');
+        $planEstudio = $this->input->post('planEstudio');
+        
         $data['materias'] = array();
         
         $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
@@ -128,63 +145,83 @@ class Profesiograma extends CI_Controller {
         $this->db->where('semmat',$GPSemestre);
         }            
         $this->db->where('activo','1');
+        $this->db->where('plan_estudio',$planEstudio);
         $this->db->order_by('semmat','ASC');
         $data['materias'] = $this->materias_model->find_all(null, $selectMat); 
-
         ?>
-        <select name="PMateria" id="Materia" class="resultMaterias form-control">
-            <option value="">- Seleccionar Materia -</option>
+        <label class="col-lg-3 control-label" for="">Materia: <em>*</em></label>
+            <div class="col-lg-9">    
             <?php foreach ($data['materias']  as $k => $listMat) { ?>
-                <option value="<?= $listMat['id_materia']; ?>"><?= $listMat['materia']; ?></option>
+                <div class="col-md-4">
+		            <label><?=$listMat['materia'].' '.$listMat['modulo']; ?> &nbsp;&nbsp;</label><input type="checkbox" name="UIdMateria[]" id="UIdMateria<?= $listMat['id_materia']; ?>" value="<?= $listMat['id_materia']; ?>">
+                </div>
             <?php } ?>
-        </select>                       
+            </div>
         <?php
     }
 
-    public function guardarProfesion() {
-        $data = array();    $datos = array();   $materias = array();   $profesiones = array();
-            
+    function save() {
+        $data = array();    $datos = array(); 
+
         $data= post_to_array('_skip');
 
-        if ($data['PMateria'] != '') {
-            $selectMat = 'materia';
-            $this->db->where('id_materia', $data['PMateria']);
-            $PMateria = $this->materias_model->find_all(null, $selectMat);
-        }
         
-
-        $datos['PMateria'] = $PMateria[0]['materia'];
-        $datos['Licenciatura'] = $data['Licenciatura'];
-        $datos['PTipo'] = $data['PLTipo'];
-        $datos['LIdentificador'] = $data['PMateria'];
-        $datos['PActivo'] = '1';
         
-        if ($data['PLTipo'] == '' || $data['Licenciatura'] == ''|| $data['GPSemestre'] == '' || $data['PMateria'] == '' ) {
+        if ($data['UGradoEstudio'] == '' || $data['ULicenciatura_'] == ''|| $data['UPlanEstudio'] == '' || $data['SemestreMat'] == '' || $data['UIdMateria'] == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
-            $id = $this->licenciaturas_model->insert($datos);
-
-            $selectMat = '*';
-            $this->db->where('idMateria', $data['PMateria']);
-            $materias = $this->profesionmateria_model->find_all(null, $selectMat);
-
-            foreach ($materias as $x => $mat) {
-                if ($mat['idProfesion'] == '') {
-                    $profesiones['idProfesion'] =  $id;
-                    $profesiones['mat_identificador'] =  $data['PMateria'];
-                    $this->profesionmateria_model->update($mat['idProMat'],$profesiones);
-                } else {
-                    $profesiones['idProfesion'] =  $materias[0]['idProfesion'].','.$id;
-                    $profesiones['mat_identificador'] =  $data['PMateria'];
-                    $this->profesionmateria_model->update($mat['idProMat'],$profesiones);
-                }
+            $datos['Licenciatura'] = $data['ULicenciatura_'];
+            $datos['LGradoEstudio'] = $data['UGradoEstudio'];
+            if ($data['UGradoEstudio'] == 'Licenciatura') {
+                $datos['LIdentificador'] = '1';
+            } elseif ($data['UGradoEstudio'] == 'Ingeniería') {
+                $datos['LIdentificador'] = '2';
+            } elseif ($data['UGradoEstudio'] == 'Certificaciones') {
+                $datos['LIdentificador'] = '3';
+            } elseif ($data['UGradoEstudio'] == 'Posgrado') {
+                $datos['LIdentificador'] = '4';
+            } elseif ($data['UGradoEstudio'] == 'Perfil') {
+                $datos['LIdentificador'] = '5';
             }
+            $datos['LIdmateria'] = implode(',', $data['UIdMateria']);
+
+            $this->licenciaturas_model->insert($datos);
+
             set_mensaje("Los datos se guardaron correctamente",'success::');
-            echo "OK;";
+            echo "OK::";
             muestra_mensaje();
         }
-        echo ";".$data['PMateria'];
+    }
+
+    public function update() {
+        $data = array();    $datos = array();
+        $data= post_to_array('_skip'); 
+        
+        if ($data['UGradoEstudio'] == '' || $data['ULicenciatura_'] == '') {
+            set_mensaje("Favor de ingresar todos los datos requeridos.");
+            muestra_mensaje();
+        } else {
+            $datos['LGradoEstudio'] = $data['UGradoEstudio'];
+            if ($data['UGradoEstudio'] == 'Licenciatura') {
+                $datos['LIdentificador'] = '1';
+            } elseif ($data['UGradoEstudio'] == 'Ingeniería') {
+                $datos['LIdentificador'] = '2';
+            } elseif ($data['UGradoEstudio'] == 'Certificaciones') {
+                $datos['LIdentificador'] = '3';
+            } elseif ($data['UGradoEstudio'] == 'Posgrado') {
+                $datos['LIdentificador'] = '4';
+            } elseif ($data['UGradoEstudio'] == 'Perfil') {
+                $datos['LIdentificador'] = '5';
+            }
+            $datos['Licenciatura'] = $data['ULicenciatura_'];      
+
+            $this->licenciaturas_model->update($data['IIdLicenciatura'],$datos);
+
+            set_mensaje("Los datos se guardaron correctamente",'success::');
+            echo "OK::";
+            muestra_mensaje();
+        }
     }
 }
 ?>
