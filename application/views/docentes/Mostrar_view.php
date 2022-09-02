@@ -33,9 +33,6 @@
 							<?php 
 							foreach ($planteles as $key => $list) {
 								$CPLClave_skip = $this->encrypt->encode($list['CPLClave']);
-								$base = $this->encrypt->encode('1');
-								$idoneo = $this->encrypt->encode('2');
-								$externo = $this->encrypt->encode('3');
 							?>
 								<tr>
 									<td class="text-left"><?php echo $list['CPLClave']; ?></td> 
@@ -43,14 +40,8 @@
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCorreo_electronico']; ?></td>
 									<td>
-									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $base?>">
-										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Base</button>
-									</a>
-									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $idoneo?>">
-										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Idoneos</button>
-									</a>
-									<a href="<?= base_url()?>Docente/ver_planteles/<?=$CPLClave_skip?>/<?= $externo?>">
-										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes Externos</button>
+									<a href="<?= base_url()?>Docente/ver_docentes/<?=$CPLClave_skip?>">
+										<button class="btn btn-default btn-sm"><i class="fa fa-eye"></i> Ver Docentes</button>
 									</a>
 									</td>
 								</tr>

@@ -1,13 +1,8 @@
 
 <?php $Horas1_2 = 31; $Horas3_4 = 35;   $Horas5 = 30;   $Horas6 = 34;  $totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0; ?>
-<table width="100%" class="no-border-left no-border-right no-border-top">
-    <tr>
-        <th><h2 class="text-left">PLANTEL Y/O CEMSAD: <?= $plantel[0]['CPLNombre']; ?></h2></th>
-    </tr><br>
-</table>
 <h2 class="text-center" style="color: #333;">NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
 <div class="row" >
-    <table style="width:100%; font-size: 13px;">
+    <table style="width:100%; font-size: 11px;">
         <tr>
             <th class="text-center" style="background: #B9B9B9;" height="35px">SEMESTRE</th>
             <th colspan="2" class="text-center" style="background: #B9B9B9; " height="35px">No DE HORAS EN MAPA CURRICULAR</th>
@@ -26,7 +21,7 @@
             <tr>
                 <th><?= $list['GRSemestre']; ?> ° SEMESTRE</th>
                 <td>
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                         <?php foreach ($GRPeriodo as $key => $listCap): ?>
                             <tr><td><?= $listCap['CCANombre']; ?></td></tr>
                         <?php endforeach; ?>                            
@@ -36,7 +31,7 @@
                 <th class="text-center"><?= $Horas3_4; ?></th>
 
                 <td>
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($a=0; $a < count($list['grupos']); $a++) { ?>
                         <?php for ($y=0; $y < count($list['grupos'][$a]); $y++) { ?>
                         <tr><td class="text-center"><?= $list['grupos'][$a][$y]['noGrup']; ?></td></tr>
@@ -46,7 +41,7 @@
                 </td>
 
                 <td colspan="2">
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
                         <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas3_4; ?></td></tr>
@@ -65,7 +60,7 @@
             <tr>
                 <th><?= $list['GRSemestre']; ?> ° SEMESTRE</th>
                 <td>
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                         <?php foreach ($GRPeriodo as $key => $listCap): ?>
                             <tr><td><?= $listCap['CCANombre']; ?></td></tr>
                         <?php endforeach; ?>                            
@@ -74,7 +69,7 @@
                 <th class="text-center"><?= $Horas5; ?></th>
 
                 <td>
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($a=0; $a < count($list['grupos']); $a++) { ?>
                         <?php for ($y=0; $y < count($list['grupos'][$a]); $y++) { ?>
                         <tr><td class="text-center"><?= $list['grupos'][$a][$y]['noGrup']; ?></td></tr>
@@ -84,7 +79,7 @@
                 </td>
 
                 <td colspan="2">
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
                         <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas5; ?></td></tr>
@@ -103,7 +98,7 @@
             <tr>
                 <th><?= $list['GRSemestre']; ?> ° SEMESTRE</th>
                 <td>
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                         <?php foreach ($GRPeriodo as $key => $listCap): ?>
                             <tr><td><?= $listCap['CCANombre']; ?></td></tr>
                         <?php endforeach; ?>                            
@@ -112,7 +107,7 @@
                 <th class="text-center"><?= $Horas6; ?></th>
 
                 <td>
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($a=0; $a < count($list['grupos']); $a++) { ?>
                         <?php for ($y=0; $y < count($list['grupos'][$a]); $y++) { ?>
                         <tr><td class="text-center"><?= $list['grupos'][$a][$y]['noGrup']; ?></td></tr>
@@ -122,7 +117,7 @@
                 </td>
 
                 <td colspan="2">
-                    <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
+                    <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
                         <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas6; ?></td></tr>
@@ -145,6 +140,32 @@
             <th colspan="2" class="text-center" style="background: #B9B9B9; " height="30px"><?= $totalPri + $totalTer + $totalQui + $totalSex ?></th>
         </tr>       
     </table>
+<br><br><br><br>
+    <table width="100%" class="no-border">
+        <tr>
+            <td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
+                <br><br>
+                _____________________________________________________ <br />
+                <p><?= $Director[0]['CPLDirector']; ?></p>
+                <b>NOMBRE Y FIRMA DIRECTOR DE PLANTEL</b>
+            </td>
+            
+            <td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
+                <br><br>                
+                _________________________ <br />
+                <p><?= date("d").'-'.ver_mes(date("m")).'-'.date("Y");?></p>
+                <b>Fecha</b>
+            </td>
+            <td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
+                <br><br>
+                ____________________________________________ <br />
+                <p>&nbsp;</p>
+                <p><b>SELLO DEL PLANTEL</b></p>
+                
+            </td>
+        </tr>
+    </table>
+
 </div>
 <style type="text/css">
     table, th, td {

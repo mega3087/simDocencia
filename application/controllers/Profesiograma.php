@@ -16,12 +16,10 @@ class Profesiograma extends CI_Controller {
         $data['idMat'] = '';//$_POST['materia'];
         $data['CPLTipo'] = get_session('CPLTipo');
         
+        $selectGrado = 'id_gradoestudios, grado_estudios';
+        $this->db->where('activo','1');
+        $data['GradoEstudio'] = $this->gradoestudios_model->find_all(null, $selectGrado);;
         
-        $selectGrado = 'LGradoEstudio';
-        $this->db->group_by('LGradoEstudio');
-        $this->db->order_by('LIdentificador','ASC');
-        $data['GradoEstudio'] = $this->licenciaturas_model->find_all(null, $selectGrado);;
-
         $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
         if (get_session('CPLTipo') == '35') {
             $CPLTipo = '1';
@@ -37,7 +35,8 @@ class Profesiograma extends CI_Controller {
         
         foreach ($data['materias'] as $m => $mat) {            
             $selectLic = '*';
-            $this->db->where("FIND_IN_SET('".$mat["id_materia"]."',LIdmateria) != ''");
+            $this->db->join('nogradoestudios','id_gradoestudios = LIdentificador');
+            $this->db->where("FIND_IN_SET('".$mat["id_materia"]."',LIdmateria)!=''");
             $data['materias'][$m]['lics'] = $this->licenciaturas_model->find_all(null, $selectLic);
         }
 
@@ -56,7 +55,6 @@ class Profesiograma extends CI_Controller {
             }
 
         }*/
-
         $data['modulo'] = $this->router->fetch_class();
         $data['subvista'] = 'profesiograma/Mostrar_view';
 
@@ -149,14 +147,28 @@ class Profesiograma extends CI_Controller {
         $this->db->order_by('semmat','ASC');
         $data['materias'] = $this->materias_model->find_all(null, $selectMat); 
         ?>
-        <label class="col-lg-3 control-label" for="">Materia: <em>*</em></label>
+        <label class="col-lg-3 control-label" for="">Plantel:<em>*</em></label>
+        <div class="col-lg-9" id="UIdMaterias">
+            <select name="UIdMateria[]" id="UIdMateria" class="form-control chosen-select" data-placeholder="Seleccionar Materia" multiple="" >
+                <?php foreach($data['materias'] as $key_p => $listMat){ ?>
+                <option value="<?=$listMat['id_materia']?>"><?=$listMat['materia'].' '.$listMat['modulo']; ?></option>
+                <?php } ?>
+            </select>
+        </div>
+        
+        <script type="text/javascript">
+	    $(document).ready(function() {
+            $('.chosen-select').chosen();            
+        });
+        </script>
+        <!--<label class="col-lg-3 control-label" for="">Materia: <em>*</em></label>
             <div class="col-lg-9">    
             <?php foreach ($data['materias']  as $k => $listMat) { ?>
                 <div class="col-md-4">
 		            <label><?=$listMat['materia'].' '.$listMat['modulo']; ?> &nbsp;&nbsp;</label><input type="checkbox" name="UIdMateria[]" id="UIdMateria<?= $listMat['id_materia']; ?>" value="<?= $listMat['id_materia']; ?>">
                 </div>
             <?php } ?>
-            </div>
+            </div>-->
         <?php
     }
 
@@ -165,25 +177,24 @@ class Profesiograma extends CI_Controller {
 
         $data= post_to_array('_skip');
 
-        
-        
         if ($data['UGradoEstudio'] == '' || $data['ULicenciatura_'] == ''|| $data['UPlanEstudio'] == '' || $data['SemestreMat'] == '' || $data['UIdMateria'] == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
             $datos['Licenciatura'] = $data['ULicenciatura_'];
-            $datos['LGradoEstudio'] = $data['UGradoEstudio'];
-            if ($data['UGradoEstudio'] == 'Licenciatura') {
-                $datos['LIdentificador'] = '1';
-            } elseif ($data['UGradoEstudio'] == 'Ingeniería') {
-                $datos['LIdentificador'] = '2';
-            } elseif ($data['UGradoEstudio'] == 'Certificaciones') {
-                $datos['LIdentificador'] = '3';
-            } elseif ($data['UGradoEstudio'] == 'Posgrado') {
-                $datos['LIdentificador'] = '4';
-            } elseif ($data['UGradoEstudio'] == 'Perfil') {
-                $datos['LIdentificador'] = '5';
+                        
+            if ($data['UGradoEstudio'] == '1') {
+                $datos['LGradoEstudio'] = 'Licenciatura';
+            } elseif ($data['UGradoEstudio'] == '2') {
+                $datos['LGradoEstudio'] = 'Ingeniería';
+            } elseif ($data['UGradoEstudio'] == '3') {
+                $datos['LGradoEstudio'] = 'Certificaciones';
+            } elseif ($data['UGradoEstudio'] == '4') {
+                $datos['LGradoEstudio'] = 'Posgrado';
+            } elseif ($data['UGradoEstudio'] == '5') {
+                $datos['LGradoEstudio'] = 'Perfil';
             }
+            $datos['LIdentificador'] = $data['UGradoEstudio'];
             $datos['LIdmateria'] = implode(',', $data['UIdMateria']);
 
             $this->licenciaturas_model->insert($datos);
@@ -202,18 +213,19 @@ class Profesiograma extends CI_Controller {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
-            $datos['LGradoEstudio'] = $data['UGradoEstudio'];
-            if ($data['UGradoEstudio'] == 'Licenciatura') {
-                $datos['LIdentificador'] = '1';
-            } elseif ($data['UGradoEstudio'] == 'Ingeniería') {
-                $datos['LIdentificador'] = '2';
-            } elseif ($data['UGradoEstudio'] == 'Certificaciones') {
-                $datos['LIdentificador'] = '3';
-            } elseif ($data['UGradoEstudio'] == 'Posgrado') {
-                $datos['LIdentificador'] = '4';
-            } elseif ($data['UGradoEstudio'] == 'Perfil') {
-                $datos['LIdentificador'] = '5';
+            
+            if ($data['UGradoEstudio'] == '1') {
+                $datos['LGradoEstudio'] = 'Licenciatura';
+            } elseif ($data['UGradoEstudio'] == '2') {
+                $datos['LGradoEstudio'] = 'Ingeniería';
+            } elseif ($data['UGradoEstudio'] == '3') {
+                $datos['LGradoEstudio'] = 'Certificaciones';
+            } elseif ($data['UGradoEstudio'] == '4') {
+                $datos['LGradoEstudio'] = 'Posgrado';
+            } elseif ($data['UGradoEstudio'] == '5') {
+                $datos['LGradoEstudio'] = 'Perfil';
             }
+            $datos['LIdentificador'] = $data['UGradoEstudio'];
             $datos['Licenciatura'] = $data['ULicenciatura_'];      
 
             $this->licenciaturas_model->update($data['IIdLicenciatura'],$datos);

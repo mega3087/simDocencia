@@ -6,7 +6,9 @@ if($plantel[0]['CPLTipo'] == '35') {
     $Horas1_2 = 26; $Horas3_4 = 30;   $Horas5 = 25;   $Horas6 = 29;
 }  ?>
 <br>
-<h2>NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
+<h2 class="text-center">NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
+<h3 class="text-center">SEMESTRE 20<?=substr($periodos,0,2)?>-<?=substr($periodos,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?></h3>
+<br>
 <div class="table responsive">
 	<table class="table table-striped table-bordered table-hover dataTable">
         <tr>

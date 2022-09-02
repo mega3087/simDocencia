@@ -99,7 +99,7 @@
 												data-target="#modal_Editar"
 												data-uidmateria="<?php echo $mat['id_materia']; ?>"
 												data-umaterias="<?php echo $mat['materia']; ?>"
-												data-gestudio="<?php echo $prof['LGradoEstudio']; ?>"
+												data-gestudio="<?php echo $prof['id_gradoestudios']; ?>"
 												data-pestudio="<?php echo $mat['plan_estudio']; ?>"
 												data-uidlicenciatura="<?php echo $prof['IdLicenciatura']; ?>"
 												data-ulicenciatura="<?php echo $prof['Licenciatura']; ?>"
@@ -132,7 +132,7 @@
 										<select name="UGradoEstudio" id="UGradoEstudio" class="form-control">
 											<option value="">- Grado Estudio -</option>
 											<?php foreach ($GradoEstudio as $g => $listG) { ?>
-												<option value="<?= $listG['LGradoEstudio']?>"><?= $listG['LGradoEstudio']?></option>	
+												<option value="<?= $listG['id_gradoestudios']?>"><?= $listG['grado_estudios']?></option>	
 											<?php } ?>s
 										</select>
 									</div>
@@ -206,7 +206,7 @@
 										<select name="UGradoEstudio" id="UGradoEstudio" class="form-control">
 											<option value="">- Grado Estudio -</option>
 											<?php foreach ($GradoEstudio as $g => $listG) { ?>
-												<option value="<?= $listG['LGradoEstudio']?>"><?= $listG['LGradoEstudio']?></option>	
+												<option value="<?= $listG['id_gradoestudios']?>"><?= $listG['grado_estudios']?></option>	
 											<?php } ?>s
 										</select>
 									</div>
@@ -322,7 +322,6 @@
 			
 		});
 
-
 	    /*Borrar docente del Plantel o Centro
 		$(".quitarDocente").click(function(e) {
 			var UNCI_usuario_skip = $(this).val();
@@ -377,6 +376,7 @@
 	});
 </script>
 <script type="text/javascript">
+
 $("#semmat").on("change", function(){
 	var sem = document.getElementById("semmat").value;
 	var plantel = document.getElementById("plantel").value;
@@ -462,7 +462,8 @@ $(".guardarLic").click(function() {
 					location.reload();
                 } else {
                     $("#errorSave").empty();
-                    $("#errorSave").append(data);   
+                    $("#errorSave").append(data);  
+					$('#FormsaveLic')[0].reset(); 
                     $(".loadingSave").html(""); 
                 }
                 
@@ -492,6 +493,7 @@ $(".guardarLic").click(function() {
                 } else {
 					$("#errorUpdate").empty();
                     $("#errorUpdate").append(data);   
+					$('#FormsaveLic')[0].reset();
                     $(".loadingUpdate").html(""); 
                 }
                 

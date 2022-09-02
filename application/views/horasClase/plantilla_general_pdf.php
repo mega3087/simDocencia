@@ -8,15 +8,13 @@
 			
 			<table width='100%' class="no-border">
 				<tr class="no-border">
-					<td width='20%' align='left' class="no-border">
+					<td width='20%' text-align='left' class="no-border">
 						<img src="assets/img/logo_edomex.png" width='100px' />
 					</td>
-					<td class='text-center no-border' style="font-size: 13px;">
-						<?php if(nvl($titulo)){  
-							echo $titulo;
-						} ?>
+					<td class='text-center no-border' style="font-size: 12px;">
+						<?php echo nvl($titulo);  ?>
 					</td>
-					<td width='20%' align='right' class="no-border">
+					<td width='20%' text-align='right' class="no-border">
 						<img src="assets/img/logo_cobaemex.png" width='150px' />
 					</td>
 				</tr>
@@ -29,7 +27,7 @@
 	</body>
 	<style>
 		@page { 
-			margin: 130px 50px 80px 40px; 
+			margin: 130px 20px 20px 20px; 
 			font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 9px;
 			color: #676a6c;

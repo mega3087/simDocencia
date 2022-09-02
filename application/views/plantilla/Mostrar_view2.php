@@ -43,7 +43,7 @@
 									<td class="text-left"><a href='<?=$urlCrear?>' target='_blank'>Crear Plantilla</a></td>							
 									<td>
 										<?php if( is_permitido(null,'GenerarPlantilla','verPlantilla') ){ ?>
-											<a href="<?php echo base_url("GenerarPlantilla/delete/$PClave_skip"); ?>" class="btn btn-default btn-sm delete"><i class="fa fa-times"></i> Ver Plantilla</a>
+											<a href="<?php echo base_url("GenerarPlantilla/ver/$PClave_skip"); ?>" class="btn btn-default btn-sm eye"><i class="fa fa-times"></i> Ver Plantilla</a>
 										<?php } ?>
 									</td>
 								</tr>

@@ -12,6 +12,10 @@ class Grupos extends CI_Controller {
     }
 
     public function index() {
+        if(is_permitido(null,'grupos','ver_grupos') && get_session('URol') == '6') {
+            redirect('grupos/ver_grupos');
+        }
+
         $data = array();
         
         $this->db->where('CPLTipo',35);
@@ -25,7 +29,6 @@ class Grupos extends CI_Controller {
         $this->db->order_by('CPEPeriodo','DESC');
         $this->db->limit('10');
         $data['periodos'] = $this->periodos_model->find_all();
-
 
         foreach ($data['planteles'] as $key => $listP) {
             $select = 'PCPlantel, PCCapacitacion, CCAClave, CCANombre, CCAAbrev';
@@ -42,13 +45,28 @@ class Grupos extends CI_Controller {
         $this->load->view('plantilla_general', $data);
     }
 
+    public function ver_grupos (){
+        $data["idPlantel"] = get_session('UPlantel');
+
+        $this->db->where('CPEStatus','1');
+        $this->db->order_by('CPEPeriodo','DESC');
+        $this->db->limit('1');
+        $data['periodos'] = $this->periodos_model->find_all();
+
+        $data['modulo'] = $this->router->fetch_class();
+        $data['subvista'] = 'grupos/Mostrar_grupos_plantel';
+
+        $this->load->view('plantilla_general', $data);
+    }
+
+
     public function listaGruposRep_skip() {
         if ( is_permitido(null,'grupos','listaGruposRep_skip') )
         $data = array();
         $GRCPlantel = $this->input->post('idPlantel');
         $GRPeriodo = $this->input->post('periodo');
         
-        
+        $data['periodo'] = $GRPeriodo;
         $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
         $this->db->where('GRCPlantel', $GRCPlantel);
         $this->db->where('GRPeriodo', $GRPeriodo);
@@ -296,14 +314,14 @@ class Grupos extends CI_Controller {
             
             //Grupos Vespertino
             if ($data['NoGruposVes3'] != '0') { 
-                
+
+                $this->db->where('GRCPlantel',$data['GRCPlantel']);
                 $this->db->where('GRPeriodo',$data['CPEPeriodo']);
                 $this->db->where('GRTurno',2);
                 $this->db->where('GRSemestre',$data['CPESemestre3']);
                 $this->db->where('GRStatus',1);
                 $contarv = $this->grupos_model->find_all();
-
-                for ($v = 1; $v <= $data['NoGruposVes3']; $v++) {
+                    for ($v = 1; $v <= $data['NoGruposVes3']; $v++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
                         $datos['GRPMat'] = '7';
@@ -325,7 +343,7 @@ class Grupos extends CI_Controller {
                         } else {
                             $datos['GRGrupo'] = $data['CPESemestre3'].'0'.$v; 
                         }
-                    }           
+                    }
                     $datos['GRTurno'] = '2';
                     $datos['GRStatus'] = "1";
                     $datos['GRFechaRegistro'] = date('Y-m-d H:i:s');
@@ -433,11 +451,14 @@ class Grupos extends CI_Controller {
 
     public function saveCapAlumnos() {
         $data= post_to_array('_skip');
+        
         foreach($data as $k  => $val){
             $datos = array( 
                 'GRCClave' => $val[0],
                 'GRCupo' => $val[1],
+                'GRUsuarioModificacion' => get_session('UNCI_usuario')
             );
+
             $this->grupos_model->update($k,$datos);
         }
         
@@ -449,8 +470,7 @@ class Grupos extends CI_Controller {
     public function ImprimirGrupos_skip($idPlantel = null, $periodo = null) {
         $idPlantel = base64_decode($idPlantel);
         $GRPeriodo = base64_decode($periodo);
-        //$GRCPlantel = $this->encrypt->decode($idPlantel);
-        
+    
         $selectNom = "CPLClave, CPLNombre";
         $this->db->where('CPLClave', $idPlantel);
         $data['plantel'] = $this->plantel_model->find_all(null, $selectNom);
@@ -477,9 +497,13 @@ class Grupos extends CI_Controller {
             $data['total'][$key]['grupos'] = $this->grupos_model->find_all(null, $select);
         }
 
+        $this->db->where('CPLClave', $idPlantel);
+        $data['Director'] = $this->plantel_model->find_all();
+        $ciclo = "SEMESTRE 20".substr($GRPeriodo,0,2)."-";
+        $anio = substr($GRPeriodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)';
         $this->load->library('Dpdf');
         $data['subvista'] = 'grupos/Ver_pdf_view';
-        $data['titulo'] = "<p style='font-size:10px;'><br>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA</p>";
+        $data['titulo'] = "<p style='font-size:11px;'>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br> <b>PLANTEL Y/O CEMSAD: ". $data['Director'][0]['CPLNombre']."</b><br>".$ciclo.$anio."</p>";
 
         $this->dpdf->load_view('grupos/plantilla_general_pdf',$data);
         $this->dpdf->setPaper('letter', 'portrait');

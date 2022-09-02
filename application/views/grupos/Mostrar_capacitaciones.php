@@ -1,6 +1,5 @@
-<br><h2 class="text-center">
-    <?php echo "FORMATO DE NÚMERO DE GRUPOS"; ?>
-</h2>
+<br><h2 class="text-center">FORMATO DE NÚMERO DE GRUPOS</h2>
+<h3 class="text-center">SEMESTRE 20<?=substr($periodo,0,2)?>-<?=substr($periodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?></h3>
 <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
         <thead>

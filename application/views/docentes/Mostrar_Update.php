@@ -37,7 +37,6 @@
                         <?php echo form_open('Docente/Registrar', array('name' => 'FormRegistrar', 'id' => 'form', 'role' => 'form', 'class' => 'wizard-big', 'enctype' => 'multipart/form-data')); ?>
                             <?php 
                             $idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); 
-                            $tipoDoc = $this->encrypt->encode($tipoDoce);
                             ?>
                                 <input type="hidden" id="UPlantel" name="UPlantel" value="<?php echo nvl($plantel[0]['CPLClave']); ?>" />
                                 <input type="hidden" id="UNCI_usuario" name="UNCI_usuario" value="<?php echo nvl($usuario[0]['UNCI_usuario']); ?>" />
@@ -45,7 +44,7 @@
                                 <fieldset>
                                     <!--<h2>Account Information</h2>-->
                                     <div class="row">
-                                        <div class="col-lg-8">
+                                        <div class="col-lg-10">
 
                                             <div class="form-group">
                                                 <label>CURP.: <em>*</em></label>
@@ -123,7 +122,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-2">
                                             <div class="text-center">
                                                 <div style="margin-top: 20px">
                                                     <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
@@ -137,36 +136,24 @@
                                 <fieldset>
                                     <div class="row">
                                         <div class="col-lg-10">
-                                            <!--<div class="form-group">
-                                                <label>Fecha de Ingreso: <em>*</em></label>
-                                                <input type="text" placeholder="yyyy-mm-dd" class="form-control date" id="UDFecha_ingreso" name="UDFecha_ingreso" value="" minlength="10" maxlength="10">
-                                            </div>-->
+                                            
                                             <div class="form-group" id="data_2">
-                                                    <label>Fecha de Ingreso: <em>*</em></label>
-                                                    <div class="input-group date">
-                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                        <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?><?php echo fecha_format(nvl($fump['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
-                                                    </div>
+                                                <label>Fecha de Ingreso: <em>*</em></label>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?><?php echo fecha_format(nvl($fump['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
                                                 </div>
+                                            </div>
+
                                             <div class="form-group">
-                                                <label>Tipo Docente:<em>*</em></label>
-                                                <select name="UDTipo_Docente" id="UDTipo_Docente" class="form-control " placeholder="Seleccionar Tipo Docente" >
-                                                    <option value="">- Seleccionar Tipo Docente -</option>
+                                                <label>Tipo Nombramiento:</label>
+                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control" placeholder="Seleccionar Tipo Docente" onchange="tipoNombramiento()">
+                                                    <option value="">- Seleccionar Nombramiento -</option>
                                                     <?php foreach($tipoDocente as $key_t => $list_t){ ?>
-                                                    <option <?php if($tipoDoce == nvl($list_t['TPClave'])) echo"selected"; ?> value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
+                                                    <option  value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
                                                     <?php } ?>
                                                 </select>                                                
                                             </div>
-
-                                            <!--<div class="form-group">
-                                                <label>Nombramiento:<em>*</em></label>
-                                                <select name="UDPlaza" id="UDPlaza" class="form-control <?php if (nvl($usuario[0]['UDPlaza']));?> required" placeholder="Seleccionar Nombramiento" >
-                                                    <option value="">- Seleccionar Nombramiento -</option>
-                                                    <?php foreach($nombramiento as $key_n => $list_n){ ?>
-                                                    <option <?php if( $list_n['PLClave'] == nvl($usuario[0]['UDPlaza'])) echo"selected"; ?> value="<?=$list_n['PLClave'];?>"><?=$list_n['PLPuesto'];?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>-->
 
                                             <div class="form-group">
                                                 <label>Plaza:<em>*</em></label>
@@ -181,15 +168,15 @@
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <label>Horas Frente Grupo: <em>*</em></label>
-                                                        <input id="UDHorasGrupo" name="UDHorasGrupo" value="" type="text" class="form-control UDHorasGrupo">
+                                                        <input type="number" id="UDHorasGrupo" name="UDHorasGrupo" class="form-control UDHorasGrupo" value="" minlength="1" maxlength="2">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label>Horas Apoyo Docencia : <em>*</em></label>
-                                                        <input id="UDHorasApoyo" name="UDHorasApoyo" value="" type="text" class="form-control UDHorasApoyo">
+                                                        <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="" minlength="1" maxlength="2">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label>Horas Adicionales : <em>*</em></label>
-                                                        <input type="text" class="form-control" id="UDHorasAdicionales" name="UDHorasAdicionales" value="" minlength="1" maxlength="2">
+                                                        <input type="number" class="form-control" id="UDHorasAdicionales" name="UDHorasAdicionales" value="" minlength="1" maxlength="2">
                                                     </div>
                                                 </div>
                                             </div>
@@ -201,90 +188,33 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label>No. de Oficio: <em>*</em></label>
-                                                <div class="row">
-                                                    <div class="col-lg-4">
-                                                        <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="10" maxlength="10">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <br>
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <label class="col-lg-3">Documento Nombramiento: </label>
-                                                    <div class="col-lg-6">
-                                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Nombramiento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDPlaza_file" id="UDPlaza_file" accept="application/pdf"></span>
-                                                            <span class="fileinput-filename"></span>
-                                                            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                            <div class="mostrar_ocultar" style="display:none;">
+                                                <div class="form-group">
+                                                    <label>No. de Oficio: <em>*</em></label>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="10" maxlength="10">
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-3">
-                                                    <?php if (nvl($usuario[0]['UDPlaza_file'])) { ?>
-                                                    <a href='<?= base_url($usuario[0]['UDPlaza_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
-                                                    <!--<button type='button' class='btn btn-sm btn-danger douploadNombramiento'> Subir Nombramiento</button>-->
-                                                    <?php } ?>
-                                                    </div>
                                                 </div>
-                                            </div>
-
-                                            <h3 class="modal-title"><i class="fa fa-folder"></i>&nbsp;&nbsp; OFICIOS DE SOLICITUD </h3><br/><br/>
-
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <label class="col-lg-3">Documento Oficio de Petición: </label>
-                                                    <div class="col-lg-6">
-                                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Oficio de Petición</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDOficio_file" id="UDOficio_file" accept="application/pdf"></span>
-                                                            <span class="fileinput-filename"></span>
-                                                            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                                <br>
+                                                <br>
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <label class="col-lg-3">Documento Nombramiento: </label>
+                                                        <div class="col-lg-6">
+                                                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                                <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Nombramiento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDNombramiento_file" id="UDNombramiento_file" accept="application/pdf"></span>
+                                                                <span class="fileinput-filename"></span>
+                                                                <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                    <?php if (nvl($usuario[0]['UDOficio_file'])) { ?>
-                                                        <a href='<?= base_url($usuario[0]['UDOficio_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
-                                                    <!--<button type='button' class='btn btn-sm btn-danger douploadOficio'> Subir Oficio</button>-->
-                                                    <?php } ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <label class="col-lg-3">Documento Curriculum: </label>
-                                                    <div class="col-lg-6">
-                                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Curriculum</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDCurriculum_file" id="UDCurriculum_file" accept="application/pdf"></span>
-                                                            <span class="fileinput-filename"></span>
-                                                            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                                        <div class="col-lg-3">
+                                                        <?php if (nvl($usuario[0]['UDNombramiento_file'])) { ?>
+                                                        <a href='<?= base_url($usuario[0]['UDNombramiento_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
+                                                        <!--<button type='button' class='btn btn-sm btn-danger douploadNombramiento'> Subir Nombramiento</button>-->
+                                                        <?php } ?>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                    <?php if (nvl($usuario[0]['UDCurriculum_file'])) { ?>
-                                                        <a href='<?= base_url($usuario[0]['UDCurriculum_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
-                                                        <!--<button type='button' class='btn btn-sm btn-danger douploadCurriculum'> Subir Curriculum</button>-->
-                                                    <?php } ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <label class="col-lg-3">Documento CURP: </label>
-                                                    <div class="col-lg-6">
-                                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar CURP</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDCURP_file" id="UDCURP_file" accept="application/pdf"></span>
-                                                            <span class="fileinput-filename"></span>
-                                                            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                    <?php if (nvl($usuario[0]['UDCURP_file'])) { ?>
-                                                        <a href='<?= base_url($usuario[0]['UDCURP_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>                                                        
-                                                    <!--<button type='button' class='btn btn-sm btn-danger douploadCURP'> Subir CURP</button>-->
-                                                    <?php } ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -313,7 +243,7 @@
                                 <h1>Estudios</h1>
                                 <fieldset>
                                 <div class="row">
-                                    <div class="col-lg-8">
+                                    <div class="col-lg-10">
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-lg-4">
@@ -396,7 +326,7 @@
                                                 <div class="resultEstudios"></div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-2">
                                         <div class="text-center">
                                             <div style="margin-top: 20px">
                                                 <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
@@ -450,8 +380,16 @@
 			}
 			]
 		});
-
 	});
+
+    function tipoNombramiento(){
+        var opt = $('#UDTipo_Nombramiento').val();
+        if(opt == "4"){
+            $('.mostrar_ocultar').show();
+        }else{
+            $('.mostrar_ocultar').hide();
+        }
+    }
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -482,7 +420,7 @@
             var idPlantel = document.getElementById("UPlantel").value;
 
             var UDFecha_ingreso = document.getElementById("UDFecha_ingreso").value;
-            var UDTipo_Docente = document.getElementById("UDTipo_Docente").value;
+            var UDTipo_Nombramiento = document.getElementById("UDTipo_Nombramiento").value;
             var UDPlaza = document.getElementById("UDPlaza").value;
             var UDTipo_materia = document.getElementById("UDTipo_materia").value;
             var UDNumOficio = document.getElementById("UDNumOficio").value;
@@ -495,7 +433,7 @@
             formData.append("UDPlantel", idPlantel);
 
             formData.append("UDFecha_ingreso", UDFecha_ingreso);
-            formData.append("UDTipo_Docente", UDTipo_Docente);
+            formData.append("UDTipo_Nombramiento", UDTipo_Nombramiento);
             formData.append("UDPlaza", UDPlaza);
             formData.append("UDTipo_materia", UDTipo_materia);
             formData.append("UDNumOficio", UDNumOficio);
@@ -503,11 +441,8 @@
             formData.append("UDHoras_apoyo", UDHorasApoyo);
             formData.append("UDHorasAdicionales", UDHorasAdicionales);
 
-            formData.append("UDPlaza_file", UDPlaza_file.files[0]);
-            formData.append("UDOficio_file", UDOficio_file.files[0]);
-            formData.append("UDCurriculum_file", UDCurriculum_file.files[0]);
-            formData.append("UDCURP_file", UDCURP_file.files[0]);
-
+            formData.append("UDNombramiento_file", UDNombramiento_file.files[0]);
+            
             $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("Docente/savePlazas"); ?>",
@@ -530,10 +465,7 @@
                         FormRegistrar.UDHorasApoyo.value = "";
                         FormRegistrar.UDHorasAdicionales.value = "";
 
-                        FormRegistrar.UDPlaza_file.value = "";
-                        FormRegistrar.UDOficio_file.value = "";
-                        FormRegistrar.UDCurriculum_file.value = "";
-                        FormRegistrar.UDCURP_file.value = "";
+                        FormRegistrar.UDNombramiento_file.value = "";
 	                    $(".loadingPlazas").html("");
 	                } else {
                         $("#errorPlazas").empty();
@@ -675,7 +607,7 @@
 					//aqui introducimos lo que haremos tras cerrar la alerta.
 					$('#wrapper').prop('class','');
 					if (e){
-                        window.location.href = "<?= base_url("Docente/ver_planteles/$idPlantel/$tipoDoc"); ?>";
+                        window.location.href = "<?= base_url("Docente/ver_docentes/$idPlantel"); ?>";
 					}
 				});     					
 			}
@@ -707,7 +639,7 @@
 				$("#result").html(data[0]);
 				$(".loading").html('');
 				if(finish && data[2]=="OK"){
-					location.href ='<?php echo base_url("Docente/ver_planteles/$idPlantel/$tipoDoc"); ?>';
+					location.href ='<?php echo base_url("Docente/ver_docentes/$idPlantel"); ?>';
 				}
 			}
 		});

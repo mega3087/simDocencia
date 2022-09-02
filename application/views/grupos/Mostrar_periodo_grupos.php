@@ -1,7 +1,7 @@
 <br><h2 class="text-center">
     <?php echo "FORMATO DE NÚMERO DE GRUPOS"; ?>
 </h2>
-<?php echo form_open('grupos/saveCap', array('name' => 'FormCap', 'id' => 'FormCap', 'role' => 'form', 'class' => 'form-horizontal panel-body')); ?>
+<?php echo form_open('grupos/saveCapAlumnos', array('name' => 'FormCap', 'id' => 'FormCap', 'role' => 'form', 'class' => 'form-horizontal panel-body')); ?>
 <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover dataTables-example dataTable" >
         <thead>
@@ -11,7 +11,9 @@
                 <th class="text-center" colspan="2">TURNO</th>
                 <th class="text-center" rowspan="2" width="380px">CAPACITACIÓN</th>
                 <th class="text-center" rowspan="2">No. DE ALUMNOS POR GRUPO</th>
+                <?php if( is_permitido(null,'grupos','delete') ){ ?>
                 <th class="text-center" rowspan="2">ACCIÓN</th>
+                <?php } ?> 
             </tr>   
             <tr>
                 <th class="text-center">MATUTINO</th>
@@ -50,8 +52,8 @@
                             </select>
                                 </td>
                             <?php } ?>
-                            <td class="text-center"><input type="number" min="0" max="99" value="<?php echo nvl($listG['GRCupo']); ?>" name="<?= $listG['GRClave']; ?>[]" id="GRCupo" class="form-group <?php if (nvl($listG['GRCupo'])) echo "disabled";?>" required></td>
-                            <td class="text-center"><?= $borrar; ?></td>
+                            <td class="text-center"><input type="number" min="0" max="50" value="<?php echo nvl($listG['GRCupo']); ?>" name="<?= $listG['GRClave']; ?>[]" id="GRCupo" class="form-group" required></td>
+                            <?php if( is_permitido(null,'grupos','delete') ){ ?> <td class="text-center"><?= $borrar; ?></td> <?php } ?>
                         </tr>                                
                     <?php } ?>
                         <!--<tr>
@@ -88,6 +90,7 @@ $(document).ready(function() {
                     $(".msgCap").append(data[1]);
                     $('#FormCap')[0].reset();
                     $(".loadingCap").html("");
+                    abrirReporte();
                 } else {
                     $("#errorCap").empty();
                     $("#errorCap").append(data);   

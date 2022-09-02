@@ -27,7 +27,7 @@
 	</body>
 	<style>
 		@page { 
-			margin: 130px 50px 80px 40px; 
+			margin: 130px 40px 40px 40px; 
 			font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 9px;
 			color: #676a6c;

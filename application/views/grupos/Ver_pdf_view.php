@@ -1,6 +1,5 @@
-<p class="text-left" style="font-size: 10px; color: #333;"><b>PLANTEL Y/O CEMSAD: <?= $plantel[0]['CPLNombre']; ?></b></p>
-<p class="text-center" style="font-size: 10px; color: #333;"><b>FORMATO DE NÚMERO DE GRUPOS</b></p>
-
+<h2 class="text-center" style="color: #333;">FORMATO DE NÚMERO DE GRUPOS</h2>
+<div class="row">
 <table width="100%">
     <tr>
         <th class="text-center" rowspan="2">SEMESTRE</th>
@@ -81,6 +80,32 @@
     	</tr>
     	<?php } ?>
 </table>
+<br><br><br><br><br>
+<table width="100%" class="no-border">
+	<tr>
+		<td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
+			<br><br>
+			_____________________________________________________ <br />
+			<p><?= $Director[0]['CPLDirector']; ?></p>
+			<b>NOMBRE Y FIRMA DIRECTOR DE PLANTEL</b>
+		</td>
+		
+		<td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
+			<br><br>                
+			_________________________ <br />
+			<p><?= date("d").'-'.ver_mes(date("m")).'-'.date("Y");?></p>
+			<b>Fecha</b>
+		</td>
+		<td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
+			<br><br>
+			____________________________________________ <br />
+			<p>&nbsp;</p>
+			<p><b>SELLO DEL PLANTEL</b></p>
+			
+		</td>
+	</tr>
+</table>
+</div>
 <style type="text/css">
   table, th, td {
   border: 1px solid black;

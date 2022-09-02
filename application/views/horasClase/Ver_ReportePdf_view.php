@@ -1,11 +1,10 @@
 <h2 class="text-center" style="color: #333;">REPORTE DE MATRICULA Y No. DE GRUPOS</h2>
-<h2 class="text-center" style="color: #333;">SEMESTRE 20<?=substr($semestre,0,2)?>-<?=substr($semestre,3,1)==1?'A':'B'?></h2>
 <br>
 <?php
 $noCap = count($Capacitaciones);
 ?>
 <div class="row">
-    <table style="width:100%">
+    <table style="width:80%">
         <tr>
             <th rowspan ="2" class="text-center">SEMESTRE</th>
             <th colspan ="2" class="text-center" style='background: #B9B9B9;' height="30px">No DE GRUPOS</th>
@@ -82,25 +81,24 @@ $noCap = count($Capacitaciones);
 
     <table width="100%" class="no-border">
         <tr>
-            <td class="text-center no-border" style="line-height: 1.5px; font-size: 13px;">
+            <td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
                 <br><br>
                 _____________________________________________________ <br />
                 <p><?= $Director[0]['CPLDirector']; ?></p>
                 <b>NOMBRE Y FIRMA DIRECTOR DE PLANTEL</b>
             </td>
             
-            <td class="text-center no-border" style="line-height: 1.5px; font-size: 13px;">
+            <td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
                 <br><br>                
                 _________________________ <br />
                 <p><?= date("d").'-'.ver_mes(date("m")).'-'.date("Y");?></p>
                 <b>Fecha</b>
             </td>
-            <td class="text-center no-border" style="line-height: 1.5px; font-size: 13px;">
+            <td class="text-center no-border" style="line-height: 1.5px; font-size: 11px;">
                 <br><br>
                 ____________________________________________ <br />
                 <p>&nbsp;</p>
                 <p><b>SELLO DEL PLANTEL</b></p>
-                
             </td>
         </tr>
     </table>

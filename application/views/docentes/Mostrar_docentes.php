@@ -17,11 +17,11 @@
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-			<div class="pull-left"><h2><b>Docentes - <?php if ($tipoDoc == '1'){ echo 'Base'; } elseif ($tipoDoc == '2') { echo 'Idoneos'; } else { echo 'Externos'; }?></b></h2></div>
+			<div class="pull-left"><h2><b>Docentes</b></h2></div>
 			<div class="pull-right">
 				<?php if( is_permitido(null,'docente','save') ) {
 				$idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); ?>
-					<a href="<?= base_url('Docente/Update/'.$idPlantel.'/'.$this->encrypt->encode('0').'/'.$this->encrypt->encode($tipoDoc)); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Registrar Docente</button></a>
+					<a href="<?= base_url('Docente/Update/'.$idPlantel.'/'.$this->encrypt->encode('0')); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Registrar Docente</button></a>
 				<?php } ?>
 			</div>
 			<h3>&nbsp;&nbsp;&nbsp;</h3>
@@ -46,7 +46,6 @@
 								$i = 1;
 								foreach ($docentes as $key => $list) {
 								$UNCI_usuario_skip = $this->encrypt->encode($list['UNCI_usuario']); 
-								$tipoDocente = $this->encrypt->encode($tipoDoc); 
 								$borrar = "<button type='button' value=".$UNCI_usuario_skip." class='btn btn-sm btn-danger quitarDocente'><i class='fa fa-trash'></i> Quitar</button>"; ?>
 									<tr>
 										<td class="text-left"><?php echo $i; ?></td> 
@@ -55,7 +54,7 @@
 										<td class="text-left"><?php echo $list['URFC']; ?></td>
 										<td class="text-left"><?php echo $list['UCURP']; ?></td>								
 										<td class="text-center">
-										<a href="<?= base_url()?>Docente/Update/<?=$idPlantel?>/<?= $UNCI_usuario_skip?>/<?= $tipoDocente;?>">
+										<a href="<?= base_url()?>Docente/Update/<?=$idPlantel?>/<?= $UNCI_usuario_skip?>">
 											<button class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Editar</button>
 										</a>
 										<?php echo $borrar; ?>

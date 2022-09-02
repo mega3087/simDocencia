@@ -16,6 +16,7 @@ class HorasClase extends CI_Controller {
         $idPlantel = $this->input->post('idPlantel');
         $Periodo = $this->input->post('periodo');
 
+        $data['periodos'] = $Periodo;
         $selectPlantel = ('CPLClave, CPLTipo');
         $this->db->where('CPLClave',$idPlantel);
         $data['plantel'] = $this->plantel_model->find_all(null, $selectPlantel);
@@ -89,14 +90,20 @@ class HorasClase extends CI_Controller {
                 $data['periodo'][$key]['grupos'][$y] = $this->grupos_model->find_all(null, $selectG);
             }
         }
+
+        $this->db->where('CPLClave', $idPlantel);
+        $data['Director'] = $this->plantel_model->find_all();
+        $ciclo = "SEMESTRE 20".substr($Periodo,0,2)."-";
+        $anio = substr($Periodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)';
               
-        $this->load->library('dpdf');
+        $this->load->library('Dpdf');
         $data['subvista'] = 'horasClase/Ver_pdf_view';
+        $data['titulo'] = "<p style='font-size:11px;'>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br> <b>PLANTEL Y/O CEMSAD: ". $data['Director'][0]['CPLNombre']."</b><br>".$ciclo.$anio."</p>";        
         
         $this->dpdf->load_view('horasClase/plantilla_general_pdf', $data);
         $this->dpdf->setPaper('letter', 'landscape');
         $this->dpdf->render();
-        $this->dpdf->stream("HorasClase.pdf",array("Attachment"=>false));
+        $this->dpdf->stream("HorasClase.pdf",array("Attachment"=>false));        
     }
 
     public function verReporte_skip() {
@@ -221,10 +228,12 @@ class HorasClase extends CI_Controller {
 
         $this->db->where('CPLClave', $idPlantel);
         $data['Director'] = $this->plantel_model->find_all();
+        $ciclo = "SEMESTRE 20".substr($GRPeriodo,0,2)."-";
+        $anio = substr($GRPeriodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)';
 
-        $this->load->library('dpdf');
+        $this->load->library('Dpdf');
         $data['subvista'] = 'horasClase/Ver_ReportePdf_view';
-        $data['titulo'] = "<br><b>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br>DIRECCIÓN ACADÉMICA<br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br> PLANTEL: ". $data['Director'][0]['CPLNombre'] ."</b>";
+        $data['titulo'] = "<p style='font-size:11px;'>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br> <b>PLANTEL Y/O CEMSAD: ". $data['Director'][0]['CPLNombre']."</b><br>".$ciclo.$anio."</p>";
 
         $this->dpdf->load_view('horasClase/plantilla_general_pdf',$data);
         $this->dpdf->setPaper('letter', 'landscape');

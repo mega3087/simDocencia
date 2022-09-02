@@ -16,9 +16,9 @@ class Docente extends CI_Controller {
 
     public function index() {
         $data = array();
-        /*if(is_permitido(null,'Docente','ver_planteles') && get_session('URol') == '6') {
-            redirect('Docente/mostrarDocentes');
-        }*/
+        if(is_permitido(null,'Docente','ver_docentes') && get_session('URol') == '6') {
+            redirect('Docente/ver_docentes');
+        }
 
         $select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
         $this->db->where('CPLTipo',35);
@@ -34,24 +34,20 @@ class Docente extends CI_Controller {
         $this->load->view('plantilla_general', $data);
     }
 
-    public function ver_planteles($idPlantel = null, $tipoDocente = null) {
+    public function ver_docentes($idPlantel = null) {
         $data = array();
         $idPlantel = $this->encrypt->decode($idPlantel);
         if (!$idPlantel) {
             $idPlantel = get_session('UPlantel');
-        }        
-        $data['tipoDoc'] = $this->encrypt->decode($tipoDocente);
+        }
                 
         $selectP = 'CPLClave, CPLNombre, CPLTipo';
         $this->db->where('CPLClave',$idPlantel);
         $data['plantel'] = $this->plantel_model->find_all(null, $selectP);
 
-        $this->db->where('UDTipo_docente',$data['tipoDoc']);
+        //$this->db->where('UDTipo_Nombramiento',$data['tipoDoc']);
         $this->db->where('UDPlantel',$idPlantel);
         $data['datosUser'] = $this->usuariodatos_model->find_all();
-
-        //echo json_encode($data['datosUser']);
-        //exit;
         
         $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro";
         $this->db->join('nocrol','URol = CROClave');
@@ -60,20 +56,7 @@ class Docente extends CI_Controller {
         $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
         $this->db->order_by('UNombre', 'ASC');
         $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
-        
-        /*foreach ($data['docentes'] as $k => $doc) {
-            $selectD = '`UDClave`, `UDTipo_Docente`, `UDActivo`, TPClave, `TPNombre`, `UDPlaza`, PLPuesto, `UDPlaza_file`, `UDOficio_file`, `UDCurriculum_file`, `UDCURP_file`';
 
-            $this->db->join('noctipopersonal','UDTipo_Docente = TPClave', 'LEFT');
-            $this->db->join('noplaza','PLClave = UDPlaza', 'LEFT');
-            $this->db->where('UDUsuario',$doc['UNCI_usuario']);
-            $this->db->where('UDPlantel', $idPlantel);
-
-            $data['docentes'][$k]['datosDocentes'] = $this->usuariodatos_model->find_all(null, $selectD);
-        }*/
-        
-        //echo json_encode($data['docentes']);
-        //exit;
 
         $data['estado_civil'] = $this->estciv_model->find_all();
         $data['tipoDocente'] = $this->tipopersonal_model->find_all();
@@ -90,9 +73,9 @@ class Docente extends CI_Controller {
         
         $data['nombramiento'] = $this->plaza_model->find_all(null, $selectNom);
         
-        $selectEst = 'IdLicenciatura, LGradoEstudio';
+        $selectEst = 'IdLicenciatura, LGradoEstudio, LIdentificador';
         $this->db->group_by('LGradoEstudio');   
-        $this->db->order_by('LGradoEstudio', 'ASC');
+        $this->db->order_by('LIdentificador', 'ASC');
         $data['estudios'] = $this->licenciaturas_model->find_all(null, $selectEst);
 
         $data['modulo'] = $this->router->fetch_class();
@@ -101,12 +84,10 @@ class Docente extends CI_Controller {
         $this->load->view('plantilla_general', $data);
     }
 
-    public function Update($idPlantel = null, $idUser = null, $tipoDoce = null) {
+    public function Update($idPlantel = null, $idUser = null) {
         $idPlantel = $this->encrypt->decode($idPlantel);
-        $idUser = $this->encrypt->decode($idUser);
-        $tipoDoce = $this->encrypt->decode($tipoDoce);
-  
-        $data['tipoDoce'] = $tipoDoce;
+        $idUser = $this->encrypt->decode($idUser);  
+        
         if($idUser != '0') {
             //$this->db->join('nousuariodatos','UNCI_usuario = UDUsuario', 'LEFT');
             $this->db->where('UNCI_usuario', $idUser);
@@ -134,9 +115,9 @@ class Docente extends CI_Controller {
 			
 		$data['nombramiento'] = $this->plaza_model->find_all(null, $selectNom);
 
-        $selectEst = 'IdLicenciatura, LGradoEstudio';
+        $selectEst = 'IdLicenciatura, LGradoEstudio,LIdentificador';
         $this->db->group_by('LGradoEstudio');   
-        $this->db->order_by('LGradoEstudio', 'ASC');
+        $this->db->order_by('LIdentificador', 'ASC');
         $data['estudios'] = $this->licenciaturas_model->find_all(null, $selectEst);
 
         $this->db->where('LIdentificador !=','0');
@@ -155,9 +136,8 @@ class Docente extends CI_Controller {
 
     public function savePlazas() {
         $data = post_to_array('_skip');
-        echo json_encode($data);
-        exit;
-        if ($data['UDFecha_ingreso'] == '' || $data['UDTipo_Docente'] == '' || $data['UDPlaza'] == '' || $data['UDNumOficio'] == '') {
+ 
+        if ($data['UDFecha_ingreso'] == '' || $data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
@@ -168,21 +148,6 @@ class Docente extends CI_Controller {
             $nomNombramiento = 'Nombramiento';
             $fileNombramiento = $nomNombramiento.$nom;
             $targetFileNombramiento = $directorio . $fileNombramiento;
-            
-            //Subir Oficio de Petición
-            $nomOficio = 'Oficio';
-            $fileOficio = $nomOficio.$nom;
-            $targetFileOficio = $directorio . $fileOficio;
-
-            //Subir Curriculum
-            $nomCurriculum = 'Curriculum';
-            $fileCurriculum = $nomCurriculum.$nom;
-            $targetFileCurriculum = $directorio . $fileCurriculum;
-
-            //Subir CURP
-            $nomCURP = 'CURP';
-            $fileCURP = $nomCURP.$nom;
-            $targetFileCURP = $directorio . $fileCURP;
 
             if (!file_exists($directorio)) {
                 mkdir($directorio, 0777, true);
@@ -191,7 +156,7 @@ class Docente extends CI_Controller {
             $datos['UDUsuario'] = $data['UDUsuario'];
             $datos['UDPlantel'] = $data['UDPlantel'];
             $datos['UDFecha_ingreso'] = $data['UDFecha_ingreso'];
-            $datos['UDTipo_Docente'] = $data['UDTipo_Docente'];
+            $datos['UDTipo_Nombramiento'] = $data['UDTipo_Nombramiento'];
             $datos['UDTipo_materia'] = $data['UDTipo_materia'];
             $datos['UDHoras_grupo'] = $data['UDHoras_grupo'];
             $datos['UDHoras_apoyo'] = $data['UDHoras_apoyo'];
@@ -199,25 +164,10 @@ class Docente extends CI_Controller {
             $datos['UDPlaza'] = $data['UDPlaza'];
             $datos['UDNumOficio'] = $data['UDNumOficio'];
 
-            if(isset($_FILES["UDPlaza_file"])){
+            if(isset($_FILES["UDNombramiento_file"])){
                 //Con datos
-                move_uploaded_file($_FILES["UDPlaza_file"]["tmp_name"], $targetFileNombramiento);
-                $datos['UDPlaza_file'] = $targetFileNombramiento;
-            }
-            if(isset($_FILES["UDOficio_file"])){
-                //Con datos
-                move_uploaded_file($_FILES["UDOficio_file"]["tmp_name"], $targetFileOficio);
-                $datos['UDOficio_file'] = $targetFileOficio;
-            }
-            if(isset($_FILES["UDCurriculum_file"])){
-                //Con datos
-                move_uploaded_file($_FILES["UDCurriculum_file"]["tmp_name"], $targetFileCurriculum);
-                $datos['UDCurriculum_file'] = $targetFileCurriculum;
-            }
-            if(isset($_FILES["UDCURP_file"])){
-                //Con datos
-                move_uploaded_file($_FILES["UDCURP_file"]["tmp_name"], $targetFileCURP);
-                $datos['UDCURP_file'] = $targetFileCURP;
+                move_uploaded_file($_FILES["UDNombramiento_file"]["tmp_name"], $targetFileNombramiento);
+                $datos['UDNombramiento_file'] = $targetFileNombramiento;
             }
             
             $datos['UDActivo'] = '1';
@@ -252,7 +202,7 @@ class Docente extends CI_Controller {
         $idPlantel = $this->input->post('idPlantel');
         
         $this->db->join('noplazadocente','idPlaza = UDPlaza','left');
-        $this->db->join('noctipopersonal',' UDTipo_Docente = TPClave','left');
+        $this->db->join('noctipopersonal',' UDTipo_Nombramiento = TPClave','left');
 
         $this->db->where('UDUsuario',$idUsuario);
         $this->db->where('UDPlantel',$idPlantel);
@@ -278,7 +228,7 @@ class Docente extends CI_Controller {
         muestra_mensaje();
         
         $this->db->join('noplazadocente','idPlaza = UDPlaza');
-        $this->db->join('noctipopersonal',' UDTipo_Docente = TPClave');
+        $this->db->join('noctipopersonal',' UDTipo_Nombramiento = TPClave');
 
         $this->db->where('UDUsuario',$idUsuario);
         $this->db->where('UDPlantel',$idPlantel);

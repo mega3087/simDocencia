@@ -2,42 +2,35 @@
 	<table class="table table-striped table-bordered table-hover dataTables-example dataTable">
 		<thead>
 			<tr>
-				<th>Tipo Docente</th>
+				<th>Tipo Nombramiento</th>
 				<th>Fecha Ingreso</th>
 				<th>Plaza</th>
 				<th>Tipo Materias</th>
-				<th>No. de Oficio</th>
-				<th>Documentos</th>
+				<?php //if(nvl($data[0]['UDTipo_Nombramiento']) == '4') { ?>
+				<!--<th>No. de Oficio</th>
+				<th>Documentos</th>-->
+				<?php //} ?>
 				<th>Acción</th>
 			</tr>
 		</thead>
 		<tbody>
 		<?php foreach($data as $key => $list) { 
-			if($UDPlaza_file = $list['UDPlaza_file']) {
-				$UDPlaza_file="<a href='".base_url($UDPlaza_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Nombramiento</button></a>";
+			if($UDNombramiento_file = nvl($list['UDNombramiento_file'])) {
+				$UDNombramiento_file="<a href='".base_url($UDNombramiento_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Nombramiento</button></a>";
 			}
-			if($UDOficio_file = $list['UDOficio_file']) {
-				$UDOficio_file="<a href='".base_url($UDOficio_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Oficio</button></a>";
-			}
-            if($UDCurriculum_file = $list['UDCurriculum_file']) {
-				$UDCurriculum_file="<a href='".base_url($UDCurriculum_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Curriculum</button></a>";
-			}
-            if($UDCURP_file = $list['UDCURP_file']) {
-				$UDCURP_file="<a href='".base_url($UDCURP_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver CURP</button></a>";
-			}
-			$borrar = "<button type='button' value=".$this->encrypt->encode($list['UDClave'])." class='btn btn-sm btn-danger quitarPlaza' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
+			$borrar = "<button type='button' value=".$this->encrypt->encode(nvl($list['UDClave']))." class='btn btn-sm btn-danger quitarPlaza' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
-				<td><?php echo $list['TPNombre']; ?></td>
-				<td><?php echo $list['UDFecha_ingreso']; ?></td>
-				<td><?php echo $list['nomplaza']; ?></td>
-				<td><?php echo $list['UDTipo_materia']; ?></td>
-				<td><?php echo $list['UDNumOficio']; ?></td>
-				<td>
-                    <?php echo nvl($UDPlaza_file);?>
-                    <?php echo nvl($UDOficio_file);?>
-                    <?php echo nvl($UDCurriculum_file);?>
-                    <?php echo nvl($UDCURP_file);?>
-                </td>
+				<td><?php echo nvl($list['TPNombre']); ?></td>
+				<td><?php echo nvl($list['UDFecha_ingreso']); ?></td>
+				<td><?php echo nvl($list['nomplaza']); ?></td>
+				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
+				<?php //if(nvl($list['UDTipo_Nombramiento']) == '4') { ?>
+				<!--<td><?php echo nvl($list['UDNumOficio']); ?></td>
+				<td><?php echo nvl($UDNombramiento_file);?></td>-->
+				<?php // } else { ?>
+					<!--<td></td>
+					<td></td>-->
+				<?php // } ?>
 				<td>
                     <?php echo nvl($borrar); ?>
 				</td>
