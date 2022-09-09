@@ -136,8 +136,8 @@ class Docente extends CI_Controller {
 
     public function savePlazas() {
         $data = post_to_array('_skip');
- 
-        if ($data['UDFecha_ingreso'] == '' || $data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' ) {
+        
+        if ($data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
@@ -153,27 +153,16 @@ class Docente extends CI_Controller {
                 mkdir($directorio, 0777, true);
             }
 
-            $datos['UDUsuario'] = $data['UDUsuario'];
-            $datos['UDPlantel'] = $data['UDPlantel'];
-            $datos['UDFecha_ingreso'] = $data['UDFecha_ingreso'];
-            $datos['UDTipo_Nombramiento'] = $data['UDTipo_Nombramiento'];
-            $datos['UDTipo_materia'] = $data['UDTipo_materia'];
-            $datos['UDHoras_grupo'] = $data['UDHoras_grupo'];
-            $datos['UDHoras_apoyo'] = $data['UDHoras_apoyo'];
-            $datos['UDHorasAdicionales'] = $data['UDHorasAdicionales'];
-            $datos['UDPlaza'] = $data['UDPlaza'];
-            $datos['UDNumOficio'] = $data['UDNumOficio'];
-
             if(isset($_FILES["UDNombramiento_file"])){
                 //Con datos
                 move_uploaded_file($_FILES["UDNombramiento_file"]["tmp_name"], $targetFileNombramiento);
-                $datos['UDNombramiento_file'] = $targetFileNombramiento;
+                $data['UDNombramiento_file'] = $targetFileNombramiento;
             }
             
-            $datos['UDActivo'] = '1';
-            $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
-            $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
-            $this->usuariodatos_model->insert($datos);
+            $data['UDActivo'] = '1';
+            $data['UDUsuario_registro'] = get_session('UNCI_usuario');
+            $data['UDFecha_registro'] = date('Y-m-d H:i:s');
+            $this->usuariodatos_model->insert($data);
             set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
             muestra_mensaje();
             echo "::OK";
@@ -258,41 +247,37 @@ class Docente extends CI_Controller {
         }
         
         if ($data['ULTitulado'] == 'Titulado') {
-            $datos['ULUsuario'] = $data['ULUsuario'];
-            $datos['ULPlantel'] = $data['ULPlantel'];
-            $datos['ULNivel_estudio'] = $data['ULNivel_estudio'];
-            $datos['ULLicenciatura'] = $data['ULLicenciatura'];
             if(isset($_FILES["ULTitulo_file"])){
                 //Con datos
                 move_uploaded_file($_FILES["ULTitulo_file"]["tmp_name"], $targetFileTitulo);
-                $datos['ULTitulo_file'] = $targetFileTitulo;
+                $data['ULTitulo_file'] = $targetFileTitulo;
             }
             if(isset($_FILES["ULCedula_file"])){
                 //Con datos
                 move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
-                $datos['ULCedula_file'] = $targetFileCedula;
+                $data['ULCedula_file'] = $targetFileCedula;
             }
-                    
-            $datos['ULCedulaProf'] = $data['ULCedulaProf'];
-            $datos['ULTitulado'] = $data['ULTitulado'];
-            $datos['ULActivo'] = '1';
-            $datos['ULUsuarioRegistro'] = get_session('UNCI_usuario');
-            $datos['UlFechaRegistro'] = date('Y-m-d H:i:s');
+            
+            $data['ULActivo'] = '1';
+            $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+            $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
                 
-            $this->usuariolic_model->insert($datos);
-            echo ";".$data['ULUsuario'];
+            $this->usuariolic_model->insert($data);
+            set_mensaje("Los datos se agregarón correctamente",'success::');
+			muestra_mensaje();
+            echo "::OK";
+            echo "::".$data['ULUsuario'];
 
         } else {
-            $datos['ULUsuario'] = $data['ULUsuario'];
-            $datos['ULPlantel'] = $data['ULPlantel'];
-            $datos['ULNivel_estudio'] = $data['ULNivel_estudio'];
-            $datos['ULLicenciatura'] = $data['ULLicenciatura'];
-            $datos['ULTitulado'] = $data['ULTitulado'];
-            $datos['ULActivo'] = '1';
-            $datos['ULUsuarioRegistro'] = get_session('UNCI_usuario');
-            $datos['UlFechaRegistro'] = date('Y-m-d H:i:s');
-            $this->usuariolic_model->insert($datos);
-            echo ";".$data['ULUsuario'];
+            $data['ULActivo'] = '1';
+            $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+            $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
+            $this->usuariolic_model->insert($data);
+            
+            set_mensaje("Los datos se agregarón correctamente",'success::');
+			muestra_mensaje();
+            echo "::OK";
+            echo "::".$data['ULUsuario'];
         }
         
     }
@@ -446,7 +431,7 @@ class Docente extends CI_Controller {
         <?php } 
     }
 
-    public function datosnombramiento_skip() {
+    public function datosPlaza_skip() {
         $datos = array();
         $idPlaza =  $this->input->post('idPlaza');
         

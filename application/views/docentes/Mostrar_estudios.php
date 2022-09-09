@@ -13,11 +13,11 @@
 		</thead>
 		<tbody>
 		<?php foreach($data as $key => $list) { 
-			if($UPTitulo_file = $list['ULTitulo_file']) {
-				$UPTitulo_file="<a href='".base_url($UPTitulo_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
+			if($list['ULTitulo_file'] != 'undefined') {
+				$UPTitulo_file = "<a href='".base_url($UPTitulo_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
-			if($UPCedula_file = $list['ULCedula_file']) {
-				$UPCedula_file="<a href='".base_url($UPCedula_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
+			if($list['ULCedula_file'] != 'undefined') {
+				$UPCedula_file = "<a href='".base_url($UPCedula_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
 			$borrar = "<button type='button' value=".$this->encrypt->encode($list['ULClave'])." class='btn btn-sm btn-danger quitarEstudios' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>

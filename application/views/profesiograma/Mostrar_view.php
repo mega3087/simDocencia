@@ -159,8 +159,7 @@
 								<div class="form-group">
 									<label class="col-lg-3 control-label" for="">Semestre: <em>*</em></label>
 									<div class="col-lg-9">
-										<select name="SemestreMat" id="SemestreMat" class="form-control MatSem">
-											<option value="">- Semestre -</option>
+										<select name="SemestreMat[]" id="SemestreMat" class="form-control MatSem chosen-select1" multiple="">
 											<option value="1" style="display:block;">1</option>
 											<option value="2" style="display:block;">2</option>
 											<option value="3" style="display:block;">3</option>
@@ -373,6 +372,7 @@
 		    $("html, body").animate({scrollTop:altura+"px"});
 		});*/
 
+		$('.chosen-select1').chosen();    
 	});
 </script>
 <script type="text/javascript">
@@ -422,12 +422,13 @@ $(".buscar").click(function() {
 
 $(".MatSem").on("change", function(){
 	var planEstudio = document.getElementById("UPlanEstudio").value;
-	var sem = document.getElementById("SemestreMat").value;
-	
+	var semestre = document.getElementById('SemestreMat');
+	var semestre = [...semestre.selectedOptions].map(option => option.value);
+
 	$.ajax({
 	    type: "POST",
 	    url: "<?php echo base_url("profesiograma/mostrarMaterias_skip"); ?>",
-	    data: {sem : sem, planEstudio : planEstudio},
+	    data: {semestre : semestre, planEstudio : planEstudio},
 	    dataType: "html",
 	    beforeSend: function(){
 	        //carga spinner

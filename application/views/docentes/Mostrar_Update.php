@@ -27,7 +27,7 @@
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h2>Editar Docente</h2>
+				<h2>Docente<b> <?php echo nvl($usuario[0]['UNombre']); ?> <?php echo nvl($usuario[0]['UApellido_pat']); ?> <?php echo nvl($usuario[0]['UApellido_mat']); ?></b></h2>
 			</div> 
 			<div class="ibox-content">
                 <div class="wrapper wrapper-content animated fadeInRight">
@@ -63,10 +63,13 @@
                                                         <input id="UApellido_mat" name="UApellido_mat" value="<?php echo nvl($usuario[0]['UApellido_mat']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UApellido_mat'])) echo "disabled";?> required">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
+                                            </div>                                            
+                                            <div class="form-group" id="data_2">
                                                 <label>Fecha de nacimiento: <em>*</em></label>
-                                                <input type="text" id="UFecha_nacimiento" placeholder="yyyy-mm-dd" name="UFecha_nacimiento" value="<?php echo nvl($usuario[0]['UFecha_nacimiento']); ?>" class="form-control date <?php if (nvl($usuario[0]['UFecha_nacimiento'])) echo "disabled";?> required" minlength="10" maxlength="10"/>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" class="form-control fecha" id="UFecha_nacimiento" name="UFecha_nacimiento" value="<?php echo fecha_format(nvl($usuario['UFecha_nacimiento'])); ?>" minlength="10" maxlength="10">
+                                                </div>
                                             </div>
                                             <div class="form-group">
                                                 <label>Lugar de nacimiento: <em>*</em></label>
@@ -137,17 +140,9 @@
                                     <div class="row">
                                         <div class="col-lg-10">
                                             
-                                            <div class="form-group" id="data_2">
-                                                <label>Fecha de Ingreso: <em>*</em></label>
-                                                <div class="input-group date">
-                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                    <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?><?php echo fecha_format(nvl($fump['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
-                                                </div>
-                                            </div>
-
                                             <div class="form-group">
                                                 <label>Tipo Nombramiento:</label>
-                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control" placeholder="Seleccionar Tipo Docente" onchange="tipoNombramiento()">
+                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control datosNombramiento" placeholder="Seleccionar Tipo Docente" onchange="tipoNombramiento()">
                                                     <option value="">- Seleccionar Nombramiento -</option>
                                                     <?php foreach($tipoDocente as $key_t => $list_t){ ?>
                                                     <option  value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
@@ -157,26 +152,52 @@
 
                                             <div class="form-group">
                                                 <label>Plaza:<em>*</em></label>
-                                                <select name="UDPlaza" id="UDPlaza" class="form-control datosnombramiento">
+                                                <select name="UDPlaza" id="UDPlaza" class="form-control datosPlaza">
                                                     <option value="">- Seleccionar Plaza -</option>
                                                     <?php foreach($plazas as $key_p => $list_p){ ?>
                                                     <option value="<?=$list_p['idPlaza'];?>"><?=$list_p['nomplaza'];?></option>
                                                     <?php } ?>
                                                 </select>
                                             </div>
+
+                                            <div class="form-group mostrarFechaIng" id="data_2" style="display:show;">
+                                                <label>Fecha de Ingreso: <em>*</em></label>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
+                                                </div>
+                                            </div>
+                                            <div class="form-group mostrarFechasNom" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-lg-4" id="data_2">
+                                                        <label>Fecha de Inicio: <em>*</em></label>
+                                                        <div class="input-group date">
+                                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                            <input type="text" class="form-control fecha" id="UDFecha_inicio" name="UDFecha_inicio" value="<?php echo fecha_format(nvl($usuario['UDFecha_inicio'])); ?>" minlength="10" maxlength="10">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" id="data_2">
+                                                        <label>Fecha de Final: <em>*</em></label>
+                                                        <div class="input-group date">
+                                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                            <input type="text" class="form-control fecha" id="UDFecha_final" name="UDFecha_final" value="<?php echo fecha_format(nvl($usuario['UDFecha_final'])); ?>" minlength="10" maxlength="10">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <label>Horas Frente Grupo: <em>*</em></label>
-                                                        <input type="number" id="UDHorasGrupo" name="UDHorasGrupo" class="form-control UDHorasGrupo" value="" minlength="1" maxlength="2">
+                                                        <input type="number" id="UDHorasGrupo" name="UDHorasGrupo" class="form-control UDHorasGrupo" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label>Horas Apoyo Docencia : <em>*</em></label>
-                                                        <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="" minlength="1" maxlength="2">
+                                                        <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                     <div class="col-lg-4">
-                                                        <label>Horas Adicionales : <em>*</em></label>
-                                                        <input type="number" class="form-control" id="UDHorasAdicionales" name="UDHorasAdicionales" value="" minlength="1" maxlength="2">
+                                                        <label>Horas Adicionales / CB-I: <em>*</em></label>
+                                                        <input type="number" class="form-control" id="UDHorasAdicionales" name="UDHorasAdicionales" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                 </div>
                                             </div>
@@ -188,36 +209,44 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="mostrar_ocultar" style="display:none;">
-                                                <div class="form-group">
-                                                    <label>No. de Oficio: <em>*</em></label>
-                                                    <div class="row">
-                                                        <div class="col-lg-4">
-                                                            <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="10" maxlength="10">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <br>
-                                                <div class="form-group">
-                                                    <div class="row">
-                                                        <label class="col-lg-3">Documento Nombramiento: </label>
-                                                        <div class="col-lg-6">
-                                                            <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                                <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Nombramiento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDNombramiento_file" id="UDNombramiento_file" accept="application/pdf"></span>
-                                                                <span class="fileinput-filename"></span>
-                                                                <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                        <?php if (nvl($usuario[0]['UDNombramiento_file'])) { ?>
-                                                        <a href='<?= base_url($usuario[0]['UDNombramiento_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
-                                                        <!--<button type='button' class='btn btn-sm btn-danger douploadNombramiento'> Subir Nombramiento</button>-->
-                                                        <?php } ?>
-                                                        </div>
+                                        
+                                            <div class="form-group mostrarOficio" style="display:none;">
+                                                <label>No. de Oficio / No. de Folio: <em>*</em></label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="6" maxlength="24">
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="form-group mostrarObservaciones" style="display:none;">
+                                                <label>Observaciones: <em>*</em></label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <input type="text" class="form-control" id="UDObservaciones" name="UDObservaciones" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                            <div class="form-group mostrarDocNom" style="display:none;">
+                                                <div class="row">
+                                                    <label class="col-lg-3">Documento Nombramiento: </label>
+                                                    <div class="col-lg-6">
+                                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Nombramiento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UDNombramiento_file" id="UDNombramiento_file" accept="application/pdf"></span>
+                                                            <span class="fileinput-filename"></span>
+                                                            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                    <?php if (nvl($usuario[0]['UDNombramiento_file'])) { ?>
+                                                    <a href='<?= base_url($usuario[0]['UDNombramiento_file']); ?>' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Archivo</button></a>
+                                                    <!--<button type='button' class='btn btn-sm btn-danger douploadNombramiento'> Subir Nombramiento</button>-->
+                                                    <?php } ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
 
                                             <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
 
@@ -239,7 +268,7 @@
                                         </div>
                                     </div>
                                 </fieldset>
-
+                                
                                 <h1>Estudios</h1>
                                 <fieldset>
                                 <div class="row">
@@ -276,48 +305,48 @@
                                         </div>                                                    
 
                                         <div id="contentPasante">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label class="col-lg-3">Documento Título Profesional: </label>
-                                                <div class="col-lg-6">
-                                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                    <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Título</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UPDocTitulo_file" id="UPDocTitulo_file" accept="application/pdf"></span>
-                                                    <span class="fileinput-filename"></span>
-                                                    <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-                                                </div>
-                                                </div>
-                                                <!--<div class="col-lg-3">
-                                                <button type='button' class='btn btn-sm btn-danger douploadTitulo'> Subir Archivo</button>
-                                                </div>-->
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label class="col-lg-3">Documento Cédula Profesional: </label>
-                                                <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <label class="col-lg-3">Documento Título Profesional: </label>
+                                                    <div class="col-lg-6">
                                                     <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                        <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Cédula</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UPDocCedula_file" id="UPDocCedula_file" accept="application/pdf"></span>
+                                                        <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Título</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UPDocTitulo_file" id="UPDocTitulo_file" accept="application/pdf"></span>
                                                         <span class="fileinput-filename"></span>
                                                         <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
                                                     </div>
-                                                </div>
-                                                <!--<div class="col-lg-3">
-                                                <button type='button' class='btn btn-sm btn-danger douploadCedula'> Subir Archivo</button>
-                                                </div>-->
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <label>No. de Cédula Profesional: <em>*</em></label>
-                                                    <input id="ULCedulaProf" name="ULCedulaProf" value="<?php echo nvl($usuario['ULCedulaProf']); ?><?php echo nvl($fump['UPCedulaProf']); ?>" type="text" class="form-control "  minlength="10" maxlength="10" />
+                                                    </div>
+                                                    <!--<div class="col-lg-3">
+                                                    <button type='button' class='btn btn-sm btn-danger douploadTitulo'> Subir Archivo</button>
+                                                    </div>-->
                                                 </div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <label class="col-lg-3">Documento Cédula Profesional: </label>
+                                                    <div class="col-lg-6">
+                                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                            <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Cédula</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UPDocCedula_file" id="UPDocCedula_file" accept="application/pdf"></span>
+                                                            <span class="fileinput-filename"></span>
+                                                            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+                                                        </div>
+                                                    </div>
+                                                    <!--<div class="col-lg-3">
+                                                    <button type='button' class='btn btn-sm btn-danger douploadCedula'> Subir Archivo</button>
+                                                    </div>-->
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label>No. de Cédula Profesional: <em>*</em></label>
+                                                        <input id="ULCedulaProf" name="ULCedulaProf" value="<?php echo nvl($usuario['ULCedulaProf']); ?>" type="text" class="form-control "  minlength="6" maxlength="10" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
                                         </div>
-                                        <br>
-                                    </div>
                                         <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
 
                                         <div class="form-group col-lg-12">
@@ -382,14 +411,6 @@
 		});
 	});
 
-    function tipoNombramiento(){
-        var opt = $('#UDTipo_Nombramiento').val();
-        if(opt == "4"){
-            $('.mostrar_ocultar').show();
-        }else{
-            $('.mostrar_ocultar').hide();
-        }
-    }
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -416,30 +437,23 @@
 
         //Guardar Plaza del Docente 
 		$(document).on("click", ".savePlazas", function () {
-            var idUser = document.getElementById("UNCI_usuario").value;
-            var idPlantel = document.getElementById("UPlantel").value;
-
-            var UDFecha_ingreso = document.getElementById("UDFecha_ingreso").value;
-            var UDTipo_Nombramiento = document.getElementById("UDTipo_Nombramiento").value;
-            var UDPlaza = document.getElementById("UDPlaza").value;
-            var UDTipo_materia = document.getElementById("UDTipo_materia").value;
-            var UDNumOficio = document.getElementById("UDNumOficio").value;
-            var UDHorasGrupo = document.getElementById("UDHorasGrupo").value;
-            var UDHorasApoyo = document.getElementById("UDHorasApoyo").value;
-            var UDHorasAdicionales = document.getElementById("UDHorasAdicionales").value;
-                        
+            
             let formData = new FormData(); 
-            formData.append("UDUsuario", idUser);
-            formData.append("UDPlantel", idPlantel);
+            formData.append("UDUsuario", document.getElementById("UNCI_usuario").value);
+            formData.append("UDPlantel", document.getElementById("UPlantel").value);
 
-            formData.append("UDFecha_ingreso", UDFecha_ingreso);
-            formData.append("UDTipo_Nombramiento", UDTipo_Nombramiento);
-            formData.append("UDPlaza", UDPlaza);
-            formData.append("UDTipo_materia", UDTipo_materia);
-            formData.append("UDNumOficio", UDNumOficio);
-            formData.append("UDHoras_grupo", UDHorasGrupo);
-            formData.append("UDHoras_apoyo", UDHorasApoyo);
-            formData.append("UDHorasAdicionales", UDHorasAdicionales);
+            formData.append("UDFecha_ingreso", document.getElementById("UDFecha_ingreso").value);
+            formData.append("UDTipo_Nombramiento", document.getElementById("UDTipo_Nombramiento").value);
+            formData.append("UDPlaza", document.getElementById("UDPlaza").value);
+            formData.append("UDTipo_materia", document.getElementById("UDTipo_materia").value);
+            formData.append("UDNumOficio", document.getElementById("UDNumOficio").value);
+            formData.append("UDHoras_grupo", document.getElementById("UDHorasGrupo").value);
+            formData.append("UDHoras_apoyo", document.getElementById("UDHorasApoyo").value);
+            formData.append("UDHoras_adicionales", document.getElementById("UDHorasAdicionales").value);
+
+            formData.append("UDFecha_inicio",  document.getElementById("UDFecha_inicio").value);
+            formData.append("UDFecha_final", document.getElementById("UDFecha_final").value);
+            formData.append("UDObservaciones", document.getElementById("UDObservaciones").value);
 
             formData.append("UDNombramiento_file", UDNombramiento_file.files[0]);
             
@@ -464,6 +478,9 @@
                         FormRegistrar.UDHorasGrupo.value = "";
                         FormRegistrar.UDHorasApoyo.value = "";
                         FormRegistrar.UDHorasAdicionales.value = "";
+                        FormRegistrar.UDFecha_inicio.value = "";
+                        FormRegistrar.UDFecha_final.value = "";
+                        FormRegistrar.UDObservaciones.value = "";
 
                         FormRegistrar.UDNombramiento_file.value = "";
 	                    $(".loadingPlazas").html("");
@@ -479,22 +496,16 @@
 
         //Guardar Estudios del Docente 
 		$(document).on("click", ".saveEstudios", function () {
-            var idUser = document.getElementById("UNCI_usuario").value;
-            var idPlantel = document.getElementById("UPlantel").value;
-            var Titulado = $("input[type=radio][name=Titulado]:checked").val();            
-            var ULNivel_estudio = document.getElementById("ULNivel_estudio").value;
-            var ULLicenciatura = document.getElementById("ULLicenciatura").value;
-            var ULCedulaProf = document.getElementById("ULCedulaProf").value;
                         
             let formData = new FormData(); 
-            formData.append("ULUsuario", idUser);
-            formData.append("ULPlantel", idPlantel);
-            formData.append("ULNivel_estudio", ULNivel_estudio);
-            formData.append("ULLicenciatura", ULLicenciatura);
+            formData.append("ULUsuario", document.getElementById("UNCI_usuario").value);
+            formData.append("ULPlantel", document.getElementById("UPlantel").value);
+            formData.append("ULNivel_estudio", document.getElementById("ULNivel_estudio").value);
+            formData.append("ULLicenciatura", document.getElementById("ULLicenciatura").value);
             formData.append("ULTitulo_file", UPDocTitulo_file.files[0]);
             formData.append("ULCedula_file", UPDocCedula_file.files[0]);
-            formData.append("ULCedulaProf", ULCedulaProf);
-            formData.append("ULTitulado", Titulado);
+            formData.append("ULCedulaProf", document.getElementById("ULCedulaProf").value);
+            formData.append("ULTitulado", $("input[type=radio][name=Titulado]:checked").val());
 
             $.ajax({
                 type: "POST",
@@ -505,20 +516,20 @@
                 contentType: false,
                 processData: false,
                 success: function(data){
-	                var data = data.split(";");
-	                if(data[0]==' OK'){
+	                var data = data.split("::");
+                    if(data[1]=='OK'){
 	                    $(".msgEstudios").empty();
-	                    $(".msgEstudios").append(data[1]);
-	                    datosEstudios( data[2]);
-	                    FormRegistrar.ULNivel_estudio.value = "";
-						FormRegistrar.ULLicenciatura.value = "";
-						FormRegistrar.UPDocTitulo_file.value = "";
-						FormRegistrar.UPDocCedula_file.value = "";
+	                    $(".msgEstudios").append(data[0]);
+	                    datosEstudios(data[2]);
+                        $("#ULNivel_estudio").val("");
+                        //$("#ULLicenciatura").val("");
+                        FormRegistrar.ULLicenciatura.value = "";
+                        $("#ULCedulaProf").val("");
 	                    $(".loadingEstudios").html("");
 	                } else {
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[0]);  
-	                    datosEstudios( data[1]);
+	                    datosEstudios(data[2]);
 	                    $(".loadingEstudios").html(""); 
 	                }
 	                
@@ -585,7 +596,7 @@
 
                 // Disable validation on fields that are disabled.
                 // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
-                form.validate().settings.ignore = ":disabled";
+                //form.validate().settings.ignore = ":disabled";
 
                 // Start validation; Prevent form submission if false
                 return form.valid();
@@ -647,7 +658,7 @@
 	
 
 	function datosPlazas(idUsuario){
-		var idUsuario = idUsuario;
+		
 		var idPlantel = document.getElementById("UPlantel").value;
 		$.ajax({
 			type: "POST",
@@ -667,7 +678,7 @@
 	}
 
     function datosEstudios(idUsuario){
-        var idUsuario = idUsuario;
+        
         var idPlantel = document.getElementById("UPlantel").value;
         $.ajax({
             type: "POST",
@@ -686,12 +697,55 @@
         });
     }
 
-    $(document).on("change", ".datosnombramiento", function (event) {
+    $(document).on("change", ".datosNombramiento", function (event) {
+        var idNombramiento = $("#UDTipo_Nombramiento option:selected").val();
+
+        if (idNombramiento == 4) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechasNom').show();
+            $('.mostrarDocNom').show();
+            $('.mostrarObservaciones').show();
+        } else if (idNombramiento == 5) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechasNom').show();
+            $('.mostrarDocNom').show();
+            $('.mostrarObservaciones').hide();
+        } else if (idNombramiento == 6) {
+            $('.mostrarFechaIng').show();
+            $('.mostrarOficio').show();
+            $('.mostrarFechasNom').hide();
+            $('.mostrarDocNom').hide();
+            $('.mostrarObservaciones').hide();
+        } else if (idNombramiento == 7) {
+            $('.mostrarFechaIng').show();
+            $('.mostrarOficio').show();
+            $('.mostrarFechasNom').hide();
+            $('.mostrarDocNom').show();
+            $('.mostrarObservaciones').hide();
+        } else if (idNombramiento == 8) {
+            $('.mostrarFechaIng').show();
+            $('.mostrarOficio').show();
+            $('.mostrarFechasNom').hide();
+            $('.mostrarDocNom').show();
+            $('.mostrarObservaciones').hide();
+        } else {
+            $('.mostrarFechaIng').show();
+            $('.mostrarOficio').hide();
+            $('.mostrarFechasNom').hide();
+            $('.mostrarDocNom').hide();
+            $('.mostrarObservaciones').hide();
+        }
+
+    });
+
+    $(document).on("change", ".datosPlaza", function (event) {
         var idPlaza = $("#UDPlaza option:selected").val();
 
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("docente/datosnombramiento_skip"); ?>",
+            url: "<?php echo base_url("docente/datosPlaza_skip"); ?>",
             data: {idPlaza: idPlaza},
             dataType: "html",
             beforeSend: function(){
@@ -705,12 +759,14 @@
                     $(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
                 } else {
                     $(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
+                    $("#UDHorasGrupo").val('0');
                 }
                 $("#UDHorasApoyo").val(data[2]);
                 if(data[2] != ''){
                     $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
                 } else {
                     $(".UDHorasApoyo").removeClass("disabled").attr("disabled", false);
+                    $("#UDHorasApoyo").val('0');
                 }
                 $("#UDTipo_materia").val(data[3]);
 

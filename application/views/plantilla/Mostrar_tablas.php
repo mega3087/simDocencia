@@ -19,8 +19,9 @@
                 <td class="text-left"><?php echo $list['UNombre']." ".$list['UApellido_pat']." ".$list['UApellido_mat']; ?></td>
                 <td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
                 <td class="text-left"><?php echo $list['URFC']; ?></td>
-                <td class="text-left"><?php echo $list['UCURP']; ?></td>								
-                <td class="text-center"><input type="checkbox" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>" class="only-one"></td>
+                <td class="text-left"><?php echo $list['UCURP']; ?></td>
+                <td class="text-center"><button class="btn btn-primary user" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>"> <i class="fa fa-save"></i> Asignar Materias</button></td>							
+                <!--<td class="text-center"><input type="checkbox" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>" class="only-one"></td>-->
             </tr>
     <?php $i++; } ?>
     </tbody>
@@ -53,4 +54,38 @@
         }
 
 	});
+
+    function asignar(idUser, UDTipo_Docente){ 
+        var plantel = document.getElementById('plantelId').value;
+        document.getElementById("idUsuario").value = idUser;
+        var cicloEsc = document.getElementById('cicloEsc').value;
+        
+        if (cicloEsc == 2) {
+            $(".mostrarMatPrimero").show();
+            $(".mostrarMatTercero").show();
+            $(".mostrarMatQuinto").show();
+        } else {
+            $(".mostrarMatSegundo").show();
+            $(".mostrarMatCuarto").show();
+            $(".mostrarMatSexto").show();
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("GenerarPlantilla/asignarMaterias"); ?>",
+            data: {idUser : idUser, plantel : plantel, UDTipo_Docente : UDTipo_Docente},
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingasignar").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                $(".mostrarAsignarMaterias").empty();
+                $(".mostrarAsignarMaterias").append(data);  
+                $(".loadingasignar").html("");
+                $('.nav-tabs a[href="#agregar-materias"]').tab('show');
+            }
+        });
+
+    }
 </script>

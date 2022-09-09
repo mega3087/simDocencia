@@ -126,7 +126,7 @@ class Profesiograma extends CI_Controller {
 
     //Agregar Profesión Nueva
     public function mostrarMaterias_skip () {
-        $GPSemestre =  $this->input->post('sem');
+        $GPSemestre =  $this->input->post('semestre');
         $planEstudio = $this->input->post('planEstudio');
         
         $data['materias'] = array();
@@ -139,17 +139,20 @@ class Profesiograma extends CI_Controller {
             $CPLTipo = '2';
             $this->db->where('plan_estudio', $CPLTipo);
         }
-        if ($GPSemestre != '') {
-        $this->db->where('semmat',$GPSemestre);
-        }            
+        
+        if (count($GPSemestre) > 0) {
+            $this->db->where_in('semmat', $GPSemestre);
+        } 
+
         $this->db->where('activo','1');
         $this->db->where('plan_estudio',$planEstudio);
         $this->db->order_by('semmat','ASC');
         $data['materias'] = $this->materias_model->find_all(null, $selectMat); 
+
         ?>
         <label class="col-lg-3 control-label" for="">Plantel:<em>*</em></label>
         <div class="col-lg-9" id="UIdMaterias">
-            <select name="UIdMateria[]" id="UIdMateria" class="form-control chosen-select" data-placeholder="Seleccionar Materia" multiple="" >
+            <select name="UIdMateria[]" id="UIdMateria" class="form-control chosen-select" multiple="" >
                 <?php foreach($data['materias'] as $key_p => $listMat){ ?>
                 <option value="<?=$listMat['id_materia']?>"><?=$listMat['materia'].' '.$listMat['modulo']; ?></option>
                 <?php } ?>
@@ -161,14 +164,6 @@ class Profesiograma extends CI_Controller {
             $('.chosen-select').chosen();            
         });
         </script>
-        <!--<label class="col-lg-3 control-label" for="">Materia: <em>*</em></label>
-            <div class="col-lg-9">    
-            <?php foreach ($data['materias']  as $k => $listMat) { ?>
-                <div class="col-md-4">
-		            <label><?=$listMat['materia'].' '.$listMat['modulo']; ?> &nbsp;&nbsp;</label><input type="checkbox" name="UIdMateria[]" id="UIdMateria<?= $listMat['id_materia']; ?>" value="<?= $listMat['id_materia']; ?>">
-                </div>
-            <?php } ?>
-            </div>-->
         <?php
     }
 

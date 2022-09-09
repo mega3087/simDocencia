@@ -54,6 +54,11 @@
 			$plantel = $this->encrypt->decode($plantel);
 			$data['plantel'] = $plantel;
 			$data['titulo'] = 'CREAR PLANTILLA';
+
+			$this->db->where('CPEStatus','1');
+			$this->db->order_by('CPEPeriodo','DESC');
+			$this->db->limit('10');
+			$data['periodos'] = $this->periodos_model->find_all();	
 			
 			$data['modulo'] = $this->router->fetch_class();
 			//$data['subvista'] = 'plantilla/Crear_view';
@@ -85,6 +90,7 @@
 		public function asignarMaterias() {
 			$idUsuario = $this->input->post('idUser');
 			$plantel = $this->input->post('plantel');
+			$UDTipo_Nombramiento =  $this->input->post('UDTipo_Docente');
 
 			$data['idUser'] = $idUsuario;
 			$select = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado";
@@ -96,27 +102,23 @@
 			$this->db->order_by('UNombre', 'ASC');
 			$data['docentes'] = $this->usuario_model->find_all(null, $select);
 
-			$selectNom = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHorasAdicionales, UDPlaza, UDActivo, nomplaza, TPClave, TPNombre';
+			$selectNom = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_adicionales, UDPlaza, UDActivo, nomplaza, TPClave, TPNombre';
 			$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
 			$this->db->join('noplazadocente','idPlaza = UDPlaza','left');
 			$this->db->where('UDUsuario',$idUsuario);
+			$this->db->where('(UDTipo_Nombramiento = '.$UDTipo_Nombramiento.' OR UDTipo_Nombramiento = 5 OR UDTipo_Nombramiento = 6 OR UDTipo_Nombramiento = 7)'); 
 			$this->db->where('UDPlantel',$plantel);
 			$this->db->where('UDActivo','1');
 			$data['nombramientos'] = $this->usuariodatos_model->find_all(null, $selectNom); 
-
+			
 			$selectEst = '*';
 			$this->db->join('nolicenciaturas', 'IdLicenciatura = ULLicenciatura','left');
 			$this->db->where('ULUsuario',$idUsuario);
 			$this->db->where('ULPlantel',$plantel);
 			$this->db->where('ULActivo','1');
-			$this->db->limit('1');
-			$data['estudios'] = $this->usuariolic_model->find_all(null, $selectEst);
+			//$this->db->limit('1');
+			$data['estudios'] = $this->usuariolic_model->find_all(null, $selectEst);		
 
-			$this->db->where('CPEStatus','1');
-			$this->db->order_by('CPEPeriodo','DESC');
-			$this->db->limit('10');
-			$data['periodos'] = $this->periodos_model->find_all();			
-			
 			$this->load->view('plantilla/Mostrar_AsignarMaterias', $data);			
 
 		}
@@ -155,30 +157,47 @@
 					$arreglo[$k] = $this->materias_model->find_all();
 				}
 				$arrayAux = array();
-				foreach ($arreglo as $valor){
-					if($valor != null && !empty($valor)){
+				foreach ($arreglo as $valor) {
+					if ($valor != null && !empty($valor)) {
 						array_push($arrayAux, $valor);
 					}
 				}
-				
-				?>
-				<div class="form-group">
-				<div class="col-lg-1"></div>
-					<div class="col-lg-12">
-						<table>
-							<?php foreach($arrayAux as $ar => $listM){ ?>
-								<td style="width: 450px;"><input type="radio" name="id_materia" id="id_materia" value="<?= $listM[0]['id_materia']; ?>"> <?php echo $listM[0]['materia'].''.$listM[0]['modulo']; ?></td>
-							<?php } ?>
-						</table>
-					</div>
-				</div>
-				<?php
+
+				$data['arrayMaterias'] = $arrayAux;
+
+				$this->load->view('plantilla/Mostrar_materias', $data);		
+
 			}
 		}
 
 		public function save() {
-			$data= post_to_array('_skip');
+			$data = post_to_array('_skip');
+			echo json_encode($data);
+				
+				$datosNom = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_adicionales, UDPlaza, nomplaza, UDActivo, UDValidado';
+				$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
+				$this->db->join('noplazadocente','idPlaza = UDPlaza','left');
+				$this->db->where('UDClave',$data['idPUDatos']);
+				$data['datosnom'] = $this->usuariodatos_model->find_all(null, $datosNom);
+				$sumahoras = '0';
+				$totalHoras = '0';
+				$totalHoras = $data['datosnom'][0]['UDHoras_grupo'] + $data['datosnom'][0]['UDHoras_apoyo'] + $data['datosnom'][0]['UDHoras_adicionales'];
+				echo $totalHoras;
+				if(nvl($data['spTotal'])) {
+					$sumahoras = array_sum(nvl($data['spTotal']));
+				}
+				if ($sumahoras > $totalHoras) {
+					set_mensaje("Las número de horas exceden al número de horas del Nombramiento.");
+					muestra_mensaje();
+				} else {
+					set_mensaje("Los datos se agregarón correctamente",'success::');
+					muestra_mensaje();
+					//echo "::OK";
+				}
 			
+			exit;
+			
+
 			if($data['pidnombramiento'] == '' || $data['pidLicenciatura'] == '' || $data['psemestre'] == '' || $data['pidMateria'] == '' || $data['nogrupoMatutino'] == '' || $data['nogrupoVespertino'] == '' ) {
 				set_mensaje("Favor de ingresar todos los datos requeridos.");
 				muestra_mensaje();

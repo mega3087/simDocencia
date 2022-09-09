@@ -6,6 +6,7 @@
 				<th>Fecha Ingreso</th>
 				<th>Plaza</th>
 				<th>Tipo Materias</th>
+				<th>No. de Horas</th>
 				<?php //if(nvl($data[0]['UDTipo_Nombramiento']) == '4') { ?>
 				<!--<th>No. de Oficio</th>
 				<th>Documentos</th>-->
@@ -21,9 +22,22 @@
 			$borrar = "<button type='button' value=".$this->encrypt->encode(nvl($list['UDClave']))." class='btn btn-sm btn-danger quitarPlaza' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
 				<td><?php echo nvl($list['TPNombre']); ?></td>
-				<td><?php echo nvl($list['UDFecha_ingreso']); ?></td>
+				<td>
+					<?php if( $list['UDFecha_ingreso'] != '0000-00-00') { 
+						echo $list['UDFecha_ingreso'];
+					} else {
+						echo $list['UDFecha_inicio'].' al '.$list['UDFecha_final'];
+					}
+					?>
+				</td>
 				<td><?php echo nvl($list['nomplaza']); ?></td>
 				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
+				<td>
+					<?php $total = '0';
+					$total = $list['UDHoras_grupo'] + $list['UDHoras_apoyo'] + $list['UDHoras_adicionales'];
+					echo $total;
+					?>
+				</td>
 				<?php //if(nvl($list['UDTipo_Nombramiento']) == '4') { ?>
 				<!--<td><?php echo nvl($list['UDNumOficio']); ?></td>
 				<td><?php echo nvl($UDNombramiento_file);?></td>-->
