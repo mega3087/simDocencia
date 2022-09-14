@@ -1,6 +1,7 @@
+<?php if($opcion == 'materias') { ?>
 <div class="form-group">
     <div class="col-lg-12">
-        <table class="table table-striped table-bordered table-hover dataTables-example" >
+        <table class="table table-striped table-bordered table-hover" >
             <thead>
                 <th>Materia</th>
                 <th>Horas</th>
@@ -14,10 +15,10 @@
                     <td style="width: 400px;"><input type="checkbox" name="pidMateria[]" id="id_materia" value="<?= $listM[0]['id_materia']; ?>"> <?php echo $listM[0]['id_materia'].'::'.$listM[0]['modulo'].' '.$listM[0]['materia']; ?></td>
                     <td><input name="multiplo[]" id="multipo<?= $listM[0]['id_materia']; ?>" class="form-control disabled" value="<?= $listM[0]['hsm']; ?>"></td>
                     <td>
-                        <input type="number" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" name="nogrupoMatutino[]" value="0" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
+                        <input type="number" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" name="nogrupoMatutino[]" placeholder="0" value="" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
                     </td>
                     <td>
-                        <input type="number" id="nogrupoVespertino<?= $listM[0]['id_materia']; ?>" name="nogrupoVespertino[]" value="0" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/>
+                        <input type="number" id="nogrupoVespertino<?= $listM[0]['id_materia']; ?>" name="nogrupoVespertino[]" placeholder="0" value="" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/>
                     </td>
                     <td class="text-center"><input type="text" id="spTotal<?= $listM[0]['id_materia']; ?>" name="spTotal[]" class="form-control disabled"></td>
                 </tr>
@@ -41,3 +42,54 @@
     </div>
 </div>
 
+<?php } else { ?>
+    <div class="form-group">
+    <div class="col-lg-12">
+        <table class="table table-striped table-bordered table-hover" >
+            <thead>
+                <tr>
+                    <th rowspan ="2" style="text-align: center;">ASIGNATURAS</th>								
+                    <th rowspan ="2" style="text-align: center;">HORAS POR <br>ASIG.</th>
+                    <th colspan="2" style="text-align: center;">NO. DE GRUPOS </th>
+                    <th colspan="3" style="text-align: center;">H/S/M POR SEM. </th>
+                    <th rowspan ="2" style="text-align: center;">TOTAL<br> HRS.<br> POR<br> ASIG.</th>
+                    <th rowspan ="2" style="text-align: center;">HRS<br> COMPLEMENTO</th>
+                    <th rowspan ="2" style="text-align: center;">HORAS FRENTE<br> A GRUPO<br> HOMOLOGADAS/<br> RECATEGORIZADAS</th>
+                    <th rowspan ="2" style="text-align: center;">HORAS DE <br> APOYO A LA<br> DOCENCIA</th>
+					<th rowspan ="2" style="text-align: center;">HORAS <br> CB-I<br> Y/O <br> TECNICO CB-I</th>
+					<th rowspan ="2" style="text-align: center;">TOTAL<br>HORAS<br>DOCENTE</th>
+                </tr>
+                <tr>
+                    <th style="text-align: center;">MAT.</th>
+                    <th style="text-align: center;">VESP.</th>
+                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '1 SEM.'; } else { echo '2 SEM.';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '3 SEM.'; } else { echo '4 SEM.';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '5 SEM.'; } else { echo '6 SEM.';} ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($datos as $x => $listDatos) {
+                    $contar = count($listDatos['plantilla']) +1;
+                        foreach($listDatos['plantilla'] as $y => $listPlan) { ?>
+                <tr>
+                    <td class="text-center"><?= $listPlan['materia']; ?></td>
+                    <td class="text-center"><?= $listPlan['hsm']; ?></td>
+                    <td class="text-center"><?= $listPlan['pnogrupoMatutino']; ?></td>
+                    <td class="text-center"><?= $listPlan['pnogrupoVespertino']; ?></td>
+                    <td class="text-center"><?php if ($listPlan['psemestre'] == '1' || $listPlan['psemestre'] == '2') { echo $listPlan['ptotalHoras']; } ?></td>
+                    <td class="text-center"><?php if ($listPlan['psemestre'] == '3' || $listPlan['psemestre'] == '4') { echo $listPlan['ptotalHoras']; } ?></td>
+                    <td class="text-center"><?php if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
+                    <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
+                    <?php } ?>
+                    <td class="text-center"></td>
+                    <td class="text-center"><?= $listDatos['UDHoras_grupo']; ?></td>    
+                    <td class="text-center"><?= $listDatos['UDHoras_apoyo']; ?></td>
+                    <td class="text-center"><?= $listDatos['UDHoras_adicionales']; ?></td>
+                    <td class="text-center"><?= $listDatos['UDHoras_grupo'] + $listDatos['UDHoras_apoyo'] + $listDatos['UDHoras_adicionales']; ?></td>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php } ?>

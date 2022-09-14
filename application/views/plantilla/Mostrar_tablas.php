@@ -20,8 +20,14 @@
                 <td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
                 <td class="text-left"><?php echo $list['URFC']; ?></td>
                 <td class="text-left"><?php echo $list['UCURP']; ?></td>
-                <td class="text-center"><button class="btn btn-primary user" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>"> <i class="fa fa-save"></i> Asignar Materias</button></td>							
-                <!--<td class="text-center"><input type="checkbox" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>" class="only-one"></td>-->
+                <td class="text-center">
+                <?php if ($list['UDValidado'] == '1') { ?>
+                    <button class="btn btn-info user" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                 <i class="fa fa-pencil"></i> Asignar Materias</button>
+                 <?php } else { ?>
+                    <button class="btn btn-primary btn-circle" type="button"><i class="fa fa-check"></i></button>
+                 <?php } ?>
+                </td>
             </tr>
     <?php $i++; } ?>
     </tbody>
@@ -69,6 +75,7 @@
             $(".mostrarMatCuarto").show();
             $(".mostrarMatSexto").show();
         }
+        datosPlantilla(idUser);
         
         $.ajax({
             type: "POST",

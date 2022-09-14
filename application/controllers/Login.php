@@ -14,6 +14,8 @@
 				set_mensaje( "Para ingresar con otro usuario, favor de cerrar sesión" );
 				redirect(base_url('dashboard'));
 			}
+
+			echo doHash( '00000000', 'UCorreo_electronico' );
 			
 			$data=array();
 			$this->load->view( 'login_view', $data );

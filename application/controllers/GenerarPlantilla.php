@@ -70,7 +70,7 @@
 			$plantel = $this->input->post('plantel');
 			$UDTipo_Nombramiento =  $this->input->post('UDTipo_Docente');
 			
-			$select = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento";
+			$select = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDValidado";
 			$this->db->join('nousuario','UNCI_usuario = UDUsuario', 'left');
 			$this->db->join('nocrol','URol = CROClave', 'left');
 			$this->db->where("CROClave NOT IN ('3','10','12')");
@@ -128,6 +128,7 @@
 			$periodo = $this->input->post('periodo');
 			$idLic = $this->input->post('licenciatura');
 			$semestre = $this->input->post('semestre');
+			$data['opcion'] = 'materias';
 			if($idLic == ''){
 				set_mensaje("Favor de seleccionar Estudios del Docente.");
 				muestra_mensaje();
@@ -172,149 +173,165 @@
 
 		public function save() {
 			$data = post_to_array('_skip');
-			echo json_encode($data);
-				
-				$datosNom = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_adicionales, UDPlaza, nomplaza, UDActivo, UDValidado';
-				$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
-				$this->db->join('noplazadocente','idPlaza = UDPlaza','left');
-				$this->db->where('UDClave',$data['idPUDatos']);
-				$data['datosnom'] = $this->usuariodatos_model->find_all(null, $datosNom);
-				$sumahoras = '0';
-				$totalHoras = '0';
-				$totalHoras = $data['datosnom'][0]['UDHoras_grupo'] + $data['datosnom'][0]['UDHoras_apoyo'] + $data['datosnom'][0]['UDHoras_adicionales'];
-				echo $totalHoras;
-				if(nvl($data['spTotal'])) {
-					$sumahoras = array_sum(nvl($data['spTotal']));
+			
+			if(nvl($data['nogrupoMatutino'])) {
+				$matutino = array();
+				foreach ($data['nogrupoMatutino'] as $valorMat){
+					if($valorMat != null && !empty($valorMat)){
+						array_push($matutino, $valorMat);
+					}
 				}
+			}
+
+			if(nvl($data['nogrupoVespertino'])) {
+			$vespertino = array();
+				foreach ($data['nogrupoVespertino'] as $valorVes){
+					if($valorVes != null && !empty($valorVes)){
+						array_push($vespertino, $valorVes);
+					}
+				}
+			}
+
+			if(nvl($data['spTotal'])) {
+				$spTotal = array();
+					foreach ($data['spTotal'] as $valorTotal){
+						if($valorTotal != null && !empty($valorTotal)){
+							array_push($spTotal, $valorTotal);
+						}
+					}
+				}
+			
+			$datosNom = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_adicionales, UDPlaza, nomplaza, UDActivo, UDValidado';
+			$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
+			$this->db->join('noplazadocente','idPlaza = UDPlaza','left');
+			$this->db->where('UDClave',$data['idPUDatos']);
+			$data['datosnom'] = $this->usuariodatos_model->find_all(null, $datosNom);
+			$sumahoras = '0';
+			$totalHoras = '0';
+			$totalHoras = $data['datosnom'][0]['UDHoras_grupo'] + $data['datosnom'][0]['UDHoras_apoyo'] + $data['datosnom'][0]['UDHoras_adicionales'];
+			//$totalHoras = $data['datosnom'][0]['UDHoras_grupo'] + $data['datosnom'][0]['UDHoras_apoyo'];
+			
+			if(nvl($data['spTotal'])) {
+				$sumahoras = array_sum(nvl($data['spTotal']));
+			}
+			if(nvl($data['psemestre']) == '' || nvl($data['pidMateria']) == '') {
+				set_mensaje("Favor de ingresar todos los datos.");
+				muestra_mensaje();
+			} else {
+				
 				if ($sumahoras > $totalHoras) {
 					set_mensaje("Las número de horas exceden al número de horas del Nombramiento.");
 					muestra_mensaje();
 				} else {
-					set_mensaje("Los datos se agregarón correctamente",'success::');
-					muestra_mensaje();
-					//echo "::OK";
+					$this->db->where('UDClave', $data['idPUDatos']);
+					$validado = $this->usuariodatos_model->find();
+					if ($validado['UDValidado'] == '1') {
+						set_mensaje("Ya se guardaron los datos del Docente.");
+						muestra_mensaje();
+					} else {
+						
+						foreach ($data['pidMateria'] as $mat => $listS) {
+							$sel = 'semmat';
+							$this->db->where('id_materia', $listS);
+							$semmat = $this->materias_model->find_all(null, $sel);
+							
+							$datos = array(
+								'idPPlantel' => $data['idPPlantel'],
+								'idPUsuario' => $data['idPUsuario'],
+								'idPUDatos' => $data['idPUDatos'],
+								'pidLicenciatura' => $data['pidLicenciatura'],
+								'pperiodo' => $data['pperiodo'],
+								'psemestre' => $semmat[0]['semmat'],
+								'pidMateria' => $data['pidMateria'][$mat],
+								'pnogrupoMatutino' => nvl($matutino[$mat]),
+								'pnogrupoVespertino' => nvl($vespertino[$mat]),
+								'ptotalHoras' => nvl($spTotal[$mat]),
+								'pactivo' => 1,
+								'pusuario_creacion' => get_session('UNCI_usuario'),
+								'pfecha_creacion' => date('Y-m-d H:i:s')
+							);
+							
+							$this->generarplantilla_model->insert($datos);	
+						}
+						$updatos = array(
+							'UDValidado' => '1'
+						);
+						
+						$idPlantilla = $this->usuariodatos_model->update($data['idPUDatos'], $updatos);
+						set_mensaje("Los datos se agregarón correctamente",'success::');
+						muestra_mensaje();
+						echo "::OK";
+						echo "::".$data['idPUsuario'];
+					}
 				}
-			
-			exit;
-			
-
-			if($data['pidnombramiento'] == '' || $data['pidLicenciatura'] == '' || $data['psemestre'] == '' || $data['pidMateria'] == '' || $data['nogrupoMatutino'] == '' || $data['nogrupoVespertino'] == '' ) {
-				set_mensaje("Favor de ingresar todos los datos requeridos.");
-				muestra_mensaje();
-			} else {
-				$data['pactivo'] = '1';
-				$data['pusuario_creacion'] = get_session('UNCI_usuario');
-				$data['pfecha_creacion'] = date('Y-m-d H:i:s');
-				
-				$id = $this->generarplantilla_model->insert($data);
-				set_mensaje("Los Grupos se Agregarón Correctamente",'success::');
-				muestra_mensaje();
-				echo "::OK";
-            	echo "::".$id;
 			}
+			
 		}
 		
 		public function datosPlantilla() {
-			$idPlantilla = $this->input->post('idPlantilla');
+			$idPUsuario = $this->input->post('idPUsuario');
 			$idPlantel = $this->input->post('idPlantel');
+			$data['periodos'] = $this->input->post('periodo');
 
-			echo $idPlantilla;
-			echo $idPlantel;
-		}
-		/*public function MostrarCarreras() {
-			$nivel =  $this->input->post('tipo');
-			if (is_numeric($nivel)) {
-				$this->db->where('UNCI_usuario', $nivel);
-				$data['usuarios'] = $this->usuario_model->find_all();
-				$UCURP = $data['usuarios'][0]['UCURP'];
-				$UNombre = $data['usuarios'][0]['UNombre'];
-				$UApellido_pat = $data['usuarios'][0]['UApellido_pat'];
-				$UApellido_mat = $data['usuarios'][0]['UApellido_mat'];
-				$URFC = $data['usuarios'][0]['URFC'];
-				$timestamp = strtotime($data['usuarios'][0]['UFecha_registro']);
-				$UFecha_ingreso = date("d-m-Y", $timestamp );
-				echo"::$UCURP";
-				echo"::$UNombre";
-				echo"::$UApellido_pat";
-				echo"::$UApellido_mat";
-				echo"::$URFC";
-				echo"::$UFecha_ingreso";
+			$data['opcion'] = 'plantilla';
 
-			} elseif (is_string($nivel)) {
-				$this->db->where('LIdentificador !=','0');
-				$this->db->like('LGradoEstudio', $nivel);
-				$this->db->group_by('Licenciatura');
-				$this->db->order_by('Licenciatura', 'ASC');
-				$data['carreras'] = $this->licenciaturas_model->find_all();
+			$select = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDFecha_ingreso, UDHoras_grupo, UDHoras_apoyo, UDHoras_adicionales, UDPlaza, UDFecha_inicio, UDFecha_final, UDObservaciones, UDValidado';
+			$this->db->where('UDUsuario', $idPUsuario );
+			$this->db->where('UDPlantel', $idPlantel);
+			$this->db->where('UDValidado','1');
+
+			$data['datos'] = $this->usuariodatos_model->find_all(null, $select);
+
+			foreach ($data['datos'] as $d => $listDat) {
+				$selectPlant = 'idPlantilla, idPUsuario, idPPlantel, idPUDatos, pidLicenciatura, pperiodo, psemestre, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras, pidMateria, materia, hsm, plan_estudio, semmat';
+				$this->db->join('nomaterias', 'id_materia = pidMateria', 'left');
+				$this->db->where('idPUDatos', $listDat['UDClave']);
 				
-				?>
-				<option value=""></option>
-				<?php foreach ($data['carreras']  as $k => $listCar) { ?>
-					<option value="<?= $listCar['IdLicenciatura']; ?>"><?= $listCar['Licenciatura']; ?></option>    
-				<?php } 
-				
+				$data['datos'][$d]['plantilla'] = $this->generarplantilla_model->find_all(null, $selectPlant);
 			}
+			
+			$this->load->view('plantilla/Mostrar_materias', $data);	
+		}
+
+		public function ver_plantilla() {
+			$idPlantel = $this->input->post('idPlantel');
+			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
+			$select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
+			$this->db->where('CPLClave',$idPlantel);
+			
+        	$data['plantel'] = $this->plantel_model->find_all(null, $select);
+
+			$this->db->where('CPEStatus','1');
+			$this->db->order_by('CPEPeriodo','DESC');
+			$this->db->limit('1');
+			$data['periodos'] = $this->periodos_model->find_all();	
+
+			$selectUser = 'UDClave, UDUsuario, UDPlantel, UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, URFC, UDTipo_Nombramiento, ULCedulaProf';
+			$this->db->join('nousuariolic','ULClave = UDClave');
+			$this->db->join('nousuario','UNCI_usuario = UDUsuario');
+			$this->db->where('UDPlantel',$idPlantel);
+			$this->db->order_by('UDTipo_Nombramiento','ASC');
+			$this->db->order_by('UApellido_pat','ASC');
+			$this->db->group_by('UDUsuario');
+
+			$data['docentes'] = $this->usuariodatos_model->find_all(null, $selectUser);
+			
+			foreach ($data['docentes'] as $u => $listUser) {
+				$select = "UDFecha_ingreso, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_adicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, UDPlaza, nomplaza, UDFecha_inicio, UDFecha_final, UDObservaciones";
+				$this->db->join('noctipopersonal', 'UDTipo_Nombramiento = TPClave', 'left');
+				$this->db->join('noplazadocente', 'UDPlaza = idPlaza', 'left');
+				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
+				$this->db->where('UDPlantel',$listUser['UDPlantel']);
+				$this->db->order_by('UDTipo_Nombramiento','ASC');
+				
+				$data['docentes'][$u]['plazas'] = $this->usuariodatos_model->find_all(null, $select);
+
+			}
+			
+			//echo json_encode($data['docentes']);
+
+			$this->load->view('plantilla/Ver_plantilla', $data);
 		}
 		
-		public function uploads() {
-			//$filename = $_FILES['file']['name'];
-
-			$time = $_POST['idUsuario'].date("dmY");
-			$targetDir = "uploads/";
-			$doc = $_POST['tipoDoc'].'.pdf';
-			$file_name = $time."-".$doc;
-			$targetFilePath = $targetDir . $file_name;
-			if ( move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)) {
-				//insertar los documentos en la tabla
-			echo '::'.'El archivo se subio Correctamente'; 
-			} else { 
-			echo '::'.'Fallo al subir Archivo'; 			}
-			
-		}
-
-		public function save() {
-			$data= post_to_array('_skip');
-			$idUser = $this->input->post('idUsuario');
-			$plantel = $this->input->post('plantel');
-
-			if($this->input->post('usernew') == 'Si') {
-				$datosUser = array(
-					'UCURP' => $data['UCURP'], 
-					'UNombre' => $data['UNombre'], 
-					'UApellido_pat' => $data['UApellido_pat'], 
-					'UApellido_mat' => $data['UApellido_mat'], 
-					'URFC' => $data['URFC'], 
-					'UFecha_ingreso' => $data['UFecha_ingreso']
-				);
-				//$idU = $this->usuario_model->insert($datosUser);
-				
-				if ($this->input->post('FClave_skip') != '') {
-					$datosEstudios = array(
-						'ULUsuario' => $this->input->post('FClave_skip'), 
-						'ULPlantel' => $plantel, 
-						'ULNivel_estudio' => $data['ULNivel_estudio'], 
-						'ULLicenciatura' => $data['ULLicenciatura'], 
-						'ULCedulaProf' => $data['ULCedulaProf'], 
-						'ULNombramiento' => $data['ULNombramiento'], 
-						'ULTitutado' => $data['Titulado'], 
-						'ULActivo' => '1',
-						'ULUsuarioRegistro' => get_session('UNCI_usuario'),
-						'ULFechaRegistro' => date('Y-m-d H:i:s')
-					);
-					//$idEst = $this->usuario_model->insert($datosEstudios);
-				}
-
-//				echo "::".$idU;
-				//echo"::OK";
-			} else {
-				$idUser = $this->input->post('idUsuario');
-				echo $idUser;
-			}
-			
-			exit;
-			
-			echo "::".$idUser;
-			echo "::"."Se guardarpn los datos correctos";
-		}*/
     }
 ?>

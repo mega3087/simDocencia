@@ -150,9 +150,9 @@ class Profesiograma extends CI_Controller {
         $data['materias'] = $this->materias_model->find_all(null, $selectMat); 
 
         ?>
-        <label class="col-lg-3 control-label" for="">Plantel:<em>*</em></label>
+        <label class="col-lg-3 control-label" for="">Materias:<em>*</em></label>
         <div class="col-lg-9" id="UIdMaterias">
-            <select name="UIdMateria[]" id="UIdMateria" class="form-control chosen-select" multiple="" >
+            <select name="UIdMateria[]" id="UIdMateria" class="form-control chosen-select" multiple="" data-placeholder="Seleccionar Materias">
                 <?php foreach($data['materias'] as $key_p => $listMat){ ?>
                 <option value="<?=$listMat['id_materia']?>"><?=$listMat['materia'].' '.$listMat['modulo']; ?></option>
                 <?php } ?>

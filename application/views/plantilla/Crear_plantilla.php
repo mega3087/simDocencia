@@ -28,7 +28,7 @@
                         </a>
                     </li>
                     <li class="nav-border nav-border-top-danger">
-                        <a href="#ver-plantilla" data-toggle="tab">
+                        <a href="#ver-plantilla" data-toggle="tab" onclick="verPlantilla('<?php echo $plantel; ?>')">
                             <i class="fa fa-eye fg-danger"></i>
                             <div>
                                 <span class="text-strong">Ver Plantilla</span>
@@ -89,13 +89,13 @@
                                         <div class="col-lg-2"></div>
                                         <div class="col-lg-9">
                                             <?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2'){?>
-                                                <div class="col-lg-4"><input type="checkbox" name="primero" id="primero" value="1"><label class="control-label">&nbsp;1 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="tercero" id="tercero" value="3"><label class="control-label">&nbsp;3 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="quinto" id="quinto" value="5"><label class="control-label">&nbsp;5 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="primero" value="1"><label class="control-label">&nbsp;1 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="tercero" value="3"><label class="control-label">&nbsp;3 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="quinto" value="5"><label class="control-label">&nbsp;5 Semestre <em>*</em></label></div>
                                             <?php } else { ?>
-                                                <div class="col-lg-4"><input type="checkbox" name="segundo" id="segundo" value="2"><label class="control-label">&nbsp;2 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="cuarto" id="cuarto" value="4"><label class="control-label">&nbsp;4 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="sexto" id="sexto" value="6"><label class="control-label">&nbsp;6 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="segundo" value="2"><label class="control-label">&nbsp;2 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="cuarto" value="4"><label class="control-label">&nbsp;4 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="sexto" value="6"><label class="control-label">&nbsp;6 Semestre <em>*</em></label></div>
                                             <?php } ?>
                                         </div>
                                     </div>
@@ -186,23 +186,30 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-lg-3 control-label" for=""></label>
-                                        <div class="col-lg-7">
+                                        <div class="col-lg-1"></div>
+                                        <div class="col-lg-10">
                                             <input type="hidden" name="idPUsuario" id="idUsuario" value="">   
-                                            <button class="btn btn-primary save" type="button"> <i class="fa fa-save"></i> Guardar</button>
+                                            <button class="btn btn-primary save  pull-right" type="button"> <i class="fa fa-save"></i> Guardar</button>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <div class="loadingSave"></div>
-                                        <div class="mostrarDatos"></div>
-                                        <div id="error"></div>
+                                        <div class="col-lg-1"></div>
+                                            <div class="col-lg-10">
+                                            <div class="loadingSave"></div>
+                                            <div id="error"></div>
+                                            <div class="mostrarDatos"></div>
+                                        </div>
                                     </div>
                                     </form>
                                 </div>
 
                                 <div class="tab-pane fade form-horizontal" id="ver-plantilla">
-                                    
+                                    <div class="form-group">
+                                            <div class="loadingPlantilla"></div>
+                                            <div class="plantilla"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             
                         </div>
@@ -222,7 +229,13 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
     var licenciatura = document.getElementById('licenciatura').value;
 
     if(this.id=="primero") {
-        var semestre = $('input:checkbox[name=primero]:checked').val();
+        //var semestre = $('input:checkbox[name=psemestre[]]:checked').val();
+        if (document.getElementById('primero').checked) {
+            var semestre = 1;
+        } else {
+            var semestre = '';
+        }
+        
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
@@ -240,7 +253,12 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     } 
     if(this.id=="segundo") {
-        var semestre = $('input:checkbox[name=segundo]:checked').val();
+        //var semestre = $('input:checkbox[name=segundo]:checked').val();
+        if (document.getElementById('segundo').checked) {
+            var semestre = 2;
+        } else {
+            var semestre = '';
+        }
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
@@ -258,7 +276,12 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     }
     if(this.id=="tercero") {
-        var semestre = $('input:checkbox[name=tercero]:checked').val();
+        //var semestre = $('input:checkbox[name=tercero]:checked').val();
+        if (document.getElementById('tercero').checked) {
+            var semestre = 3;
+        } else {
+            var semestre = '';
+        }
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
@@ -276,7 +299,13 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     }
     if(this.id=="cuarto") {
-        var semestre = $('input:checkbox[name=cuarto]:checked').val();
+        //var semestre = $('input:checkbox[name=cuarto]:checked').val();
+        if (document.getElementById('cuarto').checked) {
+            var semestre = 4;
+        } else {
+            var semestre = '';
+        }
+        var semestre = 4;
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
@@ -294,7 +323,12 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     } 
     if(this.id=="quinto") {
-        var semestre = $('input:checkbox[name=quinto]:checked').val();
+        //var semestre = $('input:checkbox[name=quinto]:checked').val();
+        if (document.getElementById('quinto').checked) {
+            var semestre = 5;
+        } else {
+            var semestre = '';
+        }
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
@@ -312,8 +346,12 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     }
     if(this.id=="sexto") {
-        var semestre = $('input:checkbox[name=sexto]:checked').val();
-        
+        //var semestre = $('input:checkbox[name=sexto]:checked').val();
+        if (document.getElementById('sexto').checked) {
+            var semestre = 6;
+        } else {
+            var semestre = '';
+        }
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
@@ -435,6 +473,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
                 if(data[1]=='OK') {
                     $(".mostrarDatos").empty();
                     $(".mostrarDatos").append(data[0]);
+                    datosPlantilla(data[2]);
                     uncheckAll();
                     $(".mostrarMatPrimero").html("");
                     $(".mostrarMatSegundo").html("");
@@ -457,54 +496,13 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             checkElement.checked = false;
         });
     }
-    /*$(".save").click(function() {
-        var plantelId = document.getElementById('plantelId').value;
-        var idUsuario = document.getElementById('idUsuario').value;
-        var nombramiento = document.getElementById('nombramiento').value;
-        var licenciatura = document.getElementById('licenciatura').value;
-        var periodo = document.getElementById('periodo').value;
-        var semestre = document.getElementById('semestre').value;
-        var id_materia = document.getElementById('id_materia').value;
-        var nogrupoMatutino = document.getElementById('nogrupoMatutino').value;
-        var nogrupoVespertino = document.getElementById('nogrupoVespertino').value;
 
-		$.ajax({
-			type: "POST",
-			url: "<?php echo base_url("GenerarPlantilla/save"); ?>",
-			data: {idPPlantel : plantelId, idPUsuario : idUsuario, pidnombramiento: nombramiento, pidLicenciatura : licenciatura, pperiodo : periodo, psemestre : semestre, 
-                pidMateria : id_materia, nogrupoMatutino : nogrupoMatutino, nogrupoVespertino : nogrupoVespertino},
-			dataType: "html",
-			beforeSend: function(){
-				//carga spinner
-				$(".loadingSave").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-			},
-			success: function(data){
-                var data = data.split("::");
-                
-                if(data[1]=='OK'){
-                    $(".mostrarDatos").empty();
-                    $(".mostrarDatos").append(data[0]);
-                    datosPlantilla(data[2]);
-                    Formsave.nombramiento.value = "";
-                    Formsave.licenciatura.value = "";
-                    Formsave.UDTipo_materia.value = "";
-                    Formsave.semestre.value = "";
-                    Formsave.id_materia.value = "";
-                    Formsave.nogrupoMatutino.value = "";
-                    Formsave.nogrupoVespertino.value = "";
-                    $(".loadingSave").html("");
-                }
-			}
-		});
-	});//----->fin*/
-
-    function datosPlantilla(idPlantilla){
-		var idPlantel = document.getElementById("plantelId").value;
-
+    function datosPlantilla(idPUsuario){
+        
 		$.ajax({
 			type: "POST",
 			url: "<?php echo base_url("GenerarPlantilla/datosPlantilla"); ?>",
-			data: {idPlantilla : idPlantilla, idPlantel : idPlantel}, 
+			data: {idPUsuario : idPUsuario, idPlantel : document.getElementById("plantelId").value, periodo : document.getElementById('periodo').value}, 
 			dataType: "html",
 			beforeSend: function(){
 				//carga spinner
@@ -517,5 +515,23 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
 			}
 		});
 	}
+
+    function verPlantilla(idPlantel) {
+        $.ajax({
+			type: "POST",
+			url: "<?php echo base_url("GenerarPlantilla/ver_plantilla"); ?>",
+			data: {idPlantel : idPlantel}, 
+			dataType: "html",
+			beforeSend: function(){
+				//carga spinner
+				$(".loadingPlantilla").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+			},
+			success: function(data){
+				$(".plantilla").empty();
+				$(".plantilla").append(data);  
+				$(".loadingPlantilla").html("");
+			}
+		});
+    }
 
 </script>
