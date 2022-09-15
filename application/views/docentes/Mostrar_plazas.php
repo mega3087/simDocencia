@@ -34,7 +34,7 @@
 				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
 				<td>
 					<?php $total = '0';
-					$total = $list['UDHoras_grupo'] + $list['UDHoras_apoyo'] + $list['UDHoras_adicionales'];
+					$total = $list['UDHoras_grupo'] + $list['UDHoras_apoyo'] + $list['UDHoras_CB'] + $list['UDHoras_provicionales'];
 					echo $total;
 					?>
 				</td>

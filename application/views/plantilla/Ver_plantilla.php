@@ -35,8 +35,9 @@
                         FECHA DE INGRESO<br>
                         TIPO NOMBRAMIENTO<br>
                     </th>
-                    <th rowspan ="2" style="text-align: center;">ESTUDIO DE LICENCIATURA<br>
+                    <th rowspan ="2" style="text-align: center;">
                         SITUACION ACTUAL<br>
+						ESTUDIO DE LICENCIATURA<br>
                         ESTUDIOS COMPLEMENTARIOS<br>
                         (PROFORDEMS, CERTIDEMS, ECODEMS)
                     </th>	
@@ -65,94 +66,136 @@
 					<tr>
 						<td class="text-left"><b><?= $i; ?></b></td> 
 						<td class="text-left"> 
-                            <?= $listDoc['UApellido_pat'].' '.$listDoc['UApellido_mat'].' '.$listDoc['UNombre'];  ?><br>
+                            <?= strtoupper($listDoc['UApellido_pat']).' '.strtoupper($listDoc['UApellido_mat']).' '.strtoupper($listDoc['UNombre']);  ?><br>
                             <?= $listDoc['URFC']; ?>
                         </td>
 						<td class="text-left">
-                        <?php foreach ($listDoc['plazas'] as $p => $listP) { ?>
-                            <?= $listDoc['ULCedulaProf']; ?><br>
-                            <?php if($listDoc['UDTipo_Nombramiento'] == '4'){
-                                echo fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']); 
-                            } else {
-                                echo fecha_format($listP['UDFecha_ingreso']); 
-                            }
-                            ?><br>
-                            <b><?= $listP['TPNombre']; ?></b><br>
-                            <?= $listP['nomplaza']; ?><?php if ($listP['TotalHoras'] != '0') { 
-                                    echo '('.$listP['TotalHoras'].' Horas)'; 
-                                } else { 
-                                    echo 'con '.$listP['UDHoras_adicionales'].'  horas/semana/mes'; 
-                                } ?><br>
-                        <?php } ?>
+							<table style="border:0px" >
+								<tr style="border:0px"><td style="border:0px"><?= nvl($listDoc['estudios'][0]['ULCedulaProf']); ?></td></tr>
+								<?php foreach ($listDoc['plazas'] as $p => $listP) { 
+									$fechaAnio = explode('-',$listP['UDFecha_ingreso']);
+									?>
+									<?php if($listDoc['UDTipo_Nombramiento'] == '4') {
+										echo '<tr style="border:0px"><td style="border:0px">'.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).'</td></tr>'; 
+									} else {
+										echo '<tr style="border:0px"><td style="border:0px">'.fecha_format($listP['UDFecha_ingreso']).'</td></tr>'; 
+									}
+									?>
+									<tr style="border:0px"><td style="border:0px"><b><?php if($listP['UDTipo_Nombramiento'] == '2' || $listP['UDTipo_Nombramiento'] == '3') { echo $listP['TPNombre'].' '.$fechaAnio[0]; } else { echo $listP['TPNombre']; }?></b></td></tr>
+									<tr style="border:0px"><td style="border:0px"><?= $listP['nomplaza']; ?><?php if ($listP['TotalHoras'] != '0') { 
+											echo '('.$listP['TotalHoras'].' Horas)'; 
+											if($listP['UDHoras_CB'] != '0' ) { echo ' y '.$listP['UDHoras_CB'].' horas/semana/mes como CB I'; } 
+										} else { 
+											echo 'con '.$listP['UDHoras_CB'].'  horas/semana/mes'; 
+										} ?></td></tr>
+								<?php } ?>
+							</table>
                         </td> 
+						<td>
+							<table style="border:0px">
+								<tr style="border:0px"><td style="border:0px"><b><?= $listDoc['estudios'][0]['ULTitulado']; ?></b></td></tr>
+								<?php foreach ($listDoc['estudios'] as $e => $listEst) { ?>
+									<tr style="border:0px"><td style="border:0px"><?= $listEst['ULNivel_estudio'].' en '.$listEst['Licenciatura']; ?></td></tr>
+								<?php } ?>
+								<tr style="border:0px"><td style="border:0px"><?= nvl($listDoc['plazas'][0]['UDObservaciones']); ?></td></tr>
+							</table>
+						</td>
 						<td class="text-left">
-                            * Estudios<br>
-							<b>TITULADO</b>
-							**Mas estudios
-						</td>
-						<td class="text-left">
-						<table>
-							materiass<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px"><?= $listMat['materia']; ?></td></tr>
+							<?php } ?>
 						</table>
 						</td>
 						<td>
-						<table>
-							HorasAsignadas<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['hsm']; ?></td></tr>
+							<?php } ?>
 						</table>
 						</td>
 						<td>
-						<table>
-							GPGrupoMatutino<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['pnogrupoMatutino']; ?></td></tr>
+							<?php } ?>
 						</table>
 						</td>
 						<td>
-						<table>
-							GrupoVespertino<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['pnogrupoVespertino']; ?></td></tr>
+							<?php } ?>
 						</table>
 						</td>
                         <td>
-						<table>
-                            1<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { 
+								if ($listMat['psemestre'] == '1' || $listMat['psemestre'] == '2') { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['ptotalHoras']; ?></td></tr>
+								<?php } else { ?>
+								<tr style="border:0px"><td style="border:0px">&nbsp;</td></tr>
+							<?php } } ?>
 						</table>
 						</td>
                         <td>
-						<table>
-                            2<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { 
+								if ($listMat['psemestre'] == '3' || $listMat['psemestre'] == '4') { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['ptotalHoras']; ?></td></tr>
+							<?php } else { ?>
+								<tr style="border:0px"><td style="border:0px">&nbsp;</td></tr>
+							<?php } } ?>
 						</table>
 						</td>
                         <td>
-						<table>
-                            3<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { 
+								if ($listMat['psemestre'] == '5' || $listMat['psemestre'] == '6') { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['ptotalHoras']; ?></td></tr>
+								<?php } else { ?>
+								<tr style="border:0px"><td style="border:0px">&nbsp;</td></tr>
+							<?php } } ?>
 						</table>
 						</td>
 						<td>
-						<table>
-                            TotalAsignar<br>
+						<table style="border:0px">
+							<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listMat['ptotalHoras']; ?></td></tr>
+							<?php } ?>
 						</table>
 						</td>
 						<td>
-						<table>
-							Horas complemento
+						<table style="border:0px">
+
 						</table>
 						</td>
 						<td>
-						<table>
-						    Horas Frente a Grupo							
+						<table style="border:0px">
+							<?php foreach ($listDoc['horas'] as $h => $listHor) { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listHor['UDHoras_grupo']; ?></td></tr>								
+							<?php } ?>					
 						</table>
 						</td>
 						<td>
-						<table>
-						    Hora Apoyo
+						<table style="border:0px">
+							<?php foreach ($listDoc['horas'] as $h => $listHor) { ?>
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listHor['UDHoras_apoyo']; ?></td></tr>								
+							<?php } ?>	
 						</table>
 						</td>
 						<td>
-						<table>
-						    Horas CB I
+						<table style="border:0px">
+							<?php foreach ($listDoc['horas'] as $h => $listHor) { 
+								$totalCB = 0;
+								$totalCB = $listHor['UDHoras_CB'] + $listHor['UDHoras_provicionales'];
+								} ?>	
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $totalCB; ?></td></tr>
 						</table>
 						</td>
 						<td>
-						<table>
-                            Total Horas
+						<table style="border:0px">
+								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $totalCB; ?></td></tr>
 						</table>
 						</td>
 					</tr>

@@ -68,7 +68,7 @@
                                                 <label>Fecha de nacimiento: <em>*</em></label>
                                                 <div class="input-group date">
                                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                    <input type="text" class="form-control fecha" id="UFecha_nacimiento" name="UFecha_nacimiento" value="<?php echo fecha_format(nvl($usuario['UFecha_nacimiento'])); ?>" minlength="10" maxlength="10">
+                                                    <input type="text" class="form-control fecha <?php if (nvl($usuario[0]['UFecha_nacimiento'])) echo "disabled";?>" id="UFecha_nacimiento" name="UFecha_nacimiento" value="<?php echo nvl($usuario[0]['UFecha_nacimiento']); ?>" minlength="10" maxlength="10">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -187,17 +187,21 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="row">
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <label>Horas Frente Grupo: <em>*</em></label>
                                                         <input type="number" id="UDHorasGrupo" name="UDHorasGrupo" class="form-control UDHorasGrupo" value="0" minlength="1" maxlength="2">
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-3">
                                                         <label>Horas Apoyo Docencia : <em>*</em></label>
                                                         <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="0" minlength="1" maxlength="2">
                                                     </div>
-                                                    <div class="col-lg-4">
-                                                        <label>Horas Adicionales / CB-I: <em>*</em></label>
-                                                        <input type="number" class="form-control" id="UDHorasAdicionales" name="UDHorasAdicionales" value="0" minlength="1" maxlength="2">
+                                                    <div class="col-lg-3">
+                                                        <label>Horas CB-I / CB-II / CB_III: <em>*</em></label>
+                                                        <input type="number" class="form-control" id="UDHoras_CB" name="UDHoras_CB" value="0" minlength="1" maxlength="2">
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label>Horas Adicionales / Provicionales: <em>*</em></label>
+                                                        <input type="number" class="form-control" id="UDHoras_provicionales" name="UDHoras_provicionales" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                 </div>
                                             </div>
@@ -449,7 +453,8 @@
             formData.append("UDNumOficio", document.getElementById("UDNumOficio").value);
             formData.append("UDHoras_grupo", document.getElementById("UDHorasGrupo").value);
             formData.append("UDHoras_apoyo", document.getElementById("UDHorasApoyo").value);
-            formData.append("UDHoras_adicionales", document.getElementById("UDHorasAdicionales").value);
+            formData.append("UDHoras_CB", document.getElementById("UDHoras_CB").value);
+            formData.append("UDHoras_provicionales", document.getElementById("UDHoras_provicionales").value);
 
             formData.append("UDFecha_inicio",  document.getElementById("UDFecha_inicio").value);
             formData.append("UDFecha_final", document.getElementById("UDFecha_final").value);
@@ -477,7 +482,9 @@
 						FormRegistrar.UDNumOficio.value = "";
                         FormRegistrar.UDHorasGrupo.value = "";
                         FormRegistrar.UDHorasApoyo.value = "";
-                        FormRegistrar.UDHorasAdicionales.value = "";
+                        FormRegistrar.UDHoras_CB.value = "";
+                        FormRegistrar.UDHoras_provicionales.value = "";                        
+                        
                         FormRegistrar.UDFecha_inicio.value = "";
                         FormRegistrar.UDFecha_final.value = "";
                         FormRegistrar.UDObservaciones.value = "";
@@ -755,6 +762,7 @@
             success: function(data) {
                 var data = data.split("::");
                 $("#UDHorasGrupo").val(data[1]);
+
                 if(data[1] != ''){
                     $(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
                 } else {
@@ -767,6 +775,15 @@
                 } else {
                     $(".UDHorasApoyo").removeClass("disabled").attr("disabled", false);
                     $("#UDHorasApoyo").val('0');
+                }
+                if (idPlaza == '11' || idPlaza == '12' || idPlaza == '13' || idPlaza == '14' || idPlaza == '15') {
+                    $(".UDHorasGrupo").removeClass("disabled").attr("disabled", true);
+                    $("#UDHorasGrupo").val('0');
+                    $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+                    $("#UDHorasApoyo").val('0');
+
+                } else {
+
                 }
                 $("#UDTipo_materia").val(data[3]);
 

@@ -84,8 +84,8 @@
                     <td class="text-center"></td>
                     <td class="text-center"><?= $listDatos['UDHoras_grupo']; ?></td>    
                     <td class="text-center"><?= $listDatos['UDHoras_apoyo']; ?></td>
-                    <td class="text-center"><?= $listDatos['UDHoras_adicionales']; ?></td>
-                    <td class="text-center"><?= $listDatos['UDHoras_grupo'] + $listDatos['UDHoras_apoyo'] + $listDatos['UDHoras_adicionales']; ?></td>
+                    <td class="text-center"><?= $listDatos['UDHoras_CB']; ?></td>
+                    <td class="text-center"><?= $listDatos['UDHoras_grupo'] + $listDatos['UDHoras_apoyo'] + $listDatos['UDHoras_CB'] + $listDatos['UDHoras_provicionales']; ?></td>
                 </tr>
             <?php } ?>
             </tbody>
