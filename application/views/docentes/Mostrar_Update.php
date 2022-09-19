@@ -142,7 +142,7 @@
                                             
                                             <div class="form-group">
                                                 <label>Tipo Nombramiento:</label>
-                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control datosNombramiento" placeholder="Seleccionar Tipo Docente" onchange="tipoNombramiento()">
+                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control datosNombramiento" placeholder="Seleccionar Tipo Docente">
                                                     <option value="">- Seleccionar Nombramiento -</option>
                                                     <?php foreach($tipoDocente as $key_t => $list_t){ ?>
                                                     <option  value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
@@ -196,13 +196,13 @@
                                                         <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                     <div class="col-lg-3">
-                                                        <label>Horas CB-I / CB-II / CB_III: <em>*</em></label>
+                                                        <label>Horas CB-I: <em>*</em></label>
                                                         <input type="number" class="form-control" id="UDHoras_CB" name="UDHoras_CB" value="0" minlength="1" maxlength="2">
                                                     </div>
-                                                    <div class="col-lg-3">
+                                                    <!--<div class="col-lg-3">
                                                         <label>Horas Adicionales / Provicionales: <em>*</em></label>
                                                         <input type="number" class="form-control" id="UDHoras_provicionales" name="UDHoras_provicionales" value="0" minlength="1" maxlength="2">
-                                                    </div>
+                                                    </div>-->
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -454,7 +454,7 @@
             formData.append("UDHoras_grupo", document.getElementById("UDHorasGrupo").value);
             formData.append("UDHoras_apoyo", document.getElementById("UDHorasApoyo").value);
             formData.append("UDHoras_CB", document.getElementById("UDHoras_CB").value);
-            formData.append("UDHoras_provicionales", document.getElementById("UDHoras_provicionales").value);
+            //formData.append("UDHoras_provicionales", document.getElementById("UDHoras_provicionales").value);
 
             formData.append("UDFecha_inicio",  document.getElementById("UDFecha_inicio").value);
             formData.append("UDFecha_final", document.getElementById("UDFecha_final").value);

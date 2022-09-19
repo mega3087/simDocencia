@@ -286,6 +286,8 @@
 				$selectPlant = 'idPlantilla, idPUsuario, idPPlantel, idPUDatos, pidLicenciatura, pperiodo, psemestre, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras, pidMateria, materia, hsm, plan_estudio, semmat';
 				$this->db->join('nomaterias', 'id_materia = pidMateria', 'left');
 				$this->db->where('idPUDatos', $listDat['UDClave']);
+				$this->db->order_by('idPUDatos','ASC');
+				$this->db->order_by('psemestre','ASC');
 				
 				$data['datos'][$d]['plantilla'] = $this->generarplantilla_model->find_all(null, $selectPlant);
 			}
@@ -317,11 +319,12 @@
 			$data['docentes'] = $this->usuariodatos_model->find_all(null, $selectUser);
 			
 			foreach ($data['docentes'] as $u => $listUser) {
-				$select = "UDFecha_ingreso, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, UDPlaza, nomplaza, UDFecha_inicio, UDFecha_final, UDObservaciones";
+				$select = "UDClave, UDFecha_ingreso, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, UDPlaza, nomplaza, UDFecha_inicio, UDFecha_final, UDObservaciones,UDNumOficio";
 				$this->db->join('noctipopersonal', 'UDTipo_Nombramiento = TPClave', 'left');
 				$this->db->join('noplazadocente', 'UDPlaza = idPlaza', 'left');
 				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
 				$this->db->where('UDPlantel',$listUser['UDPlantel']);
+				$this->db->where('UDActivo','1');
 				
 				$data['docentes'][$u]['plazas'] = $this->usuariodatos_model->find_all(null, $select);
 
@@ -336,12 +339,15 @@
 				$this->db->join('nomaterias','id_materia = pidMateria','left');
 				$this->db->where('idPUsuario',$listUser['UNCI_usuario']);
 				$this->db->where('idPPlantel',$listUser['UDPlantel']);
+				$this->db->order_by('idPUDatos','ASC');
+				$this->db->order_by('psemestre','ASC');
 
 				$data['docentes'][$u]['materias'] = $this->generarplantilla_model->find_all(null, $selectMat);
 
 				$selectHoras = "SUM(UDHoras_grupo) UDHoras_grupo, SUM(UDHoras_apoyo) UDHoras_apoyo, SUM(UDHoras_CB) UDHoras_CB, SUM(UDHoras_provicionales) UDHoras_provicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras";
 				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
 				$this->db->where('UDPlantel',$listUser['UDPlantel']);
+				$this->db->where('UDActivo','1');
 
 				$data['docentes'][$u]['horas'] = $this->usuariodatos_model->find_all(null, $selectHoras);
 

@@ -28,7 +28,7 @@
                 <tr>
                     <th rowspan ="2" style="text-align: center;">No</th>
                     <th rowspan ="2" style="text-align: center;">
-                        NOMBRE DEL DOCENTE<br><br><br>
+                        NOMBRE DEL DOCENTE<br>
                         R.F.C. CON HOMOCLAVE
                     </th>
                     <th rowspan ="2" style="text-align: center;">CEDULA PROFESIONAL<br>
@@ -46,7 +46,7 @@
                     <th colspan="2" style="text-align: center;">NO. DE GRUPOS </th>
                     <th colspan="3" style="text-align: center;">H/S/M POR SEM. </th>
                     <th rowspan ="2" style="text-align: center;">TOTAL<br> HRS.<br> POR<br> ASIG.</th>
-                    <th rowspan ="2" style="text-align: center;">HRS<br> COMPLEMENTO</th>
+                    <th rowspan ="2" style="text-align: center;">HRS<br> COMPLE-<br>MENTO</th>
                     <th rowspan ="2" style="text-align: center;">HORAS FRENTE<br> A GRUPO<br> HOMOLOGADAS/<br> RECATEGORIZADAS</th>
                     <th rowspan ="2" style="text-align: center;">HORAS DE <br> APOYO A LA<br> DOCENCIA</th>
 					<th rowspan ="2" style="text-align: center;">HORAS <br> CB-I<br> Y/O <br> TECNICO CB-I</th>
@@ -55,9 +55,9 @@
                 <tr>
                     <th style="text-align: center;">MAT.</th>
                     <th style="text-align: center;">VESP.</th>
-                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '1 SEM.'; } else { echo '2 SEM.';} ?></th>
-                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '3 SEM.'; } else { echo '4 SEM.';} ?></th>
-                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '5 SEM.'; } else { echo '6 SEM.';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '1'; } else { echo '2';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '3'; } else { echo '4';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '5'; } else { echo '6';} ?></th>
                 </tr>
             </thead>
                 <?php 
@@ -66,8 +66,14 @@
 					<tr>
 						<td class="text-left"><b><?= $i; ?></b></td> 
 						<td class="text-left"> 
-                            <?= strtoupper($listDoc['UApellido_pat']).' '.strtoupper($listDoc['UApellido_mat']).' '.strtoupper($listDoc['UNombre']);  ?><br>
-                            <?= $listDoc['URFC']; ?>
+							<table style="border:0px" >
+								<tr style="border:0px"><td style="border:0px">
+									<?= mb_strtoupper($listDoc['UApellido_pat'],'utf-8').' '.mb_strtoupper($listDoc['UApellido_mat'],'utf-8').' '.mb_strtoupper($listDoc['UNombre'],'utf-8');  ?>
+								</td></tr>
+								<tr style="border:0px"><td style="border:0px">
+                            		<?= $listDoc['URFC']; ?>
+								</td></tr>
+							</table>
                         </td>
 						<td class="text-left">
 							<table style="border:0px" >
@@ -75,19 +81,36 @@
 								<?php foreach ($listDoc['plazas'] as $p => $listP) { 
 									$fechaAnio = explode('-',$listP['UDFecha_ingreso']);
 									?>
-									<?php if($listDoc['UDTipo_Nombramiento'] == '4') {
+									<?php if($listP['UDTipo_Nombramiento'] == '4') {
 										echo '<tr style="border:0px"><td style="border:0px">'.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).'</td></tr>'; 
-									} else {
+									} elseif($listP['UDTipo_Nombramiento'] == '2') {
 										echo '<tr style="border:0px"><td style="border:0px">'.fecha_format($listP['UDFecha_ingreso']).'</td></tr>'; 
+									} elseif($listP['UDTipo_Nombramiento'] == '5' || $listP['UDTipo_Nombramiento'] == '8') {
+										echo '<tr style="border:0px"><td style="border:0px"></td></tr>'; 
 									}
 									?>
-									<tr style="border:0px"><td style="border:0px"><b><?php if($listP['UDTipo_Nombramiento'] == '2' || $listP['UDTipo_Nombramiento'] == '3') { echo $listP['TPNombre'].' '.$fechaAnio[0]; } else { echo $listP['TPNombre']; }?></b></td></tr>
-									<tr style="border:0px"><td style="border:0px"><?= $listP['nomplaza']; ?><?php if ($listP['TotalHoras'] != '0') { 
+									<tr style="border:0px"><td style="border:0px"><b>
+									<?php if($listP['UDTipo_Nombramiento'] == '2' || $listP['UDTipo_Nombramiento'] == '3') { 
+										echo $listP['TPNombre'].' '.$fechaAnio[0]; 
+										} elseif ($listP['UDTipo_Nombramiento'] == '1' || $listP['UDTipo_Nombramiento'] == '4') {
+										echo $listP['TPNombre']; }?></b>
+										</td>
+									</tr>
+									<tr style="border:0px"><td style="border:0px">
+										<?php if ($listP['UDTipo_Nombramiento'] == '5') { 
+											echo '<b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Folio: '.$listP['UDNumOficio'].'</b>';
+										} elseif ($listP['UDTipo_Nombramiento'] == '8') {
+											echo '<b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> por promoción '.fecha_format($listP['UDFecha_ingreso']).'</b>';
+										} else { ?>
+										<?= $listP['nomplaza']; ?>
+										<?php if ($listP['TotalHoras'] != '0') { 
 											echo '('.$listP['TotalHoras'].' Horas)'; 
 											if($listP['UDHoras_CB'] != '0' ) { echo ' y '.$listP['UDHoras_CB'].' horas/semana/mes como CB I'; } 
 										} else { 
 											echo 'con '.$listP['UDHoras_CB'].'  horas/semana/mes'; 
-										} ?></td></tr>
+										} }?>
+										</td>
+									</tr>
 								<?php } ?>
 							</table>
                         </td> 
@@ -209,7 +232,7 @@
 table{
 	width : 100%;
 	color: #000;
-	font-size:9px;
+	font-size:11px;
 	font-family: "Ebrima";
 }
 th, td{

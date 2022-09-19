@@ -62,9 +62,9 @@
                 <tr>
                     <th style="text-align: center;">MAT.</th>
                     <th style="text-align: center;">VESP.</th>
-                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '1 SEM.'; } else { echo '2 SEM.';} ?></th>
-                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '3 SEM.'; } else { echo '4 SEM.';} ?></th>
-                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '5 SEM.'; } else { echo '6 SEM.';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '1'; } else { echo '2';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '3'; } else { echo '4';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos,3,1) == '2') { echo '5'; } else { echo '6';} ?></th>
                 </tr>
             </thead>
             <tbody>
