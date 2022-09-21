@@ -21,11 +21,11 @@
                 <td class="text-left"><?php echo $list['URFC']; ?></td>
                 <td class="text-left"><?php echo $list['UCURP']; ?></td>
                 <td class="text-center">
-                <?php if ($list['UDValidado'] != '1') { ?>
+                <?php if ($list['UDValidado'] == '') { ?>
                     <button class="btn btn-info user" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                  <i class="fa fa-pencil"></i> Asignar Materias</button>
                  <?php } else { ?>
-                    <button class="btn btn-primary btn-circle" type="button"><i class="fa fa-check"></i></button>
+                    <b class="text-warning"><i class="fa fa-clock-o"></i> Pendiente por Revisar</b>
                  <?php } ?>
                 </td>
             </tr>

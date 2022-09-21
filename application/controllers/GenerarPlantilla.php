@@ -225,7 +225,12 @@
 				} else {
 					$this->db->where('UDClave', $data['idPUDatos']);
 					$validado = $this->usuariodatos_model->find();
-					if ($validado['UDValidado'] == '1') {
+					
+					$this->db->where('idPUsuario', $data['idPUsuario']);
+					$this->db->where('pidLicenciatura', $data['pidLicenciatura']);
+					$asignatura = $this->generarplantilla_model->find();
+
+					if ($validado['UDValidado'] == '1' && count($asignatura) > '1') {
 						set_mensaje("Ya se guardaron los datos del Docente.");
 						muestra_mensaje();
 					} else {

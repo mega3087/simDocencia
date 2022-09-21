@@ -90,12 +90,8 @@
                                         <div class="col-lg-9">
                                             <?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2'){?>
                                                 <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="primero" value="1"><label class="control-label">&nbsp;1 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="tercero" value="3"><label class="control-label">&nbsp;3 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="quinto" value="5"><label class="control-label">&nbsp;5 Semestre <em>*</em></label></div>
                                             <?php } else { ?>
                                                 <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="segundo" value="2"><label class="control-label">&nbsp;2 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="cuarto" value="4"><label class="control-label">&nbsp;4 Semestre <em>*</em></label></div>
-                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="sexto" value="6"><label class="control-label">&nbsp;6 Semestre <em>*</em></label></div>
                                             <?php } ?>
                                         </div>
                                     </div>
@@ -103,7 +99,6 @@
                                     <div class="form-group">
                                         <div class="col-lg-2"></div>
                                         <div class="col-lg-9">
-                                            <div class="loadingMat"></div>
                                             <div class="mostrarMatPrimero" style="display: none;">
                                                 <table class="table table-striped table-bordered table-hover" >
                                                     <thead>
@@ -130,6 +125,23 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                        </div>
+                                    </div>                                    
+
+                                    <div class="form-group">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-9">
+                                            <?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2'){?>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="tercero" value="3"><label class="control-label">&nbsp;3 Semestre <em>*</em></label></div>
+                                            <?php } else { ?>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="cuarto" value="4"><label class="control-label">&nbsp;4 Semestre <em>*</em></label></div><div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="sexto" value="6"><label class="control-label">&nbsp;6 Semestre <em>*</em></label></div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-9">
                                             <div class="mostrarMatTercero" style="display: none;">
                                                 <table class="table table-striped table-bordered table-hover" >
                                                     <thead>
@@ -156,6 +168,23 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                        </div>
+                                    </div>  
+
+                                    <div class="form-group">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-9">
+                                            <?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2'){?>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="quinto" value="5"><label class="control-label">&nbsp;5 Semestre <em>*</em></label></div>
+                                            <?php } else { ?>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="sexto" value="6"><label class="control-label">&nbsp;6 Semestre <em>*</em></label></div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-9">
                                             <div class="mostrarMatQuinto" style="display: none;">
                                                 <table class="table table-striped table-bordered table-hover" >
                                                     <thead>
@@ -183,8 +212,9 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    </div>
-
+                                    </div>  
+                                    <div class="loadingMat"></div>
+    
                                     <div class="form-group">
                                         <div class="col-lg-1"></div>
                                         <div class="col-lg-10">

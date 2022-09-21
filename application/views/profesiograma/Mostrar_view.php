@@ -12,7 +12,10 @@
 	</div>
 </div>
 
-<div class="row" id="chat">
+<div class="loading"></div>
+<div class="msg"></div>
+
+<div class="row">
 	<div class="col-lg-12">
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
@@ -72,46 +75,77 @@
 						<thead>
 							<tr>
 								<th>#</th>
+								<th>Grado de Estudios</th>
+								<th></th>
 								<th>Materia</th>
-								<th>Semestre</th>
-								<th>Licenciatura(s) </th>
+								<th class="text-center">Semestre</th>
 								<th width="130px">Centro Escolar </th>
 								<?php if (is_permitido(null,'profesiograma','save')) { ?>
-								<th width="130px">Acción</th>
+								<th class="text-center" width="130px">Acción</th>
+								<th class="text-center" width="130px">Acción</th>
 								<?php } ?>
 							</tr>	
 						</thead>
 						<tbody>
 							<?php
 								$i = 1;
-								foreach ($materias as $y => $mat) { 
-								$contar = count($mat['lics']) + 1; 
-								foreach ($mat['lics'] as $p => $prof) { ?>								
+								foreach ($lics as $l => $listLics) { 
+								//$contar = count($listLics['lics']) + 1; ?>
 									<tr>
 										<td class="text-left"><?= $i; ?></td> 
-										<td class="text-left"><?php echo $mat['materia'].' '.$mat['modulo']; ?></td>
-										<td class="text-left"><?= $mat['semmat']; ?></td>
-										<td class="text-left"><?php echo $prof['LGradoEstudio'].' en '.$prof['Licenciatura']; ?></td>
-										<td class="text-left"><?php if($mat['plan_estudio'] == '1') { echo 'Plantel'; } else { echo 'CEMSAD'; } ?></td>
+										<td class="text-left"><?php echo $listLics['LGradoEstudio'].' en '.$listLics['Licenciatura']; ?></td>
+										<td class="text-left">
+											<button type="button" class="btn btn-outline btn-info btn-xs openEditar" 
+												data-target="#modal_Editar"
+												data-uidlicenciatura="<?php echo $listLics['IdLicenciatura']; ?>"
+												data-ulgradoestudios="<?php echo $listLics['LIdentificador']; ?>"
+												data-ulicenciatura="<?php echo $listLics['Licenciatura']; ?>"
+												data-toggle="modal">
+												<i class='fa fa-pencil'></i> Editar</button>
+										</td>
+										<td>
+										<table style="border:0px">
+											<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+												<tr style="border:0px"><td style="border:0px"><?= $listMat['materia']; ?></td></tr>
+											<?php } ?>
+										</table>
+										</td>
+										<td class="text-center">
+											<table style="border:0px">
+												<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+													<tr style="border:0px"><td style="border:0px"><?= $listMat['semmat']; ?></td></tr>
+												<?php } ?>
+											</table>
+										</td>
+										<td>
+											<table style="border:0px">
+												<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+													<tr style="border:0px"><td style="border:0px"><?php if($listMat['plan_estudio'] == '1') { echo 'Plantel'; } else { echo 'CEMSAD'; } ?></td></tr>
+												<?php } ?>
+											</table>
+										</td>
 										<?php if (is_permitido(null,'profesiograma','save')) { ?>
 										<td class="text-center">
-											<button class="btn btn-default btn-sm openEditar" 
-												data-target="#modal_Editar"
-												data-uidmateria="<?php echo $mat['id_materia']; ?>"
-												data-umaterias="<?php echo $mat['materia']; ?>"
-												data-gestudio="<?php echo $prof['id_gradoestudios']; ?>"
-												data-pestudio="<?php echo $mat['plan_estudio']; ?>"
-												data-uidlicenciatura="<?php echo $prof['IdLicenciatura']; ?>"
-												data-ulicenciatura="<?php echo $prof['Licenciatura']; ?>"
-												data-usemmat="<?php echo $mat['semmat']; ?>"
-												data-toggle="modal">
-												<i class="fa fa-pencil"></i> Editar
-											</button>
+											<table style="border:0px">
+											<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+												<tr style="border:0px"><td style="border:0px">
+												<a><span class="badge badge-danger"  onclick="quitarMateria('<?php echo $listLics['IdLicenciatura'];?>','<?php echo $listMat['id_materia'];?>')"><i class='fa fa-trash'></i> Quitar Materia</span></a>
+												</td></tr>
+												<?php } ?>
+											</table>
 										</td>
-										<?php } ?>										
+										<td class="text-left">
+											<button type="button" class="btn btn-outline btn-primary btn-xs agregarMaterias"
+												data-target="#modal_Agregar"
+												data-uidlicenciatura="<?php echo $listLics['IdLicenciatura']; ?>"
+												data-ulgradoestudios="<?php echo $listLics['LIdentificador']; ?>"
+												data-ulicenciatura="<?php echo $listLics['Licenciatura']; ?>"
+												data-toggle="modal">
+											<i class='fa fa-plus'></i> Agregar Materias</button>
+										</td>									
+										<?php  } ?>
 									</tr>
 								<?php $i++; } ?>
-								<?php } ?>
 						</tbody>
 					</table>
 				</div>
@@ -150,6 +184,7 @@
 									<div class="col-lg-9">
 									<select name="UPlanEstudio" id="UPlanEstudio" class="form-control">
 										<option value="">- Seleccionar -</option>
+										<option value="0">Ambos</option>
 										<option value="1">Plantel</option>
 										<option value="2">CEMSAD</option>
 									</select>
@@ -159,7 +194,7 @@
 								<div class="form-group">
 									<label class="col-lg-3 control-label" for="">Semestre: <em>*</em></label>
 									<div class="col-lg-9">
-										<select name="SemestreMat[]" id="SemestreMat" class="form-control MatSem chosen-select1" multiple="">
+										<select name="SemestreMat[]" id="SemestreMat" class="form-control MatSem chosen-select" multiple="" data-placeholder="Seleccionar Semestre">
 											<option value="1" style="display:block;">1</option>
 											<option value="2" style="display:block;">2</option>
 											<option value="3" style="display:block;">3</option>
@@ -217,44 +252,6 @@
 									<input type="text" id="ULicenciatura" name="ULicenciatura " value="" maxlength='150' class="form-control" />
 									</div>
 								</div>
-
-								<div class="form-group">
-									<label class="col-lg-3 control-label" for="">Semestre: <em>*</em></label>
-									<div class="col-lg-9">
-										<select name="SemestreMat" id="SemestreMat" class="form-control disabled">
-											<option value="">- Semestre -</option>
-											<option value="1" style="display:block;">1</option>
-											<option value="2" style="display:block;">2</option>
-											<option value="3" style="display:block;">3</option>
-											<option value="4" style="display:block;">4</option>
-											<option value="5" style="display:block;">5</option>
-											<option value="6" style="display:block;">6</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<label class="col-lg-3 control-label" for="">Centro Escolar: <em>*</em></label>
-									<div class="col-lg-9">
-									<select name="UPlanEstudio" id="UPlanEstudios" class="form-control disabled">
-										<option value="0">- Seleccionar -</option>
-										<option value="1">Plantel</option>
-										<option value="2">CEMSAD</option>
-									</select>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<label class="col-lg-3 control-label" for="">Materia: <em>*</em></label>
-									<div class="col-lg-9">
-										<select name="UIdMateria" id="UIdMateria" class="form-control disabled">
-											<option value="">- Seleccionar Materia -</option>
-											<<?php foreach($materias as $key => $listMat){ ?>
-											<option value="<?= $listMat['id_materia']; ?>" <?php if($listMat['id_materia'] == $idMat) echo"selected"; ?>><?=$listMat['materia'].' '.$listMat['modulo'];?></option>
-											<?php  } ?>
-										</select>
-									</div>
-								</div>
 								
 								<div class="form-group">
 									<div class="loadingUpdate"></div>
@@ -267,6 +264,81 @@
 									<button type="button" class="btn btn-primary pull-right editarLic"> <i class="fa fa-save"></i> Guardar</button>
 								</div>
 								<?php echo form_close(); ?>								
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--Ventana modal Agregar Materias-->
+				<div class="modal inmodal" id="modal_Agregar" tabindex="-1" role="dialog" aria-hidden="true">
+					<div class="modal-dialog modal-lg" >
+						<div class="modal-content animated flipInY">
+							
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+								<h6 class="modal-title"><i class="fa fa-user"></i>&nbsp;&nbsp; Agregar Materias</h6><div class="border-bottom"><br /></div>
+								<?php echo form_open('profesiograma/agregarMaterias', array('name' => 'FormAgregarMat', 'id' => 'FormAgregarMat', 'role' => 'form', 'class' => 'form-horizontal panel-body')); ?>
+								<input type="hidden" name="IIdLicenciatura" id="IIdLicenciaturas" value="">
+
+								<div class="form-group">
+									<label class="col-lg-3 control-label" for="">Grado de Estudio: <em>*</em></label>
+									<div class="col-lg-9">
+										<select name="UGradoEstudio" id="UGradoEstudios" class="form-control disabled">
+											<option value="">- Grado Estudio -</option>
+											<?php foreach ($GradoEstudio as $g => $listG) { ?>
+												<option value="<?= $listG['id_gradoestudios']?>"><?= $listG['grado_estudios']?></option>	
+											<?php } ?>s
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-lg-3 control-label">Licenciatura: <em>*</em></label>
+									<div class="col-lg-9">
+									<input type="text" id="ULicenciaturas" name="ULicenciatura " value="" maxlength='150' class="form-control disabled" />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-lg-3 control-label" for="">Centro Escolar: <em>*</em></label>
+									<div class="col-lg-9">
+									<select name="UPlanEstudio" id="UPlanEstudios" class="form-control">
+										<option value="">- Seleccionar -</option>
+										<option value="0">Ambos</option>
+										<option value="1">Plantel</option>
+										<option value="2">CEMSAD</option>
+									</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-lg-3 control-label" for="">Semestre: <em>*</em></label>
+									<div class="col-lg-9">
+										<select name="SemestreMat[]" id="SemestreMats" class="form-control MatSemestre chosen-select" multiple="" data-placeholder="Seleccionar">
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+											<option value="6">6</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group resultMaterias">
+								</div>
+
+								<div class="form-group">
+									<div class="loadingSaveMat"></div>
+									<div class="msgSaveMat"></div>
+									<div id="errorSaveMat"></div>
+								</div>
+								
+								<div class="modal-footer">
+									<a href="#" data-dismiss="modal" class="btn btn-danger cerrar">Cerrar</a>
+									<button type="button" class="btn btn-primary pull-right guardarMaterias"> <i class="fa fa-save"></i> Guardar</button>
+								</div>
+								<?php echo form_close(); ?>
 							</div>
 						</div>
 					</div>
@@ -309,70 +381,21 @@
 		
 		/* Ventana modal */
 		$(document).on("click", ".openEditar", function () {
-			var sem = $(this).data('usemmat');
-			
-			$(".modal-header #UIdMateria").val( $(this).data('uidmateria') );
-			$(".modal-header #materiaSem").val( $(this).data('umaterias') );
 			$(".modal-header #IIdLicenciatura").val( $(this).data('uidlicenciatura') );
-			$(".modal-header #UGradoEstudio").val( $(this).data('gestudio') );
-			$(".modal-header #UPlanEstudios").val( $(this).data('pestudio') );
+			$(".modal-header #UGradoEstudio").val( $(this).data('ulgradoestudios') );
 			$(".modal-header #ULicenciatura").val( $(this).data('ulicenciatura') );
-			$(".modal-header #SemestreMat").val( $(this).data('usemmat') );
 			
 		});
 
-	    /*Borrar docente del Plantel o Centro
-		$(".quitarDocente").click(function(e) {
-			var UNCI_usuario_skip = $(this).val();
-			var PlantelId = document.getElementById("plantelId").value;
-			bootbox.confirm({
-			    message: "<div class='text-center'>¿Realmente desea quitar el Docente del Plantel?</div>",
-			    size: 'small',
-			    buttons: {
-			        confirm: {
-			            label: 'Si',
-			            className: 'btn-primary'
-			        },
-			        cancel: {
-			            label: 'No',
-			            className: 'btn-danger'
-			        }
-			    },
-			    callback: function (result) {
-			    	if (result == true) {
-			    		$.ajax({
-							type: "POST",
-							url: "<?php echo base_url("docente/quitarDocente"); ?>",
-							data: {UNCI_usuario_skip: UNCI_usuario_skip, PlantelId: PlantelId},
-							dataType: "html",
-							beforeSend: function(){
-								//carga spinner
-								$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-							},
-							success: function(data){
-								if(data==' OK'){
-									location.reload();
-								} else {
-									$(".msg").empty();
-				                    $(".msg").append(data);  
-				                    $(".loading").html("");	
-								}
-							}
-						});
-			    	}
-			    }
-			});
+		$(document).on("click", ".agregarMaterias", function () {
+			$(".modal-header #IIdLicenciaturas").val( $(this).data('uidlicenciatura') );
+			$(".modal-header #UGradoEstudios").val( $(this).data('ulgradoestudios') );
+			$(".modal-header #ULicenciaturas").val( $(this).data('ulicenciatura') );
+			
 		});
-		//Fin Borrar Docente del Plantel o Centro
 		
-		/*obtenemos la altura del documento Para el chat 
-		var altura = $(document).height();
-		 
-		$("#chat").click(function(){
-		    $("html, body").animate({scrollTop:altura+"px"});
-		});*/
-
-		$('.chosen-select1').chosen();    
+		$('.chosen-select').chosen();  
+		
 	});
 </script>
 <script type="text/javascript">
@@ -410,12 +433,12 @@ $(".buscar").click(function() {
 	    dataType: "html",
 	    beforeSend: function(){
 	        //carga spinner
-	        $(".loadingBusqueda").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+	        $(".loadMat").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
 	    },
 	    success: function(data){
 	        $("#mostrarBusqueda").empty();
 	        $("#mostrarBusqueda").append(data);  
-	        $("#loadingBusqueda").html("");
+	        $("#loadMat").html("");
 	    }
 	});
 });
@@ -424,11 +447,32 @@ $(".MatSem").on("change", function(){
 	var planEstudio = document.getElementById("UPlanEstudio").value;
 	var semestre = document.getElementById('SemestreMat');
 	var semestre = [...semestre.selectedOptions].map(option => option.value);
-
+	
 	$.ajax({
 	    type: "POST",
 	    url: "<?php echo base_url("profesiograma/mostrarMaterias_skip"); ?>",
 	    data: {semestre : semestre, planEstudio : planEstudio},
+	    dataType: "html",
+	    beforeSend: function(){
+	        //carga spinner
+	        $(".loadingLic").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+	    },
+	    success: function(data){
+	        $(".resultMaterias").empty();
+	        $(".resultMaterias").append(data);  
+	        $(".loadingLic").html("");
+	    }
+	});
+});	
+
+$(".MatSemestre").on("change", function(){
+	var semestre = document.getElementById('SemestreMats');
+	var semestre = [...semestre.selectedOptions].map(option => option.value);
+	
+	$.ajax({
+	    type: "POST",
+	    url: "<?php echo base_url("profesiograma/materias_skip"); ?>",
+	    data: {IIdLicenciatura : document.getElementById("IIdLicenciaturas").value, semestre : semestre, planEstudio : document.getElementById("UPlanEstudios").value},
 	    dataType: "html",
 	    beforeSend: function(){
 	        //carga spinner
@@ -501,6 +545,83 @@ $(".guardarLic").click(function() {
             }
         });
     });//----->fin
+
+	//Guardar nueva Licenciatura
+$(".guardarMaterias").click(function() {
+	    $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("profesiograma/save_materias_skip"); ?>",
+            data: $(this.form).serialize(),
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingSave").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                var data = data.split("::");
+				if(data[1] == 'OK'){
+                    $(".msgSaveMat").empty();
+                    $(".msgSaveMat").append(data[0]);
+					$("#UPlanEstudios").val('');
+					$('#SemestreMats').val('').trigger('change');
+					$('#SemestreMats').val('').trigger('chosen:updated');
+                    $(".loadingSaveMat").html("");
+					location.reload();
+                } else {
+                    $("#errorSaveMat").empty();
+                    $("#errorSaveMat").append(data);  
+                    $(".loadingSaveMat").html(""); 
+                }
+                
+            }
+        });
+    });//----->fin
+
+	function quitarMateria(idLic, idMateria) { 
+		
+		bootbox.confirm({
+			message: "<div class='text-center'>¿Realmente desea quitar el Materia?</div>",
+			size: 'small',
+			buttons: {
+				confirm: {
+					label: 'Si',
+					className: 'btn-primary'
+				},
+				cancel: {
+					label: 'No',
+					className: 'btn-danger'
+				}
+			},
+			callback: function (result) {
+				if (result == true) {
+					$.ajax({
+						type: "POST",
+						url: "<?php echo base_url("profesiograma/delete"); ?>",
+						data: {idLic: idLic, idMateria: idMateria},
+						dataType: "html",
+						beforeSend: function(){
+							//carga spinner
+							$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+						},
+						success: function(data){
+							var data = data.split("::");
+							
+							if(data[1] == 'OK'){
+								$(".msg").empty();
+								$(".msg").append(data[0]);  
+								$(".loading").html("");
+								location.reload();
+							} else {
+								$(".msg").empty();
+								$(".msg").append(data);  
+								$(".loading").html("");	
+							}
+						}
+					});
+				}
+			}
+		});
+	}
 
 $('#modal_Registrar').on('show.bs.modal', function (event) {
 	$("#modal_Registrar input").val("");

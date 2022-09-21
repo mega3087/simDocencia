@@ -21,7 +21,10 @@
 			}
 			$borrar = "<button type='button' value=".$this->encrypt->encode(nvl($list['UDClave']))." class='btn btn-sm btn-danger quitarPlaza' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
-				<td><?php echo nvl($list['TPNombre']); ?></td>
+				<td>
+					<input type="hidden" name="tipoNombramiento" id="tipoNombramiento" value="<?php echo nvl($list['UDTipo_Nombramiento']); ?>">
+					<?php echo nvl($list['TPNombre']); ?>
+				</td>
 				<td>
 					<?php if( $list['UDFecha_ingreso'] != '0000-00-00') { 
 						echo $list['UDFecha_ingreso'];

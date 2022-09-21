@@ -6,18 +6,20 @@
 				<th>Especialidad</th>
 				<th>Titulado</th>
 				<th>No. Cédula Profesional</th>
-				<th>Título Profesional</th>
-				<th>Cédula Profesional</th>				
+				<th>Documento</th>		
 				<th>Acción</th>
 			</tr>
 		</thead>
 		<tbody>
 		<?php foreach($data as $key => $list) { 
-			if($list['ULTitulo_file'] != 'undefined') {
-				$UPTitulo_file = "<a href='".base_url($UPTitulo_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
+			
+			if( $list['ULTitulo_file'] != '') {
+				$urltitulo = 'Documentos/Licenciaturas/'.$list['ULUsuario'].'/'.$list['ULTitulo_file'];
+				$UPTitulo_file = "<a href='".base_url($urltitulo)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
-			if($list['ULCedula_file'] != 'undefined') {
-				$UPCedula_file = "<a href='".base_url($UPCedula_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
+			if($list['ULCedula_file'] != '') {
+				$urlCedula = 'Documentos/Licenciaturas/'.$list['ULUsuario'].'/'.$list['ULCedula_file'];
+				$UPCedula_file = "<a href='".base_url($urlCedula)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
 			$borrar = "<button type='button' value=".$this->encrypt->encode($list['ULClave'])." class='btn btn-sm btn-danger quitarEstudios' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
@@ -26,7 +28,7 @@
 				<td><?php echo $list['ULTitulado']; ?></td>
 				<td><?php echo $list['ULCedulaProf']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
-				<td><?php echo nvl($UPCedula_file); ?></td>
+				<!--<td><?php echo nvl($UPCedula_file); ?></td>-->
 				<td>
 					<?php echo nvl($borrar); ?>
 				</td>

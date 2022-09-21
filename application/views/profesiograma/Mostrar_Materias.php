@@ -2,45 +2,77 @@
 	<thead>
 		<tr>
 			<th>#</th>
+			<th>Grado de Estudios</th>
+			<th></th>
 			<th>Materia</th>
-			<th>Semestre</th>
-			<th>Licenciatura(s) </th>
+			<th class="text-center">Semestre</th>
 			<th width="130px">Centro Escolar </th>
 			<?php if (is_permitido(null,'profesiograma','save')) { ?>
-			<th width="130px">Acción</th>
+			<th class="text-center" width="130px">Acción</th>
+			<th class="text-center" width="130px">Acción</th>
 			<?php } ?>
 		</tr>	
 	</thead>
 	<tbody>
-	<?php
-		$i = 1;
-		foreach ($materias as $y => $mat) { 
-		$contar = count($mat['lics']) + 1; 
-		foreach ($mat['lics'] as $p => $prof) { ?>								
-			<tr>
-				<td class="text-left"><?= $i; ?></td> 
-				<td class="text-left"><?php echo $mat['materia'].' '.$mat['modulo']; ?></td>
-				<td class="text-left"><?= $mat['semmat']; ?></td>
-				<td class="text-left"><?php echo $prof['LGradoEstudio'].' en '.$prof['Licenciatura']; ?></td>
-				<td class="text-left"><?php if($mat['plan_estudio'] == '1') { echo 'Plantel'; } else { echo 'CEMSAD'; } ?></td>
-				<?php if (is_permitido(null,'profesiograma','save')) { ?>
-				<td class="text-center">
-					<button class="btn btn-default btn-sm openEditar" 
-						data-target="#modal_Editar"
-						data-uidmateria="<?php echo $mat['id_materia']; ?>"
-						data-umaterias="<?php echo $mat['materia']; ?>"
-						data-gestudio="<?php echo $prof['LGradoEstudio']; ?>"
-						data-pestudio="<?php echo $mat['plan_estudio']; ?>"
-						data-uidlicenciatura="<?php echo $prof['IdLicenciatura']; ?>"
-						data-ulicenciatura="<?php echo $prof['Licenciatura']; ?>"
-						data-usemmat="<?php echo $mat['semmat']; ?>"
-						data-toggle="modal">
-						<i class="fa fa-pencil"></i> Editar
-					</button>
-				</td>
-				<?php } ?>										
-			</tr>
-		<?php $i++; } } ?>
+		<?php
+			$i = 1;
+			foreach ($lics as $l => $listLics) { 
+			//$contar = count($listLics['lics']) + 1; ?>
+				<tr>
+					<td class="text-left"><?= $i; ?></td> 
+					<td class="text-left"><?php echo $listLics['LGradoEstudio'].' en '.$listLics['Licenciatura']; ?></td>
+					<td class="text-left">
+						<button type="button" class="btn btn-outline btn-info btn-xs openEditar" 
+							data-target="#modal_Editar"
+							data-uidlicenciatura="<?php echo $listLics['IdLicenciatura']; ?>"
+							data-ulgradoestudios="<?php echo $listLics['LIdentificador']; ?>"
+							data-ulicenciatura="<?php echo $listLics['Licenciatura']; ?>"
+							data-toggle="modal">
+							<i class='fa fa-pencil'></i> Editar</button>
+					</td>
+					<td>
+					<table style="border:0px">
+						<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+							<tr style="border:0px"><td style="border:0px"><?= $listMat['materia']; ?></td></tr>
+						<?php } ?>
+					</table>
+					</td>
+					<td class="text-center">
+						<table style="border:0px">
+							<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px"><?= $listMat['semmat']; ?></td></tr>
+							<?php } ?>
+						</table>
+					</td>
+					<td>
+						<table style="border:0px">
+							<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+								<tr style="border:0px"><td style="border:0px"><?php if($listMat['plan_estudio'] == '1') { echo 'Plantel'; } else { echo 'CEMSAD'; } ?></td></tr>
+							<?php } ?>
+						</table>
+					</td>
+					<?php if (is_permitido(null,'profesiograma','save')) { ?>
+					<td class="text-center">
+						<table style="border:0px">
+						<?php foreach ($listLics['materias'] as $m => $listMat) { ?>
+							<tr style="border:0px"><td style="border:0px">
+							<a><span class="badge badge-danger"  onclick="quitarMateria('<?php echo $listLics['IdLicenciatura'];?>','<?php echo $listMat['id_materia'];?>')"><i class='fa fa-trash'></i> Quitar Materia</span></a>
+							</td></tr>
+							<?php } ?>
+						</table>
+					</td>
+					<td class="text-left">
+						<button type="button" class="btn btn-outline btn-primary btn-xs agregarMaterias"
+							data-target="#modal_Agregar"
+							data-uidlicenciatura="<?php echo $listLics['IdLicenciatura']; ?>"
+							data-ulgradoestudios="<?php echo $listLics['LIdentificador']; ?>"
+							data-ulicenciatura="<?php echo $listLics['Licenciatura']; ?>"
+							data-toggle="modal">
+						<i class='fa fa-plus'></i> Agregar Materias</button>
+					</td>									
+					<?php  } ?>
+				</tr>
+			<?php $i++; } ?>
 	</tbody>
 </table>
 

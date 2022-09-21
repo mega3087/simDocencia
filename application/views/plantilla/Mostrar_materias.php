@@ -53,11 +53,6 @@
                     <th colspan="2" style="text-align: center;">NO. DE GRUPOS </th>
                     <th colspan="3" style="text-align: center;">H/S/M POR SEM. </th>
                     <th rowspan ="2" style="text-align: center;">TOTAL<br> HRS.<br> POR<br> ASIG.</th>
-                    <th rowspan ="2" style="text-align: center;">HRS<br> COMPLEMENTO</th>
-                    <th rowspan ="2" style="text-align: center;">HORAS FRENTE<br> A GRUPO<br> HOMOLOGADAS/<br> RECATEGORIZADAS</th>
-                    <th rowspan ="2" style="text-align: center;">HORAS DE <br> APOYO A LA<br> DOCENCIA</th>
-					<th rowspan ="2" style="text-align: center;">HORAS <br> CB-I<br> Y/O <br> TECNICO CB-I</th>
-					<th rowspan ="2" style="text-align: center;">TOTAL<br>HORAS<br>DOCENTE</th>
                 </tr>
                 <tr>
                     <th style="text-align: center;">MAT.</th>
@@ -80,13 +75,8 @@
                     <td class="text-center"><?php if ($listPlan['psemestre'] == '3' || $listPlan['psemestre'] == '4') { echo $listPlan['ptotalHoras']; } ?></td>
                     <td class="text-center"><?php if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
                     <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
-                    <?php } ?>
-                    <td class="text-center"></td>
-                    <td class="text-center"><?= $listDatos['UDHoras_grupo']; ?></td>    
-                    <td class="text-center"><?= $listDatos['UDHoras_apoyo']; ?></td>
-                    <td class="text-center"><?= $listDatos['UDHoras_CB']; ?></td>
-                    <td class="text-center"><?= $listDatos['UDHoras_grupo'] + $listDatos['UDHoras_apoyo'] + $listDatos['UDHoras_CB'] + $listDatos['UDHoras_provicionales']; ?></td>
                 </tr>
+                <?php } ?>
             <?php } ?>
             </tbody>
         </table>

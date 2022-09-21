@@ -44,8 +44,8 @@
                                 <fieldset>
                                     <!--<h2>Account Information</h2>-->
                                     <div class="row">
+                                        <div class="col-lg-1"></div>
                                         <div class="col-lg-10">
-
                                             <div class="form-group">
                                                 <label>CURP.: <em>*</em></label>
                                                 <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario[0]['UCURP']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UCURP'])) echo "disabled";?> required"  minlength="18" maxlength="18"/>
@@ -125,21 +125,14 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2">
-                                            <div class="text-center">
-                                                <div style="margin-top: 20px">
-                                                    <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
 
                                 </fieldset>
                                 <h1>Datos de la Plaza</h1>
                                 <fieldset>
                                     <div class="row">
+                                        <div class="col-lg-1"></div>
                                         <div class="col-lg-10">
-                                            
                                             <div class="form-group">
                                                 <label>Tipo Nombramiento:</label>
                                                 <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control datosNombramiento" placeholder="Seleccionar Tipo Docente">
@@ -187,16 +180,16 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="row">
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <label>Horas Frente Grupo: <em>*</em></label>
                                                         <input type="number" id="UDHorasGrupo" name="UDHorasGrupo" class="form-control UDHorasGrupo" value="0" minlength="1" maxlength="2">
                                                     </div>
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-4">
                                                         <label>Horas Apoyo Docencia : <em>*</em></label>
                                                         <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="0" minlength="1" maxlength="2">
                                                     </div>
-                                                    <div class="col-lg-3">
-                                                        <label>Horas CB-I: <em>*</em></label>
+                                                    <div class="col-lg-4">
+                                                        <label>Horas CB-I / CB-II / CB-III: <em>*</em></label>
                                                         <input type="number" class="form-control" id="UDHoras_CB" name="UDHoras_CB" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                     <!--<div class="col-lg-3">
@@ -215,7 +208,7 @@
                                             </div>
                                         
                                             <div class="form-group mostrarOficio" style="display:none;">
-                                                <label>No. de Oficio / No. de Folio: <em>*</em></label>
+                                                <label>No. de Oficio / No. de Folio: </label>
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="6" maxlength="24">
@@ -224,9 +217,9 @@
                                             </div>
 
                                             <div class="form-group mostrarObservaciones" style="display:none;">
-                                                <label>Observaciones: <em>*</em></label>
+                                                <label>Observaciones: </label>
                                                 <div class="row">
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-10">
                                                         <input type="text" class="form-control" id="UDObservaciones" name="UDObservaciones" value="">
                                                     </div>
                                                 </div>
@@ -263,19 +256,13 @@
                                             
                                         </div>                                       
 
-                                        <div class="col-lg-2">
-                                            <div class="text-center">
-                                                <div style="margin-top: 20px">
-                                                    <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </fieldset>
                                 
                                 <h1>Estudios</h1>
                                 <fieldset>
-                                <div class="row">
+                                <div class="row"> 
+                                    <div class="col-lg-1"></div>
                                     <div class="col-lg-10">
                                         <div class="form-group">
                                             <div class="row">
@@ -300,21 +287,20 @@
                                         
                                         <div class="form-group">
                                             <label>Especialidad: <em>*</em></label>
-                                            <select class="select2_demo_3 form-control resultCarrera select2" name="ULLicenciatura" id="ULLicenciatura" style="width:100%">
-                                                <option value=""></option>
-                                                    <?php foreach ($carreras as $k => $listCar) { ?>
-                                                        <option value="<?php echo $listCar['IdLicenciatura']; ?>"><?php echo $listCar['Licenciatura']; ?></option>    
-                                                    <?php } ?>
-                                            </select>
-                                        </div>                                                    
+                                            <div class="resultCarrera">
+                                                <select name="ULLicenciatura" id="ULLicenciatura" class="form-control chosen-select" data-placeholder="Seleccionar">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                        </div>                                        
 
                                         <div id="contentPasante">
-                                            <div class="form-group">
+                                            <div class="form-group" id="documento">
                                                 <div class="row">
-                                                    <label class="col-lg-3">Documento Título Profesional: </label>
+                                                    <label class="col-lg-3">Documento Título y/o Cédula Profesional: </label>
                                                     <div class="col-lg-6">
                                                     <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                        <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Título</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UPDocTitulo_file" id="UPDocTitulo_file" accept="application/pdf"></span>
+                                                        <span class="btn btn-primary btn-file"><span class="fileinput-new">Seleccionar Documento</span><span class="fileinput-exists">Cambiar</span><input type="file" name="UPDocTitulo_file" id="UPDocTitulo_file" accept="application/pdf"></span>
                                                         <span class="fileinput-filename"></span>
                                                         <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
                                                     </div>
@@ -325,7 +311,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group">
+                                            <!--<div class="form-group">
                                                 <div class="row">
                                                     <label class="col-lg-3">Documento Cédula Profesional: </label>
                                                     <div class="col-lg-6">
@@ -335,11 +321,11 @@
                                                             <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
                                                         </div>
                                                     </div>
-                                                    <!--<div class="col-lg-3">
+                                                    <div class="col-lg-3">
                                                     <button type='button' class='btn btn-sm btn-danger douploadCedula'> Subir Archivo</button>
-                                                    </div>-->
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </div>-->
                                             
                                             <div class="form-group">
                                                 <div class="row">
@@ -357,13 +343,6 @@
                                                 <div class="loadingEstudios"></div>
                                                 <div class="msgEstudios"></div>
                                                 <div class="resultEstudios"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <div class="text-center">
-                                            <div style="margin-top: 20px">
-                                                <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -439,6 +418,9 @@
 	        });
 		});
 
+        //$(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+        //$(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+
         //Guardar Plaza del Docente 
 		$(document).on("click", ".savePlazas", function () {
             
@@ -476,20 +458,21 @@
 	                    $(".msgPlazas").empty();
 	                    $(".msgPlazas").append(data[0]);
 	                    datosPlazas(data[2]);
-	                    FormRegistrar.UDFecha_ingreso.value = "";
-						FormRegistrar.UDPlaza.value = "";
-						FormRegistrar.UDTipo_materia.value = "";
-						FormRegistrar.UDNumOficio.value = "";
-                        FormRegistrar.UDHorasGrupo.value = "";
-                        FormRegistrar.UDHorasApoyo.value = "";
-                        FormRegistrar.UDHoras_CB.value = "";
-                        FormRegistrar.UDHoras_provicionales.value = "";                        
-                        
-                        FormRegistrar.UDFecha_inicio.value = "";
-                        FormRegistrar.UDFecha_final.value = "";
-                        FormRegistrar.UDObservaciones.value = "";
+//                        $("#tipoNombramiento").val($data[3]);
 
-                        FormRegistrar.UDNombramiento_file.value = "";
+                        $("#UDFecha_ingreso").val('');
+						$("#UDPlaza").val('');
+						$("#UDTipo_materia").val('');
+						$("#v").val('');
+                        $("#UDHorasGrupo").val('');
+                        $("#UDHorasApoyo").val('');
+                        $("#UDHoras_CB").val('');
+                        
+                        $("#UDFecha_inicio").val('');
+                        $("#UDFecha_final").val('');
+                        $("#UDObservaciones").val('');
+
+                        $("#UDNombramiento_file").val('');
 	                    $(".loadingPlazas").html("");
 	                } else {
                         $("#errorPlazas").empty();
@@ -510,7 +493,7 @@
             formData.append("ULNivel_estudio", document.getElementById("ULNivel_estudio").value);
             formData.append("ULLicenciatura", document.getElementById("ULLicenciatura").value);
             formData.append("ULTitulo_file", UPDocTitulo_file.files[0]);
-            formData.append("ULCedula_file", UPDocCedula_file.files[0]);
+            //formData.append("ULCedula_file", UPDocCedula_file.files[0]);
             formData.append("ULCedulaProf", document.getElementById("ULCedulaProf").value);
             formData.append("ULTitulado", $("input[type=radio][name=Titulado]:checked").val());
 
@@ -528,16 +511,17 @@
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[0]);
 	                    datosEstudios(data[2]);
+                        $('#ULNivel_estudio').val('').trigger('change');
+                        $('#ULLicenciatura').val('').trigger('chosen:updated');
                         $("#ULNivel_estudio").val("");
-                        //$("#ULLicenciatura").val("");
-                        FormRegistrar.ULLicenciatura.value = "";
+                        
                         $("#ULCedulaProf").val("");
+
 	                    $(".loadingEstudios").html("");
 	                } else {
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[0]);  
-	                    datosEstudios(data[2]);
-	                    $(".loadingEstudios").html(""); 
+	                    $(".loadingEstudios").html("");
 	                }
 	                
 	            } 
@@ -587,6 +571,10 @@
                     if(newIndex == '2'){
 						var idUsuario = document.getElementById("UNCI_usuario").value;
                         datosEstudios(idUsuario);
+                        var tiponombramiento = document.getElementById("tipoNombramiento").value;
+                        if (tiponombramiento == '1' ) {
+                            $('#documento').hide();
+                        }
 					}
 
                 }
@@ -777,9 +765,9 @@
                     $("#UDHorasApoyo").val('0');
                 }
                 if (idPlaza == '11' || idPlaza == '12' || idPlaza == '13' || idPlaza == '14' || idPlaza == '15') {
-                    $(".UDHorasGrupo").removeClass("disabled").attr("disabled", true);
+                    $(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
                     $("#UDHorasGrupo").val('0');
-                    $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+                    $(".UDHorasApoyo").addClass("disabled").attr("disabled", false);
                     $("#UDHorasApoyo").val('0');
 
                 } else {
@@ -799,6 +787,8 @@
         autoclose: true,
         format: "yyyy-mm-dd"
     });
+    
+    $('.chosen-select').chosen(); 
 });
 </script>
 <style>

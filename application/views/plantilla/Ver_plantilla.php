@@ -228,6 +228,15 @@
 	</form>
 </div>
 
+<br><br>
+<div class="form-group">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-10">
+		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button"> <i class="fa fa-eye"></i> Mandar a Revisón</button>
+	</div>
+</div>
+
+
 <style type="text/css" media="print,screen">
 table{
 	width : 100%;

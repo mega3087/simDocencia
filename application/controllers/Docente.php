@@ -137,26 +137,27 @@ class Docente extends CI_Controller {
     public function savePlazas() {
         $data = post_to_array('_skip');
         
-        if ($data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' ) {
+        if ($data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' || nvl($data['UDHoras_CB']) == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
-            $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
-            $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
-        
-            //Subir Nombramiento
-            $nomNombramiento = 'Nombramiento';
-            $fileNombramiento = $nomNombramiento.$nom;
-            $targetFileNombramiento = $directorio . $fileNombramiento;
+            if(isset($_FILES["UDNombramiento_file"]) && nvl($data['UDNombramiento_file']) != 'undefined' ){
+                $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
+                $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
+                
+                //Subir Nombramiento
+                $nomNombramiento = 'Nombramiento';
+                $fileNombramiento = $nomNombramiento.$nom;
+                $targetFileNombramiento = $directorio . $fileNombramiento;
 
-            if (!file_exists($directorio)) {
-                mkdir($directorio, 0777, true);
-            }
-
-            if(isset($_FILES["UDNombramiento_file"])){
+                if (!file_exists($directorio)) {
+                    mkdir($directorio, 0777, true);
+                }
                 //Con datos
                 move_uploaded_file($_FILES["UDNombramiento_file"]["tmp_name"], $targetFileNombramiento);
                 $data['UDNombramiento_file'] = $targetFileNombramiento;
+            } else {
+                $data['UDNombramiento_file'] = '';
             }
             
             $data['UDActivo'] = '1';
@@ -167,23 +168,9 @@ class Docente extends CI_Controller {
             muestra_mensaje();
             echo "::OK";
             echo "::".$data['UDUsuario'];
+            //echo "::".$data['UDTipo_Nombramiento'];
         }
         
-        
-
-        /*$this->db->where('UDPlantel', $data['UDPlantel']);
-        $this->db->where('UDUsuario', $data['UDUsuario']);
-        $contar = $this->usuariodatos_model->find_all();
-        
-        if (count($contar) == 0){
-            $this->usuariodatos_model->insert($datos);
-            echo ";".$data['UDUsuario'];
-        } else {
-            $datos['UDUsuarioModificacion'] = get_session('UNCI_usuario');
-            $datos['UDFechaModificacion'] = date('Y-m-d H:i:s');
-            $this->usuariodatos_model->update($contar[0]['UDClave'],$datos);
-            echo ";".$data['UDUsuario'];
-        }*/
     }    
 
     public function mostrarPlazas () {
@@ -229,55 +216,65 @@ class Docente extends CI_Controller {
 
     public function saveEstudios() {
         $data= post_to_array('_skip');
-
         //Subir Titulo Profesional
-        $nom = date("dmY").'.pdf';
-        $directorio = "./Documentos/Docentes/Licenciaturas/".$data['ULUsuario']."/";
-
-        $nomTitulo = 'Titulo'.$_POST['ULUsuario'];
-        $fileTitulo = $nomTitulo.$nom;
-        $targetFileTitulo = $directorio . $fileTitulo;
-        
-        //Subir Cedula Profesional
-        $nomCedula = 'Cedula'.$_POST['ULUsuario'];
-        $fileCedula = $nomCedula.$nom;
-        $targetFileCedula = $directorio . $fileCedula;
-        if (!file_exists($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-        
-        if ($data['ULTitulado'] == 'Titulado') {
-            if(isset($_FILES["ULTitulo_file"])){
-                //Con datos
-                move_uploaded_file($_FILES["ULTitulo_file"]["tmp_name"], $targetFileTitulo);
-                $data['ULTitulo_file'] = $targetFileTitulo;
-            }
-            if(isset($_FILES["ULCedula_file"])){
-                //Con datos
-                move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
-                $data['ULCedula_file'] = $targetFileCedula;
-            }
-            
-            $data['ULActivo'] = '1';
-            $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
-            $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
+        if ($data['ULTitulado'] == 'Titulado') {    
+            if ($data['ULNivel_estudio'] == '' || $data['ULLicenciatura'] == '' || $data['ULCedulaProf'] == '') {
+                set_mensaje("Favor de ingresar todos los datos requeridos.");
+                muestra_mensaje();
+            } else {
+                if(isset($_FILES["ULTitulo_file"]) && nvl($data['ULTitulo_file']) != 'undefined') {
+                    $nom = date("dmY").'.pdf';
+                    $directorio = "./Documentos/Docentes/Licenciaturas/".$data['ULUsuario']."/";
+    
+                    $nomTitulo = 'Titulo'.$_POST['ULUsuario'];
+                    $fileTitulo = $nomTitulo.$nom;
+                    $targetFileTitulo = $directorio . $fileTitulo;   
+                    
+                    if (!file_exists($directorio)) {
+                        mkdir($directorio, 0777, true);
+                    }
+                    //Con datos
+                    move_uploaded_file($_FILES["ULTitulo_file"]["tmp_name"], $targetFileTitulo);
+                    $data['ULTitulo_file'] = $targetFileTitulo;
+                } else {
+                    $data['ULTitulo_file'] = '';
+                }
+                /*if(isset($_FILES["ULCedula_file"])){
+                    /*Subir Cedula Profesional
+                    $nomCedula = 'Cedula'.$_POST['ULUsuario'];
+                    $fileCedula = $nomCedula.$nom;
+                    $targetFileCedula = $directorio . $fileCedula;
+                    //Con datos
+                    move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
+                    $data['ULCedula_file'] = $targetFileCedula;
+                }*/
                 
-            $this->usuariolic_model->insert($data);
-            set_mensaje("Los datos se agregarón correctamente",'success::');
-			muestra_mensaje();
-            echo "::OK";
-            echo "::".$data['ULUsuario'];
+                $data['ULActivo'] = '1';
+                $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+                $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
+                    
+                $this->usuariolic_model->insert($data);
+                set_mensaje("Los datos se agregarón correctamente",'success::');
+                muestra_mensaje();
+                echo "::OK";
+                echo "::".$data['ULUsuario'];
+            }
 
         } else {
-            $data['ULActivo'] = '1';
-            $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
-            $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
-            $this->usuariolic_model->insert($data);
-            
-            set_mensaje("Los datos se agregarón correctamente",'success::');
-			muestra_mensaje();
-            echo "::OK";
-            echo "::".$data['ULUsuario'];
+            if ($data['ULNivel_estudio'] == '' || $data['ULLicenciatura'] == '') {
+                set_mensaje("Favor de ingresar todos los datos requeridos.");
+                muestra_mensaje();
+            } else {
+                $data['ULActivo'] = '1';
+                $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+                $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
+                $this->usuariolic_model->insert($data);
+                
+                set_mensaje("Los datos se agregarón correctamente",'success::');
+                muestra_mensaje();
+                echo "::OK";
+                echo "::".$data['ULUsuario'];
+            }
         }
         
     }
@@ -425,10 +422,18 @@ class Docente extends CI_Controller {
         $data['carreras'] = $this->licenciaturas_model->find_all();
         
         ?>
-        <option value=""></option>
-        <?php foreach ($data['carreras']  as $k => $listCar) { ?>
-            <option value="<?= $listCar['IdLicenciatura']; ?>"><?= $listCar['Licenciatura']; ?></option>    
-        <?php } 
+        <select name="ULLicenciatura" id="ULLicenciatura" class="form-control chosen-select" data-placeholder="Seleccionar">
+            <option value=""></option>
+            <?php foreach ($data['carreras']  as $k => $listCar) { ?>
+                <option value="<?= $listCar['IdLicenciatura']; ?>"><?= $listCar['Licenciatura']; ?></option>    
+            <?php } ?>
+        </select>    
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.chosen-select').chosen();            
+            });
+        </script>    
+        <?php
     }
 
     public function datosPlaza_skip() {
