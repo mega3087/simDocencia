@@ -1,6 +1,6 @@
 <div class="row">	
     <div class="text-center">
-        <h2><b>DOCENTE: <?php echo $docentes[0]['UNCI_usuario'].': '.$docentes[0]['UNombre']." ".$docentes[0]['UApellido_pat']." ".$docentes[0]['UApellido_mat']; ?></b></h2>
+        <h2><b>DOCENTE: <?php echo $docentes[0]['UNombre']." ".$docentes[0]['UApellido_pat']." ".$docentes[0]['UApellido_mat']; ?></b></h2>
     </div>
 </div>
 

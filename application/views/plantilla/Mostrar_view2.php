@@ -26,7 +26,6 @@
 								<th>Plantel</th>
 								<th>CCT</th>
 								<th>Acción</th>
-								<th width="130px">Plantilla</th> 
 							</tr>	
 						</thead>
 						<tbody>
@@ -40,10 +39,9 @@
 								<td class="text-left"><?php echo $i; ?></td>
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
-									<td class="text-left"><a href='<?=$urlCrear?>' target='_blank'>Crear Plantilla</a></td>							
 									<td>
 										<?php if( is_permitido(null,'GenerarPlantilla','verPlantilla') ){ ?>
-											<a href="<?php echo base_url("GenerarPlantilla/ver/$PClave_skip"); ?>" class="btn btn-default btn-sm eye"><i class="fa fa-times"></i> Ver Plantilla</a>
+											<a href="<?php echo base_url("GenerarPlantilla/crear/$PClave_skip"); ?>" class="btn btn-default btn-sm eye"><i class="fa fa-eye"></i> Ver Plantilla</a>
 										<?php } ?>
 									</td>
 								</tr>

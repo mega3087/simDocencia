@@ -173,7 +173,7 @@
 
 		public function save() {
 			$data = post_to_array('_skip');
-			
+
 			if(nvl($data['nogrupoMatutino'])) {
 				$matutino = array();
 				foreach ($data['nogrupoMatutino'] as $valorMat){
@@ -230,7 +230,7 @@
 					$this->db->where('pidLicenciatura', $data['pidLicenciatura']);
 					$asignatura = $this->generarplantilla_model->find();
 
-					if ($validado['UDValidado'] == '1' && count($asignatura) > '1') {
+					if ($validado['UDValidado'] >= '1' && count($asignatura) > '1') {
 						set_mensaje("Ya se guardaron los datos del Docente.");
 						muestra_mensaje();
 					} else {
@@ -258,8 +258,9 @@
 							
 							$this->generarplantilla_model->insert($datos);	
 						}
+						//Cambiar estatus para 1 que es Editar
 						$updatos = array(
-							'UDValidado' => '1'
+							'UDValidado' => '2'
 						);
 						
 						$idPlantilla = $this->usuariodatos_model->update($data['idPUDatos'], $updatos);
@@ -301,6 +302,13 @@
 		}
 
 		public function ver_plantilla() {
+			if (is_permitido(null,'generarplantilla','save')) { 
+				$validar = "2";
+			} 
+			if (is_permitido(null,'generarplantilla','validar')) {
+				$validar = "3";
+			}
+
 			$idPlantel = $this->input->post('idPlantel');
 			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
 			$select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
@@ -317,9 +325,13 @@
 			//$this->db->join('nousuariolic','ULClave = UDClave','left');
 			$this->db->join('nousuario','UNCI_usuario = UDUsuario','left');
 			$this->db->where('UDPlantel',$idPlantel);
+			
+			$this->db->where('UDValidado',$validar);			
+			
 			$this->db->order_by('UDTipo_Nombramiento','ASC');
 			$this->db->order_by('UApellido_pat','ASC');
 			$this->db->group_by('UDUsuario');
+
 
 			$data['docentes'] = $this->usuariodatos_model->find_all(null, $selectUser);
 			
@@ -362,6 +374,21 @@
 
 			$this->load->view('plantilla/Ver_plantilla', $data);
 		}
-		
+
+		public function revisarPlantilla () {
+			$data = post_to_array('_skip');
+			
+			foreach ($data['UDClave'] as $x => $listIds) {
+				$updatos = array (
+					'UDValidado' => '3'
+				);
+				
+				$this->usuariodatos_model->update($listIds, $updatos);
+			}
+
+			set_mensaje("Los Plantilla se envio correctamente a Revisión.",'success::');
+			muestra_mensaje();
+			echo "::OK";
+		}	
     }
 ?>

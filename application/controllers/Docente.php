@@ -49,14 +49,14 @@ class Docente extends CI_Controller {
         $this->db->where('UDPlantel',$idPlantel);
         $data['datosUser'] = $this->usuariodatos_model->find_all();
         
-        $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro";
+        $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro, UDTipo_Nombramiento";
         $this->db->join('nocrol','URol = CROClave');
+        $this->db->join('nousuariodatos','UDUsuario = UNCI_usuario','left');
         $this->db->where("UEstado",'Activo');
         $this->db->where("CROClave NOT IN ('3','10','12')");
         $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
         $this->db->order_by('UNombre', 'ASC');
         $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
-
 
         $data['estado_civil'] = $this->estciv_model->find_all();
         $data['tipoDocente'] = $this->tipopersonal_model->find_all();
@@ -161,6 +161,7 @@ class Docente extends CI_Controller {
             }
             
             $data['UDActivo'] = '1';
+            $data['UDValidado'] = '1';
             $data['UDUsuario_registro'] = get_session('UNCI_usuario');
             $data['UDFecha_registro'] = date('Y-m-d H:i:s');
             $this->usuariodatos_model->insert($data);

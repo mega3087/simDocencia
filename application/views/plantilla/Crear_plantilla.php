@@ -1,4 +1,9 @@
 <link href="<?php echo base_url('assets/inspinia/css/plugins/dataTables/datatables.min.css');?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/plugins/steps/jquery.steps.css');?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/plugins/iCheck/custom.css');?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/plugins/chosen/chosen.css'); ?>" rel="stylesheet">
+<link href="<?php echo base_url('assets/inspinia/css/plugins/datapicker/datepicker3.css'); ?>" rel="stylesheet" />
+<link href="<?php echo base_url('assets/inspinia/css/plugins/clockpicker/clockpicker.css'); ?>" rel="stylesheet" />	
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Crear Plantilla</h2>
@@ -19,14 +24,16 @@
                             </div>
                         </a>
                     </li>
+                    <?php if (is_permitido(null,'generarplantilla','save')) { ?>
                     <li class="nav-border nav-border-top-danger">
-                        <a href="#agregar-materias" data-toggle="tab">
+                        <a href="#agregar-materias" data-toggle="tab" onclick="limpiarFormulario()">
                             <i class="fa fa-pencil fg-danger"></i>
                             <div>
                                 <span class="text-strong">Asignar Materias</span>
                             </div>
                         </a>
                     </li>
+                    <?php } ?>
                     <li class="nav-border nav-border-top-danger">
                         <a href="#ver-plantilla" data-toggle="tab" onclick="verPlantilla('<?php echo $plantel; ?>')">
                             <i class="fa fa-eye fg-danger"></i>
@@ -66,11 +73,30 @@
                                     <div class="loading"></div>
                             </div>
                                 <div class="tab-pane fade form-horizontal" id="agregar-materias">
-                                    <form name='Formsave' id='Formsave' action="<?=base_url("GenerarPlantilla/save")?>" method="POST" class='form-horizontal'>
+                                <form action="<?php echo base_url("generarplantilla/validar"); ?>" name="form" id="form" method="POST" class="wizard-big form-vertical">
                                     <input type="hidden" name="idPPlantel" id="plantelId" value="<?= $plantel; ?>"> 
+                                    <input type="hidden" name="idPUsuario" id="idUsuario" value="">
                                     <div class="form-group">    
                                         <div class="loadingasignar"></div>    
-                                        <div class="mostrarAsignarMaterias"></div>
+                                        <div class="mostrarAsignarMaterias">
+                                            <div class="form-group">
+                                                <label class="col-lg-2 control-label" for="">Tipos de Nombramiento: <em>*</em></label>
+                                                <div class="col-lg-9">
+                                                    <select name="idPUDatos" id="nombramiento" class="form-control">
+                                                            <option value="">Seleccionar</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 control-label" for="">Estudios: <em>*</em></label>
+                                                <div class="col-lg-9">
+                                                    <select name="pidLicenciatura" id="licenciatura" class="form-control">
+                                                            <option value="">Seleccionar</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-lg-2 control-label" for="">Periodo Escolar: <em>*</em></label>
@@ -214,26 +240,17 @@
                                         </div>
                                     </div>  
                                     <div class="loadingMat"></div>
-    
-                                    <div class="form-group">
-                                        <div class="col-lg-1"></div>
-                                        <div class="col-lg-10">
-                                            <input type="hidden" name="idPUsuario" id="idUsuario" value="">   
-                                            <button class="btn btn-primary save  pull-right" type="button"> <i class="fa fa-save"></i> Guardar</button>
-                                        </div>
-                                    </div>
 
                                     <div class="form-group">
-                                        <div class="col-lg-1"></div>
+                                        <div class="col-lg-2"></div>
                                             <div class="col-lg-10">
                                             <div class="loadingSave"></div>
                                             <div id="error"></div>
                                             <div class="mostrarDatos"></div>
                                         </div>
                                     </div>
-                                    </form>
+                                </form>
                                 </div>
-
                                 <div class="tab-pane fade form-horizontal" id="ver-plantilla">
                                     <div class="form-group">
                                             <div class="loadingPlantilla"></div>
@@ -251,7 +268,12 @@
     </div>
 </div>
 
-
+<script src="<?php echo base_url('assets/inspinia/js/plugins/staps/jquery.steps.min.js'); ?>"></script>
+<!-- Jquery Validate -->
+<script src="<?php echo base_url('assets/inspinia/js/plugins/validate/jquery.validate.min.js'); ?>"></script>
+<script src="<?php echo base_url('assets/messages_es.js'); ?>"></script>
+<script src="<?php echo base_url('assets/inspinia/js/plugins/iCheck/icheck.min.js'); ?>"></script>
+<script src="<?php echo base_url('assets/inspinia/js/plugins/chosen/chosen.jquery.js'); ?>"></script>
 <script>
 $(document).on('change','input[type="checkbox"]' ,function(e) {
     var plantel = document.getElementById('plantelId').value;
@@ -492,7 +514,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/save"); ?>",
-            data: $(this.form).serialize(),
+            data: $('#form').serialize(),
+            //data: $(this.form).serialize(),
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -522,13 +545,12 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
     });//----->fin
 
     function uncheckAll() {
-        document.querySelectorAll('#Formsave input[type=checkbox]').forEach(function(checkElement) {
+        document.querySelectorAll('#Form input[type=checkbox]').forEach(function(checkElement) {
             checkElement.checked = false;
         });
     }
 
-    function datosPlantilla(idPUsuario){
-        
+    function datosPlantilla(idPUsuario){   
 		$.ajax({
 			type: "POST",
 			url: "<?php echo base_url("GenerarPlantilla/datosPlantilla"); ?>",
@@ -552,16 +574,22 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
 			url: "<?php echo base_url("GenerarPlantilla/ver_plantilla"); ?>",
 			data: {idPlantel : idPlantel}, 
 			dataType: "html",
-			beforeSend: function(){
-				//carga spinner
-				$(".loadingPlantilla").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-			},
 			success: function(data){
 				$(".plantilla").empty();
 				$(".plantilla").append(data);  
-				$(".loadingPlantilla").html("");
+				//$(".loadingPlantilla").html("");
 			}
 		});
+    }
+
+    function limpiarFormulario() {
+        uncheckAll();
+        document.getElementById("mostrarMatPrimero").val();
+        document.getElementById("mostrarMatSegurndo").val();
+        document.getElementById("mostrarMatTercero").val();
+        document.getElementById("mostrarMatCuarto").val();
+        document.getElementById("mostrarMatQuinto").val();
+        document.getElementById("mostrarMatSexto").val();
     }
 
 </script>

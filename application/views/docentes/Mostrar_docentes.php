@@ -19,10 +19,11 @@
 			<div class="ibox-title">
 			<div class="pull-left"><h2><b>Docentes</b></h2></div>
 			<div class="pull-right">
-				<?php if( is_permitido(null,'docente','save') ) {
-				$idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']); ?>
+				<?php 
+				$idPlantel = $this->encrypt->encode($plantel[0]['CPLClave']);
+				if( is_permitido(null,'docente','save') ) {	?>
 					<a href="<?= base_url('Docente/Update/'.$idPlantel.'/'.$this->encrypt->encode('0')); ?>" ><button class="btn btn-primary"><i class="fa fa-pencil"></i> Registrar Docente</button></a>
-				<?php } ?>
+				<?php }?>
 			</div>
 			<h3>&nbsp;&nbsp;&nbsp;</h3>
 			</div> 
@@ -54,10 +55,19 @@
 										<td class="text-left"><?php echo $list['URFC']; ?></td>
 										<td class="text-left"><?php echo $list['UCURP']; ?></td>								
 										<td class="text-center">
+										<?php if($list['UDTipo_Nombramiento'] == '1') {
+											echo '<b class="text-info"><i class="fa fa-check"></i> Docente Base</b>';
+										} elseif ($list['UDTipo_Nombramiento'] == '2') {
+											echo '<b class="text-info"><i class="fa fa-check"></i> Docente SPD(IDONEO)</b>';
+										} elseif ($list['UDTipo_Nombramiento'] == '3') {
+											echo '<b class="text-info"><i class="fa fa-check"></i> Docente USICAMM</b>';
+										} elseif ($list['UDTipo_Nombramiento'] == '4') {
+											echo '<b class="text-info"><i class="fa fa-check"></i> Docente EXTERNO(TERNA)</b>';
+										} ?><br>
 										<a href="<?= base_url()?>Docente/Update/<?=$idPlantel?>/<?= $UNCI_usuario_skip?>">
 											<button class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Editar</button>
 										</a>
-										<?php echo $borrar; ?>
+										<?php echo $borrar; ?>										
 										</td>
 									</tr>
 							<?php $i++; } ?>

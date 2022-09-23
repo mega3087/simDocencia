@@ -1,56 +1,59 @@
-<div class="row">
-	<form action="<?php echo base_url("fump/comentarios"); ?>" name="form_comen" id="form_comen" method="POST" class="wizard-big form-vertical">
+<div class="table-responsive">
+	<form action="<?php echo base_url("generarplantilla/validar"); ?>" name="formValidar" id="formValidar" method="POST" class="wizard-big form-vertical">
 		<div class="col-lg-12">
-			<table>
+			<!--<table>
 				<tr>
 					<td rowspan="2" class="no-border text-left"><img src="<?=base_url("assets/img/logo_edomex.png")?>" width="100px" alt="" /></td>
 					<td class="no-border text-center">&nbsp;</td>
 					<td rowspan="2" width="150px" class="no-border text-right"><img src="<?=base_url("assets/img/$FLogo_cobaemex")?>" width="100%" alt="" /></td>
 				</tr>
-				
-			</table>
+			</table>-->
 			<table>
 				<tr>
-					<td rowspan="2" class="no-border text-left" style="font-size: 10px">
+					<td rowspan="2" class="no-border text-left" style="font-size: 12px">
 						COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br>
 						DIRECCIÓN ACADÉMICA<br>
 						DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br>
 						PLANTILLA DE PERSONAL DOCENTE<br>
 						PLANTEL Y/O CENTRO EMSAD: <b><?php echo $plantel[0]['CPLNombre']; ?></b> <br>
-						SEMESTRE: 20<?= substr($periodos[0]['CPEPeriodo'],0,2); ?>-<?= substr($periodos[0]['CPEPeriodo'],3,1) == 1? 'A (Febrero-Julio)' : 'B (Agosto-Enero)'?><br>
-						FECHA: <?php echo date('d/m/Y'); ?> <br>
+						SEMESTRE:<b> 20<?= substr($periodos[0]['CPEPeriodo'],0,2); ?>-<?= substr($periodos[0]['CPEPeriodo'],3,1) == 1? 'A (Febrero-Julio)' : 'B (Agosto-Enero)'?></b><br>
+						FECHA: <b><?php echo date('d/m/Y'); ?></b> <br>
 					</td>
 				</tr>
 			</table><br>
 
-			<table>
+			<table class="table table-striped table-bordered table-hover dataTables-example">
 				<thead>
                 <tr>
-                    <th rowspan ="2" style="text-align: center;">No</th>
-                    <th rowspan ="2" style="text-align: center;">
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">No</th>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">
                         NOMBRE DEL DOCENTE<br>
                         R.F.C. CON HOMOCLAVE
                     </th>
-                    <th rowspan ="2" style="text-align: center;">CEDULA PROFESIONAL<br>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">CEDULA PROFESIONAL<br>
                         FECHA DE INGRESO<br>
                         TIPO NOMBRAMIENTO<br>
                     </th>
-                    <th rowspan ="2" style="text-align: center;">
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">
                         SITUACION ACTUAL<br>
 						ESTUDIO DE LICENCIATURA<br>
                         ESTUDIOS COMPLEMENTARIOS<br>
                         (PROFORDEMS, CERTIDEMS, ECODEMS)
                     </th>	
-                    <th rowspan ="2" style="text-align: center;">ASIGNATURAS</th>								
-                    <th rowspan ="2" style="text-align: center;">HORAS POR <br>ASIG.</th>
-                    <th colspan="2" style="text-align: center;">NO. DE GRUPOS </th>
-                    <th colspan="3" style="text-align: center;">H/S/M POR SEM. </th>
-                    <th rowspan ="2" style="text-align: center;">TOTAL<br> HRS.<br> POR<br> ASIG.</th>
-                    <th rowspan ="2" style="text-align: center;">HRS<br> COMPLE-<br>MENTO</th>
-                    <th rowspan ="2" style="text-align: center;">HORAS FRENTE<br> A GRUPO<br> HOMOLOGADAS/<br> RECATEGORIZADAS</th>
-                    <th rowspan ="2" style="text-align: center;">HORAS DE <br> APOYO A LA<br> DOCENCIA</th>
-					<th rowspan ="2" style="text-align: center;">HORAS <br> CB-I<br> Y/O <br> TECNICO CB-I</th>
-					<th rowspan ="2" style="text-align: center;">TOTAL<br>HORAS<br>DOCENTE</th>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">ASIGNATURAS</th>								
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">HORAS POR <br>ASIG.</th>
+                    <th colspan="2" style="text-align: center; vertical-align: middle;">NO. DE GRUPOS </th>
+                    <th colspan="3" style="text-align: center; vertical-align: middle;">H/S/M POR SEM. </th>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">TOTAL<br> HRS.<br> POR<br> ASIG.</th>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">HRS<br> COMPLE-<br>MENTO</th>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">HORAS FRENTE<br> A GRUPO<br> HOMOLOGADAS/<br> RECATEGORIZADAS</th>
+                    <th rowspan ="2" style="text-align: center; vertical-align: middle;">HORAS DE <br> APOYO A LA<br> DOCENCIA</th>
+					<th rowspan ="2" style="text-align: center; vertical-align: middle;">HORAS <br> CB-I<br> Y/O <br> TECNICO CB-I</th>
+					<th rowspan ="2" style="text-align: center; vertical-align: middle;">TOTAL<br>HORAS<br>DOCENTE</th>
+					<?php if( is_permitido(null,'generarplantilla','validar') ) { ?>
+					<th rowspan ="2" style="text-align: center; vertical-align: middle;">OBSERVACIONES</th>
+					<?php } ?>
+
                 </tr>
                 <tr>
                     <th style="text-align: center;">MAT.</th>
@@ -59,12 +62,14 @@
                     <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '3'; } else { echo '4';} ?></th>
                     <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '5'; } else { echo '6';} ?></th>
                 </tr>
-            </thead>
+            	</thead>
                 <?php 
                 $i = 1;
-                foreach ($docentes as $d => $listDoc) { ?>
+                foreach ($docentes as $d => $listDoc) { 
+				$idPlantel = $this->encrypt->encode($listDoc['UDPlantel']); ?>
+				
 					<tr>
-						<td class="text-left"><b><?= $i; ?></b></td> 
+						<td class="text-left"><b><?= $i; ?><input type="hidden" name="UDClave[]" id="UDClave" value="<?= $listDoc['UDClave']; ?>"></b></td> 
 						<td class="text-left"> 
 							<table style="border:0px" >
 								<tr style="border:0px"><td style="border:0px">
@@ -216,11 +221,21 @@
 								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $totalCB; ?></td></tr>
 						</table>
 						</td>
-						<td>
+						<td class="text-center">
 						<table style="border:0px">
 								<tr style="border:0px"><td style="border:0px; text-align: center;"><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $totalCB; ?></td></tr>
 						</table>
 						</td>
+						<?php if( is_permitido(null,'generarplantilla','validar') ) { ?>
+						<td>
+							<table style="border:0px">
+								<tr style="border:0px"><td style="border:0px; text-align: center;" >
+									<!--<input type="checkbox" name="idPlantilla[]" id="idPlantilla" value="<?= $listDoc['UDClave']; ?>"><?= $listDoc['UDClave']; ?>-->
+									<button title="Observaciones" class="btn btn-warning btn-circle pull-left" nombre="PObservaciones" value="" type="button" data-toggle="popover" data-placement="auto left" data-content=""><i class="fa fa-comment"></i></button>
+								</td></tr>								
+							</table>
+						</td>
+						<?php } ?>
 					</tr>
                 <?php $i++; } ?>
 			</table>
@@ -229,110 +244,70 @@
 </div>
 
 <br><br>
+<?php if (is_permitido(null,'generarplantilla','save')) { ?>
 <div class="form-group">
 	<div class="col-lg-1"></div>
 	<div class="col-lg-10">
 		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button"> <i class="fa fa-eye"></i> Mandar a Revisón</button>
 	</div>
 </div>
+<?php } ?>
 
+<?php if( is_permitido(null,'generarplantilla','validar') ) { ?>
+	<div class="form-group">
+	<div class="col-lg-1"></div>
+	<div class="col-lg-10">
+		<button class="btn btn-primary btn-rounded btn-block save_rechazar pull-center" type="button"> <i class="fa fa-save"></i> Guardar</button>
+	</div>
+</div>
+<?php } ?>
+<div class="loading"></div>
+<div id="result"></div>
 
-<style type="text/css" media="print,screen">
-table{
-	width : 100%;
-	color: #000;
-	font-size:11px;
-	font-family: "Ebrima";
-}
-th, td{
-    border:1pt solid #9c9c9c;
-    -border-collapse:collapse;
-    padding: 0px 3px;
-}
-.no-border{
-	border:none;
-	font-size:3px;
-}
+<script>
+$(document).ready(function() {
+	$(".revision").click(function() {
+		$.ajax({
+			type: "POST",
+			url: "<?php echo base_url("generarplantilla/revisarPlantilla"); ?>",
+			data: $('#formValidar').serialize(),
+			dataType: "html",
+			beforeSend: function(){
+				//carga spinner
+				$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+			},
+			success: function(data) {
+				var data = data.split("::");
+					if(data[1]=='OK'){
+						$("#result").empty();
+						$("#result").html(data[0]);
+						$(".loading").html('');
+						location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
+				}
+			}
+		});
+	});
 
-.no-content{
-	font-size:3px;
-}
-
-.text-left{
-    text-align: left;
-}
-.text-center{
-    text-align: center;
-}
-
-.text-right{
-    text-align: right;
-}
-
-.text-justify {
-    text-align: justify;
-}
-
-.firmas{
-	line-height: 1.2;
-	height:80px;
-	vertical-align: bottom;
-	padding: 3px 3px;
-}
-
-.firma_c, .firma_h, .firma_f, .firma_d {
-	width: 35mm;
-    position: absolute;
-}
-
-.firma_c{
-	margin: -45px -55px;
-}
-
-.firma_h{
-	margin: -30px -65px;
-}
-
-.firma_f{
-	margin: -175px -55px;
-}
-
-.firma_d{
-	margin: -25px -55px;
-}
-
-.firma_a{
-	font-size: 16px;
-	color: green;
-}
-
-
-.texto{
-	font-size: 7px;
-}
-
-.titulo1{
-	font-size: 16px;
-	background: #c2c2c2;
-}
-.titulo2{
-	font-size: 11px;
-	background: #c2c2c2;
-}
-th{
-	background: #eaeaea;
-}
-
-@media print {
-	.titulo1{
-		background: #c2c2c2 !important;
-	}
-	.titulo2{
-		background: #c2c2c2 !important;
-	}
-	th{
-		background: #eaeaea !important;
-	}
-}
-
-</style>
+	$("[data-toggle]").click(function() {
+		var nombre = $(this).attr('nombre');
+		
+		var i = 0;
+		var y = 0;
+		var texto = '';
+		$('input[name='+nombre+']').each(function(){
+			i = 1;
+		});
+		if(i == 0){
+			$(this).parent().append('<input type="hidden" name="'+nombre+'" value="" />');
+		}else{
+			texto = $('input[name='+nombre+']').val();
+		}
+		$('#'+$(this).attr('aria-describedby')+' .popover-content').html('<textarea id="'+nombre+'" class="form-control textarea" >'+texto+'</textarea>');
+		
+		$('.textarea').keyup(function(){
+			nombre = $(this).attr('id');
+			$('input[name='+nombre+']').val( $(this).val() );
+		});
+	});
+});
+</script>

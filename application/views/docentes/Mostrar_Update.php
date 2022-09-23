@@ -243,9 +243,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
-
-                                            <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
+                                            <?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+                                                <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
+                                            <?php } ?>
 
                                             <div class="form-group col-lg-12">
                                                 <div class="loadingPlazas"></div>
@@ -337,7 +337,9 @@
                                             </div>
                                             <br>
                                         </div>
-                                        <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
+                                        <?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+                                            <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
+                                        <?php } ?>
 
                                         <div class="form-group col-lg-12">
                                                 <div class="loadingEstudios"></div>
@@ -654,11 +656,10 @@
 
 	function datosPlazas(idUsuario){
 		
-		var idPlantel = document.getElementById("UPlantel").value;
 		$.ajax({
 			type: "POST",
 			url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
-			data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
+			data: {idUsuario : idUsuario, idPlantel : document.getElementById("UPlantel").value}, 
 			dataType: "html",
 			beforeSend: function(){
 				//carga spinner
@@ -674,11 +675,10 @@
 
     function datosEstudios(idUsuario){
         
-        var idPlantel = document.getElementById("UPlantel").value;
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("docente/mostrarEstudios"); ?>",
-            data: {idUsuario : idUsuario, idPlantel : idPlantel}, 
+            data: {idUsuario : idUsuario, idPlantel : document.getElementById("UPlantel").value}, 
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -706,31 +706,31 @@
             $('.mostrarOficio').show();
             $('.mostrarFechasNom').show();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').hide();
+            $('.mostrarObservaciones').show();
         } else if (idNombramiento == 6) {
             $('.mostrarFechaIng').show();
             $('.mostrarOficio').show();
             $('.mostrarFechasNom').hide();
             $('.mostrarDocNom').hide();
-            $('.mostrarObservaciones').hide();
+            $('.mostrarObservaciones').show();
         } else if (idNombramiento == 7) {
             $('.mostrarFechaIng').show();
             $('.mostrarOficio').show();
             $('.mostrarFechasNom').hide();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').hide();
+            $('.mostrarObservaciones').show();
         } else if (idNombramiento == 8) {
             $('.mostrarFechaIng').show();
             $('.mostrarOficio').show();
             $('.mostrarFechasNom').hide();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').hide();
+            $('.mostrarObservaciones').show();
         } else {
             $('.mostrarFechaIng').show();
             $('.mostrarOficio').hide();
             $('.mostrarFechasNom').hide();
             $('.mostrarDocNom').hide();
-            $('.mostrarObservaciones').hide();
+            $('.mostrarObservaciones').show();
         }
 
     });

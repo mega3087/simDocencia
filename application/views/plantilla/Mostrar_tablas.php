@@ -21,12 +21,21 @@
                 <td class="text-left"><?php echo $list['URFC']; ?></td>
                 <td class="text-left"><?php echo $list['UCURP']; ?></td>
                 <td class="text-center">
-                <?php if ($list['UDValidado'] == '') { ?>
-                    <button class="btn btn-info user" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
-                 <i class="fa fa-pencil"></i> Asignar Materias</button>
-                 <?php } else { ?>
+                <?php if ($list['UDValidado'] == '1' &&  is_permitido(null,'generarplantilla','save')) { ?>
+                    <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                    <i class="fa fa-pencil"></i> Asignar Materias</button>
+                <?php } if ($list['UDValidado'] == '1' && is_permitido(null,'generarplantilla','validar')) { ?>
+                    <b class="text-success"><i class="fa fa-clock-o"></i> Asignando Materias</b>
+                <?php } if ($list['UDValidado'] == '2') { ?>
+                    <b class="text-info"><i class="fa fa-check"></i> Materias Asignadas</b>
+                <?php } if ($list['UDValidado'] == '3') { ?>
                     <b class="text-warning"><i class="fa fa-clock-o"></i> Pendiente por Revisar</b>
-                 <?php } ?>
+                <?php } elseif ($list['UDValidado'] == '4') { ?>
+                    <button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                    <i class="fa fa-pencil"></i> Editar</button>
+                <?php } elseif ($list['UDValidado'] == '5') { ?>
+                    <b class="text-success"><i class="fa fa-check"></i> Aprobado</b>
+                <?php } ?>
                 </td>
             </tr>
     <?php $i++; } ?>

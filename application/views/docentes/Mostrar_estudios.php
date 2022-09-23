@@ -1,13 +1,15 @@
 <div class="table-responsive">
-	<table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+	<table class="table table-striped table-bordered ">
 		<thead>
 			<tr>
 				<th>Estudios</th>
 				<th>Especialidad</th>
 				<th>Titulado</th>
 				<th>No. Cédula Profesional</th>
-				<th>Documento</th>		
+				<th>Documento</th>
+				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>	
 				<th>Acción</th>
+				<?php } ?>
 			</tr>
 		</thead>
 		<tbody>
@@ -29,9 +31,11 @@
 				<td><?php echo $list['ULCedulaProf']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<!--<td><?php echo nvl($UPCedula_file); ?></td>-->
+				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>	
 				<td>
 					<?php echo nvl($borrar); ?>
 				</td>
+				<?php } ?>
 			</tr>
 		<?php } ?>
 		</tbody>

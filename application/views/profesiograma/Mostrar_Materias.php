@@ -3,7 +3,9 @@
 		<tr>
 			<th>#</th>
 			<th>Grado de Estudios</th>
+			<?php if (is_permitido(null,'profesiograma','save')) { ?>
 			<th></th>
+			<?php } ?>
 			<th>Materia</th>
 			<th class="text-center">Semestre</th>
 			<th width="130px">Centro Escolar </th>
@@ -21,6 +23,7 @@
 				<tr>
 					<td class="text-left"><?= $i; ?></td> 
 					<td class="text-left"><?php echo $listLics['LGradoEstudio'].' en '.$listLics['Licenciatura']; ?></td>
+					<?php if (is_permitido(null,'profesiograma','save')) { ?>
 					<td class="text-left">
 						<button type="button" class="btn btn-outline btn-info btn-xs openEditar" 
 							data-target="#modal_Editar"
@@ -30,6 +33,7 @@
 							data-toggle="modal">
 							<i class='fa fa-pencil'></i> Editar</button>
 					</td>
+					<?php } ?>
 					<td>
 					<table style="border:0px">
 						<?php foreach ($listLics['materias'] as $m => $listMat) { ?>

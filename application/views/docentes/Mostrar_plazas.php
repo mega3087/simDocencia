@@ -1,5 +1,5 @@
 <div class="table-responsive">
-	<table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+	<table class="table table-striped table-bordered ">
 		<thead>
 			<tr>
 				<th>Tipo Nombramiento</th>
@@ -11,11 +11,15 @@
 				<!--<th>No. de Oficio</th>
 				<th>Documentos</th>-->
 				<?php //} ?>
+				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>
 				<th>Acción</th>
+				<?php } ?>
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach($data as $key => $list) { 
+		<?php
+		if (count($data) != '0') { 
+			foreach($data as $key => $list) { 
 			if($UDNombramiento_file = nvl($list['UDNombramiento_file'])) {
 				$UDNombramiento_file="<a href='".base_url($UDNombramiento_file)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Ver Nombramiento</button></a>";
 			}
@@ -27,9 +31,9 @@
 				</td>
 				<td>
 					<?php if( $list['UDFecha_ingreso'] != '0000-00-00') { 
-						echo $list['UDFecha_ingreso'];
+						echo fecha_format($list['UDFecha_ingreso']);
 					} else {
-						echo $list['UDFecha_inicio'].' al '.$list['UDFecha_final'];
+						echo fecha_format($list['UDFecha_inicio']).' al '.fecha_format($list['UDFecha_final']);
 					}
 					?>
 				</td>
@@ -48,10 +52,15 @@
 					<!--<td></td>
 					<td></td>-->
 				<?php // } ?>
+				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>
 				<td>
                     <?php echo nvl($borrar); ?>
 				</td>
+				<?php } ?>
 			</tr>
+		<?php } 
+		} else { ?>
+		<input type="hidden" name="tipoNombramiento" id="tipoNombramiento" value="">
 		<?php } ?>
 		</tbody>
 	</table>

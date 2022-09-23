@@ -12,7 +12,7 @@
             <tbody>
             <?php foreach($arrayMaterias as $ar => $listM){ ?>
                 <tr>
-                    <td style="width: 400px;"><input type="checkbox" name="pidMateria[]" id="id_materia" value="<?= $listM[0]['id_materia']; ?>"> <?php echo $listM[0]['id_materia'].'::'.$listM[0]['modulo'].' '.$listM[0]['materia']; ?></td>
+                    <td style="width: 400px;"><input type="checkbox" name="pidMateria[]" id="id_materia" value="<?= $listM[0]['id_materia']; ?>"> <?php echo $listM[0]['modulo'].' '.$listM[0]['materia']; ?></td>
                     <td><input name="multiplo[]" id="multipo<?= $listM[0]['id_materia']; ?>" class="form-control disabled" value="<?= $listM[0]['hsm']; ?>"></td>
                     <td>
                         <input type="number" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" name="nogrupoMatutino[]" placeholder="0" value="" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
@@ -43,8 +43,16 @@
 </div>
 
 <?php } else { ?>
-    <div class="form-group">
-    <div class="col-lg-12">
+<br><br>
+<div class="form-group">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-11">
+        <button class="btn btn-primary save  pull-right" type="button"> <i class="fa fa-save"></i> Guardar</button>
+    </div>
+</div>
+<br><br>
+<div class="form-group">
+    <div class="col-lg-11">
         <table class="table table-striped table-bordered table-hover" >
             <thead>
                 <tr>
@@ -83,3 +91,38 @@
     </div>
 </div>
 <?php } ?>
+
+<script>
+    $(".save").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("GenerarPlantilla/save"); ?>",
+            data: $(this.form).serialize(),
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loadingSave").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                var data = data.split("::");
+                if(data[1]=='OK') {
+                    $(".mostrarDatos").empty();
+                    $(".mostrarDatos").append(data[0]);
+                    datosPlantilla(data[2]);
+                    uncheckAll();
+                    $(".mostrarMatPrimero").html("");
+                    $(".mostrarMatSegundo").html("");
+                    $(".mostrarMatTercero").html("");
+                    $(".mostrarMatCuarto").html("");
+                    $(".mostrarMatQuinto").html("");
+                    $(".mostrarMatSexto").html("");
+                    $(".loadingSave").html("");
+                } else {
+                    $("#error").empty();
+                    $("#error").append(data);   
+                    $(".loadingSave").html(""); 
+                }             
+            }
+        });
+    });//----->fin
+</script>
