@@ -93,8 +93,8 @@ class HorasClase extends CI_Controller {
 
         $this->db->where('CPLClave', $idPlantel);
         $data['Director'] = $this->plantel_model->find_all();
-        $ciclo = "SEMESTRE 20".substr($Periodo,0,2)."-";
-        $anio = substr($Periodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)';
+        $ciclo = "SEMESTRE 20".substr($Periodo,0,2)." ";
+        $anio = substr($Periodo,3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)';
               
         $this->load->library('Dpdf');
         $data['subvista'] = 'horasClase/Ver_pdf_view';
@@ -228,8 +228,8 @@ class HorasClase extends CI_Controller {
 
         $this->db->where('CPLClave', $idPlantel);
         $data['Director'] = $this->plantel_model->find_all();
-        $ciclo = "SEMESTRE 20".substr($GRPeriodo,0,2)."-";
-        $anio = substr($GRPeriodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)';
+        $ciclo = "SEMESTRE 20".substr($GRPeriodo,0,2)." ";
+        $anio = substr($GRPeriodo,3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)';
 
         $this->load->library('Dpdf');
         $data['subvista'] = 'horasClase/Ver_ReportePdf_view';

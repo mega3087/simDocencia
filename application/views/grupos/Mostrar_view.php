@@ -106,7 +106,7 @@
                         <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control">
                             <?php foreach ($periodos as $key => $listPer) { ?>
                                 <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                        <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?>
+                                        <?='20'.substr($listPer['CPEPeriodo'],0,2)?> <?=substr($listPer['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -125,7 +125,7 @@
                         <tbody>
                             <tr>
                                 <td rowspan="2">
-                                    <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'; ?>
+                                    <?= '20'.substr($periodos[0]['CPEPeriodo'],0,2)?> <?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'; ?>
                                     <input type="hidden" name="CPEPeriodo" id="CPEPeriodo" value="<?= $periodos[0]['CPEPeriodo']; ?>" />
                                 </td>
                                 <td rowspan="2">
@@ -158,7 +158,7 @@
                             
                             <tr>
                                 <td rowspan="2">
-                                    <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
+                                    <?= '20'.substr($periodos[0]['CPEPeriodo'],0,2)?> <?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)';?>
                                 </td>
                                 <td rowspan="2">
                                     <?php $sem1 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'4':'3'; echo $sem1;?>
@@ -186,7 +186,7 @@
 
                             <tr>
                                 <td rowspan="2">
-                                    <?= substr($periodos[0]['CPEPeriodo'],0,2)?>-<?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'; echo "  (".substr($periodos[0]['CPEPeriodo'],-1).")"; ?>
+                                    <?= '20'.$periodos[0]['CPEPeriodo'] ?> <?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'; ?>
                                 </td>
                                 <td rowspan="2">
                                     <?php $sem2 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'6':'5'; echo $sem2; ?>
@@ -253,7 +253,7 @@
                         <select name="SemestrePeriodo" id="SemestrePeriodo" class="form-control SemestrePeriodo">
                             <?php foreach ($periodos as $key => $listPer) { ?>
                                 <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                        <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?>
+                                        <?= '20'.substr($listPer['CPEPeriodo'],0,2)?> <?=substr($listPer['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -290,7 +290,7 @@
                             <select name="semReportes" id="semReportes" class="form-control semReportes">
                                 <?php foreach ($periodos as $key => $listPer) { ?>
                                     <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                         <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?>
+                                         <?='20'.substr($listPer['CPEPeriodo'],0,2)?> <?=substr($listPer['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?>
                                     </option>
                                 <?php } ?>
                             </select>

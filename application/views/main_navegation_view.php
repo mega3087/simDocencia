@@ -102,7 +102,7 @@
 					<li <?php if( nvl($modulo) == 'plantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("plantilla");?>' >Plantilla</a></li>
 					<?php } ?>
 					<?php if(is_permitido(null,'GenerarPlantilla','index')) { ?>
-					<li <?php if( nvl($modulo) == 'GenerarPlantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("GenerarPlantilla");?>' >Generar Plantilla</a></li>
+					<li <?php if( nvl($modulo) == 'GenerarPlantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("GenerarPlantilla");?>' >Plantilla</a></li>
 					<?php } ?>
 				</ul>
 			</li>

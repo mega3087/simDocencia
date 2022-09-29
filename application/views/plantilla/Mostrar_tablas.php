@@ -16,12 +16,12 @@
         //$borrar = "<button type='button' value=".$UNCI_usuario_skip." class='btn btn-sm btn-danger quitarDocente'><i class='fa fa-trash'></i> Quitar</button>"; ?>
             <tr>
                 <td class="text-center"><?php echo $i; ?></td> 
-                <td class="text-left"><?php echo mb_strtoupper($list['UNombre']." ".$list['UApellido_pat']." ".$list['UApellido_mat'],'utf-8'); ?></td>
+                <td class="text-left"><?php echo mb_strtoupper($list['UApellido_pat']." ".$list['UApellido_mat']." ".$list['UNombre'],'utf-8'); ?></td>
                 <td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
                 <td class="text-left"><?php echo $list['URFC']; ?></td>
                 <td class="text-left"><?php echo $list['UCURP']; ?></td>
                 <td class="text-center">
-                <?php if ($list['UDValidado'] == '1' &&  is_permitido(null,'generarplantilla','save')) { ?>
+                <?php if ($list['UDValidado'] == '1' && is_permitido(null,'generarplantilla','save')) { ?>
                     <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Asignar Materias</button>
                 <?php } if ($list['UDValidado'] == '1' && is_permitido(null,'generarplantilla','validar')) { ?>
@@ -74,6 +74,7 @@
         var plantel = document.getElementById('plantelId').value;
         document.getElementById("idUsuario").value = idUser;
         var cicloEsc = document.getElementById('cicloEsc').value;
+        limpiarFormulario();
         
         if (cicloEsc == 2) {
             $(".mostrarMatPrimero").show();
@@ -88,7 +89,7 @@
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/asignarMaterias"); ?>",
+            url: "<?php echo base_url("GenerarPlantilla/asignarMaterias_skip"); ?>",
             data: {idUser : idUser, plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){

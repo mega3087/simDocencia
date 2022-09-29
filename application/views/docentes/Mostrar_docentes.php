@@ -50,7 +50,7 @@
 								$borrar = "<button type='button' value=".$UNCI_usuario_skip." class='btn btn-sm btn-danger quitarDocente'><i class='fa fa-trash'></i> Quitar</button>"; ?>
 									<tr>
 										<td class="text-left"><?php echo $i; ?></td> 
-										<td class="text-left"><?php echo $list['UNombre']." ".$list['UApellido_pat']." ".$list['UApellido_mat']; ?></td>
+										<td class="text-left"><?php echo $list['UApellido_pat']." ".$list['UApellido_mat'].' '.$list['UNombre']; ?></td>
 										<td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
 										<td class="text-left"><?php echo $list['URFC']; ?></td>
 										<td class="text-left"><?php echo $list['UCURP']; ?></td>								

@@ -1,9 +1,3 @@
-<link href="<?php echo base_url('assets/inspinia/css/plugins/dataTables/datatables.min.css');?>" rel="stylesheet">
-<link href="<?php echo base_url('assets/inspinia/css/plugins/steps/jquery.steps.css');?>" rel="stylesheet">
-<link href="<?php echo base_url('assets/inspinia/css/plugins/iCheck/custom.css');?>" rel="stylesheet">
-<link href="<?php echo base_url('assets/inspinia/css/plugins/chosen/chosen.css'); ?>" rel="stylesheet">
-<link href="<?php echo base_url('assets/inspinia/css/plugins/datapicker/datepicker3.css'); ?>" rel="stylesheet" />
-<link href="<?php echo base_url('assets/inspinia/css/plugins/clockpicker/clockpicker.css'); ?>" rel="stylesheet" />	
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Crear Plantilla</h2>
@@ -61,7 +55,7 @@
                                         <button class="btn btn-outline btn-primary" id="UDTipo_Idoneo" onclick='tablaIdoneo()' value="2" type="button"> <i class="fa fa-users"></i> Docentes IDONEOS</button>    
                                         </li>
                                         <li class="breadcrumb-item">
-                                        <button class="btn btn-outline btn-primary" id="UDTipo_Usycamm" onclick='tablaUsycamm()' value="3" type="button"> <i class="fa fa-users"></i> Docentes USICAMM</button>
+                                        <button class="btn btn-outline btn-primary" id="UDTipo_Usicamm" onclick='tablaUsicamm()' value="3" type="button"> <i class="fa fa-users"></i> Docentes USICAMM</button>
                                         </li>
                                         <li class="breadcrumb-item">
                                             <button class="btn btn-outline btn-primary" id="UDTipo_Externo" onclick='tablaExterno()' value="4" type="button"> <i class="fa fa-users"></i> Docentes EXTERNOS</button>
@@ -69,11 +63,11 @@
                                     </ol>
                                     <br><br>
                                     <input type="hidden" name="cicloEsc" id="cicloEsc" value="<?= substr($periodos[0]['CPEPeriodo'],3,1); ?>"> 
-                                    <div class="table-responsive mostrarTabla"></div>
                                     <div class="loading"></div>
+                                    <div class="table-responsive mostrarTabla"></div>
                             </div>
                                 <div class="tab-pane fade form-horizontal" id="agregar-materias">
-                                <form action="<?php echo base_url("generarplantilla/validar"); ?>" name="form" id="form" method="POST" class="wizard-big form-vertical">
+                                <form action="<?php echo base_url("generarplantilla/save"); ?>" name="formGuardar" id="formGuardar" method="POST" class="wizard-big form-vertical">
                                     <input type="hidden" name="idPPlantel" id="plantelId" value="<?= $plantel; ?>"> 
                                     <input type="hidden" name="idPUsuario" id="idUsuario" value="">
                                     <div class="form-group">    
@@ -104,7 +98,7 @@
                                             <select name="pperiodo" id="periodo" class="form-control periodo disabled">
                                                 <?php foreach ($periodos as $key => $listPer) { ?>
                                                     <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                                            <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?>
+                                                            <?='20'.substr($listPer['CPEPeriodo'],0,2)?> <?=substr($listPer['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?>
                                                     </option>
                                                 <?php } ?>
                                             </select>
@@ -240,12 +234,24 @@
                                         </div>
                                     </div>  
                                     <div class="loadingMat"></div>
+                                    <div class="form-group">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-11">
+                                            <button class="btn btn-primary save  pull-right" type="button"> <i class="fa fa-save"></i> Guardar</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-lg-2"></div>
+                                            <div class="col-lg-9">
+                                            <div class="loadingSave"></div>
+                                            <div id="error"></div>
+                                        </div>
+                                    </div>
 
                                     <div class="form-group">
                                         <div class="col-lg-2"></div>
                                             <div class="col-lg-10">
-                                            <div class="loadingSave"></div>
-                                            <div id="error"></div>
                                             <div class="mostrarDatos"></div>
                                         </div>
                                     </div>
@@ -268,18 +274,32 @@
     </div>
 </div>
 
-<script src="<?php echo base_url('assets/inspinia/js/plugins/staps/jquery.steps.min.js'); ?>"></script>
 <!-- Jquery Validate -->
-<script src="<?php echo base_url('assets/inspinia/js/plugins/validate/jquery.validate.min.js'); ?>"></script>
-<script src="<?php echo base_url('assets/messages_es.js'); ?>"></script>
-<script src="<?php echo base_url('assets/inspinia/js/plugins/iCheck/icheck.min.js'); ?>"></script>
-<script src="<?php echo base_url('assets/inspinia/js/plugins/chosen/chosen.jquery.js'); ?>"></script>
 <script>
 $(document).on('change','input[type="checkbox"]' ,function(e) {
-    var plantel = document.getElementById('plantelId').value;
-    var periodo = document.getElementById('periodo').value;
-    var licenciatura = document.getElementById('licenciatura').value;
-
+    $("[data-toggle]").click(function() {
+		var nombre = $(this).attr('nombre');
+		
+		var i = 0;
+		var y = 0;
+		var texto = '';
+		$('input[name='+nombre+']').each(function(){
+			i = 1;
+		});
+		if(i == 0){
+			$(this).parent().append('<input type="hidden" name="'+nombre+'" value="" />');
+		}else{
+			texto = $('input[name='+nombre+']').val();
+		}
+		
+		$('#'+$(this).attr('aria-describedby')+' .popover-content').html('<textarea id="'+nombre+'" class="form-control textarea" >'+texto+'</textarea>');
+		
+		$('.textarea').keyup(function(){
+			nombre = $(this).attr('id');
+			$('input[name='+nombre+']').val( $(this).val() );
+		});
+	});
+    
     if(this.id=="primero") {
         //var semestre = $('input:checkbox[name=psemestre[]]:checked').val();
         if (document.getElementById('primero').checked) {
@@ -290,8 +310,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
-            data: {plantel : plantel, periodo : periodo, licenciatura: licenciatura, semestre : semestre},
+            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -304,6 +324,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             }
         });
     } 
+
     if(this.id=="segundo") {
         //var semestre = $('input:checkbox[name=segundo]:checked').val();
         if (document.getElementById('segundo').checked) {
@@ -313,8 +334,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
-            data: {plantel : plantel, periodo : periodo, licenciatura: licenciatura, semestre : semestre},
+            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -327,6 +348,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             }
         });
     }
+
     if(this.id=="tercero") {
         //var semestre = $('input:checkbox[name=tercero]:checked').val();
         if (document.getElementById('tercero').checked) {
@@ -336,8 +358,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
-            data: {plantel : plantel, periodo : periodo, licenciatura: licenciatura, semestre : semestre},
+            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -350,6 +372,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             }
         });
     }
+
     if(this.id=="cuarto") {
         //var semestre = $('input:checkbox[name=cuarto]:checked').val();
         if (document.getElementById('cuarto').checked) {
@@ -360,8 +383,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         var semestre = 4;
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
-            data: {plantel : plantel, periodo : periodo, licenciatura: licenciatura, semestre : semestre},
+            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -374,6 +397,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             }
         });
     } 
+
     if(this.id=="quinto") {
         //var semestre = $('input:checkbox[name=quinto]:checked').val();
         if (document.getElementById('quinto').checked) {
@@ -383,8 +407,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
-            data: {plantel : plantel, periodo : periodo, licenciatura: licenciatura, semestre : semestre},
+            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -397,6 +421,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             }
         });
     }
+
+
     if(this.id=="sexto") {
         //var semestre = $('input:checkbox[name=sexto]:checked').val();
         if (document.getElementById('sexto').checked) {
@@ -406,8 +432,8 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias"); ?>",
-            data: {plantel : plantel, periodo : periodo, licenciatura: licenciatura, semestre : semestre},
+            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -430,7 +456,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas"); ?>",
+            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -445,13 +471,13 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     }
 
-    function tablaUsycamm(){
+    function tablaUsicamm(){
         var plantel = document.getElementById('plantelId').value;
-        var UDTipo_Docente = document.getElementById('UDTipo_Usycamm').value;
+        var UDTipo_Docente = document.getElementById('UDTipo_Usicamm').value;
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas"); ?>",
+            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -472,7 +498,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas"); ?>",
+            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -493,7 +519,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas"); ?>",
+            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -514,8 +540,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("GenerarPlantilla/save"); ?>",
-            data: $('#form').serialize(),
-            //data: $(this.form).serialize(),
+            data: $('#formGuardar').serialize(),
             dataType: "html",
             beforeSend: function(){
                 //carga spinner
@@ -523,9 +548,10 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
             },
             success: function(data){
                 var data = data.split("::");
+                
                 if(data[1]=='OK') {
-                    $(".mostrarDatos").empty();
-                    $(".mostrarDatos").append(data[0]);
+                    $("#error").empty();
+                    $("#error").append(data[0]);
                     datosPlantilla(data[2]);
                     uncheckAll();
                     $(".mostrarMatPrimero").html("");
@@ -539,21 +565,33 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
                     $("#error").empty();
                     $("#error").append(data);   
                     $(".loadingSave").html(""); 
+                    //datosPlantilla(data[2]);
                 }             
             }
         });
     });//----->fin
+    
+    function limpiarFormulario() {
+        uncheckAll();
+        $(".mostrarMatPrimero").html("");
+        $(".mostrarMatSegundo").html("");
+        $(".mostrarMatTercero").html("");
+        $(".mostrarMatCuarto").html("");
+        $(".mostrarMatQuinto").html("");
+        $(".mostrarMatSexto").html("");
+    }
 
     function uncheckAll() {
-        document.querySelectorAll('#Form input[type=checkbox]').forEach(function(checkElement) {
+        document.querySelectorAll('#form input[type=checkbox]').forEach(function(checkElement) {
             checkElement.checked = false;
         });
     }
 
     function datosPlantilla(idPUsuario){   
+        
 		$.ajax({
 			type: "POST",
-			url: "<?php echo base_url("GenerarPlantilla/datosPlantilla"); ?>",
+			url: "<?php echo base_url("GenerarPlantilla/datosPlantilla_skip"); ?>",
 			data: {idPUsuario : idPUsuario, idPlantel : document.getElementById("plantelId").value, periodo : document.getElementById('periodo').value}, 
 			dataType: "html",
 			beforeSend: function(){
@@ -571,7 +609,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
     function verPlantilla(idPlantel) {
         $.ajax({
 			type: "POST",
-			url: "<?php echo base_url("GenerarPlantilla/ver_plantilla"); ?>",
+			url: "<?php echo base_url("GenerarPlantilla/verplantilla"); ?>",
 			data: {idPlantel : idPlantel}, 
 			dataType: "html",
 			success: function(data){
@@ -580,16 +618,6 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
 				//$(".loadingPlantilla").html("");
 			}
 		});
-    }
-
-    function limpiarFormulario() {
-        uncheckAll();
-        document.getElementById("mostrarMatPrimero").val();
-        document.getElementById("mostrarMatSegurndo").val();
-        document.getElementById("mostrarMatTercero").val();
-        document.getElementById("mostrarMatCuarto").val();
-        document.getElementById("mostrarMatQuinto").val();
-        document.getElementById("mostrarMatSexto").val();
     }
 
 </script>

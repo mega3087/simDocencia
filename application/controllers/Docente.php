@@ -16,7 +16,7 @@ class Docente extends CI_Controller {
 
     public function index() {
         $data = array();
-        if(is_permitido(null,'Docente','ver_docentes') && get_session('URol') == '6') {
+        if(is_permitido(null,'Docente','ver_docentes') && get_session('URol') == '16') {
             redirect('Docente/ver_docentes');
         }
 
@@ -36,8 +36,9 @@ class Docente extends CI_Controller {
 
     public function ver_docentes($idPlantel = null) {
         $data = array();
+
         $idPlantel = $this->encrypt->decode($idPlantel);
-        if (!$idPlantel) {
+        if ($idPlantel == '') {
             $idPlantel = get_session('UPlantel');
         }
                 
@@ -49,15 +50,17 @@ class Docente extends CI_Controller {
         $this->db->where('UDPlantel',$idPlantel);
         $data['datosUser'] = $this->usuariodatos_model->find_all();
         
-        $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro, UDTipo_Nombramiento";
+        $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro, UDTipo_Nombramiento,UDValidado";
         $this->db->join('nocrol','URol = CROClave');
         $this->db->join('nousuariodatos','UDUsuario = UNCI_usuario','left');
         $this->db->where("UEstado",'Activo');
         $this->db->where("CROClave NOT IN ('3','10','12')");
         $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
-        $this->db->order_by('UNombre', 'ASC');
+        $this->db->group_by('UNCI_usuario');
+        $this->db->order_by('UApellido_pat', 'ASC');
+        $this->db->order_by('UDTipo_Nombramiento', 'ASC');
         $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
-
+        
         $data['estado_civil'] = $this->estciv_model->find_all();
         $data['tipoDocente'] = $this->tipopersonal_model->find_all();
 
@@ -89,10 +92,12 @@ class Docente extends CI_Controller {
         $idUser = $this->encrypt->decode($idUser);  
         
         if($idUser != '0') {
-            //$this->db->join('nousuariodatos','UNCI_usuario = UDUsuario', 'LEFT');
+            $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro, UDTipo_Nombramiento,UDValidado";
+            $this->db->join('nocrol','URol = CROClave');
+            $this->db->join('nousuariodatos','UDUsuario = UNCI_usuario','left');
             $this->db->where('UNCI_usuario', $idUser);
             $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
-            $data['usuario'] = $this->usuario_model->find_all();
+            $data['usuario'] = $this->usuario_model->find_all(null, $selectU);
         }
         
         $data['estado_civil'] = $this->estciv_model->find_all();
@@ -115,10 +120,8 @@ class Docente extends CI_Controller {
 			
 		$data['nombramiento'] = $this->plaza_model->find_all(null, $selectNom);
 
-        $selectEst = 'IdLicenciatura, LGradoEstudio,LIdentificador';
-        $this->db->group_by('LGradoEstudio');   
-        $this->db->order_by('LIdentificador', 'ASC');
-        $data['estudios'] = $this->licenciaturas_model->find_all(null, $selectEst);
+        $this->db->order_by('id_gradoestudios', 'ASC');
+        $data['estudios'] = $this->gradoestudios_model->find_all();
 
         $this->db->where('LIdentificador !=','0');
         $this->db->group_by('Licenciatura');
@@ -136,45 +139,84 @@ class Docente extends CI_Controller {
 
     public function savePlazas() {
         $data = post_to_array('_skip');
+
+        $select = 'SUM(UDHoras_grupo + UDHoras_apoyo + UDHoras_CB) AS Total';
+        $this->db->where('UDUsuario',$data['UDUsuario']);
+        $this->db->where('UDPlantel',$data['UDPlantel']);
+        $this->db->where('UDActivo','1');
+        $totales = $this->usuariodatos_model->find_all(null, $select);
         
-        if ($data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' || nvl($data['UDHoras_CB']) == '' ) {
+        if ($data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' || $data['UDHoras_CB'] == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
-            if(isset($_FILES["UDNombramiento_file"]) && nvl($data['UDNombramiento_file']) != 'undefined' ){
-                $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
-                $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
-                
-                //Subir Nombramiento
-                $nomNombramiento = 'Nombramiento';
-                $fileNombramiento = $nomNombramiento.$nom;
-                $targetFileNombramiento = $directorio . $fileNombramiento;
-
-                if (!file_exists($directorio)) {
-                    mkdir($directorio, 0777, true);
-                }
-                //Con datos
-                move_uploaded_file($_FILES["UDNombramiento_file"]["tmp_name"], $targetFileNombramiento);
-                $data['UDNombramiento_file'] = $targetFileNombramiento;
+            if (($data['UDTipo_Nombramiento'] == '1' || $data['UDTipo_Nombramiento'] == '2') &&  $data['UDFecha_ingreso'] == '') {
+                set_mensaje("Favor de ingresar todos los datos requeridos.");
+                muestra_mensaje();
+            } elseif (($data['UDTipo_Nombramiento'] == '3' || $data['UDTipo_Nombramiento'] == '4'  || $data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6')  &&  ($data['UDFecha_inicio'] == '' ||  $data['UDFecha_final'] == '')) {
+                set_mensaje("Favor de ingresar todos los datos requeridos.");
+                muestra_mensaje();
+            } elseif ($data['UDTipo_Nombramiento'] == '8'  &&  $data['UDFecha_inicio'] == '') {
+                set_mensaje("Favor de ingresar todos los datos requeridos.");
+                muestra_mensaje();
             } else {
-                $data['UDNombramiento_file'] = '';
+                    $totalhoras = 0;
+                    $totalhoras = $data['UDHoras_grupo'] + $data['UDHoras_apoyo'] + $data['UDHoras_CB'];
+                if($totalhoras > 40) {
+                    set_mensaje("El Número de horas no debe de exceder las <b>40 horas</b>.");
+                    muestra_mensaje();
+                } else {
+                    $total = 0;
+                    $total = $totalhoras + $totales[0]['Total'];
+                    if ($total > '40'){
+                        set_mensaje("Número Total de horas exceden las<b> 40</b>.");
+                        muestra_mensaje();
+                    } else {
+                        if ($data['UDTipo_Nombramiento'] == '6' && $data['UDHoras_CB'] > '5') {
+                            set_mensaje("Número de horas no pueden exceder las<b> 5 horas por Nombramiento.</b>");
+                            muestra_mensaje();
+                        } else {
+                            if(isset($_FILES["UDNombramiento_file"]) && nvl($data['UDNombramiento_file']) != 'undefined' ) {
+                                $nom = $_POST['UDUsuario'].date("dmY").'.pdf';
+                                $directorio = "./Documentos/Docentes/Nombramientos/".$_POST['UDUsuario']."/";
+                                
+                                //Subir Nombramiento
+                                $nomNombramiento = 'Nombramiento';
+                                $fileNombramiento = $nomNombramiento.$nom;
+                                $targetFileNombramiento = $directorio . $fileNombramiento;
+                
+                                if (!file_exists($directorio)) {
+                                    mkdir($directorio, 0777, true);
+                                }
+                                //Con datos
+                                move_uploaded_file($_FILES["UDNombramiento_file"]["tmp_name"], $targetFileNombramiento);
+                                $data['UDNombramiento_file'] = $targetFileNombramiento;
+                            } else {
+                                $data['UDNombramiento_file'] = '';
+                            }
+                            
+                            $data['UDActivo'] = '1';
+                            $data['UDValidado'] = '1';
+                            $data['UDUsuario_registro'] = get_session('UNCI_usuario');
+                            $data['UDFecha_registro'] = date('Y-m-d H:i:s');
+                            $this->usuariodatos_model->insert($data);
+                            set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
+                            muestra_mensaje();
+                            echo "::OK";
+                            echo "::".$data['UDUsuario'];
+                            //echo "::".$data['UDTipo_Nombramiento'];
+                        }
+                        
+                    }
+
+                }
+                
             }
-            
-            $data['UDActivo'] = '1';
-            $data['UDValidado'] = '1';
-            $data['UDUsuario_registro'] = get_session('UNCI_usuario');
-            $data['UDFecha_registro'] = date('Y-m-d H:i:s');
-            $this->usuariodatos_model->insert($data);
-            set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
-            muestra_mensaje();
-            echo "::OK";
-            echo "::".$data['UDUsuario'];
-            //echo "::".$data['UDTipo_Nombramiento'];
         }
         
     }    
 
-    public function mostrarPlazas () {
+    public function mostrarPlazas_skip () {
         $idUsuario = $this->input->post('idUsuario');
         $idPlantel = $this->input->post('idPlantel');
         
@@ -219,7 +261,7 @@ class Docente extends CI_Controller {
         $data= post_to_array('_skip');
         //Subir Titulo Profesional
         if ($data['ULTitulado'] == 'Titulado') {    
-            if ($data['ULNivel_estudio'] == '' || $data['ULLicenciatura'] == '' || $data['ULCedulaProf'] == '') {
+            if ($data['ULNivel_estudio'] == '' || $data['ULLicenciatura'] == '') {
                 set_mensaje("Favor de ingresar todos los datos requeridos.");
                 muestra_mensaje();
             } else {
@@ -291,8 +333,18 @@ class Docente extends CI_Controller {
         $this->db->where('ULPlantel',$idPlantel);
         $this->db->where('ULActivo','1');
         $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
+
+        $select = 'UDValidado';
+        $this->db->where('UDUsuario',$idUsuario);
+        $this->db->where('UDPlantel',$idPlantel);
+        $this->db->where('UDActivo','1');
+        $data['valido'] = $this->usuariodatos_model->find_all(null, $select);
         
-        $this->load->view('docentes/Mostrar_estudios', $data);
+        if (count($data['data']) != 0){
+            $this->load->view('docentes/Mostrar_estudios', $data);
+        } else {
+            echo count($data['data']);
+        }
     }   
 
     public function deleteEstudios() {
@@ -416,8 +468,8 @@ class Docente extends CI_Controller {
 
     public function mostrarCarreras() {
         $nivel =  $this->input->post('tipo');
-        $this->db->where('LIdentificador !=','0');
-        $this->db->like('LGradoEstudio', $nivel);
+        
+        $this->db->where('LIdentificador',$nivel);
         $this->db->group_by('Licenciatura');
         $this->db->order_by('Licenciatura', 'ASC');
         $data['carreras'] = $this->licenciaturas_model->find_all();

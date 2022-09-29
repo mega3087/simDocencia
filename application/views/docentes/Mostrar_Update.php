@@ -27,7 +27,7 @@
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h2>Docente<b> <?php echo nvl($usuario[0]['UNombre']); ?> <?php echo nvl($usuario[0]['UApellido_pat']); ?> <?php echo nvl($usuario[0]['UApellido_mat']); ?></b></h2>
+				<h2>Docente::<b> <?php echo nvl($usuario[0]['UApellido_pat']); ?> <?php echo nvl($usuario[0]['UApellido_mat']); ?> <?php echo nvl($usuario[0]['UNombre']); ?></b></h2>
 			</div> 
 			<div class="ibox-content">
                 <div class="wrapper wrapper-content animated fadeInRight">
@@ -160,16 +160,25 @@
                                                     <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
                                                 </div>
                                             </div>
-                                            <div class="form-group mostrarFechasNom" style="display:none;">
+
+                                            <div class="form-group mostrarFechaIng2014" style="display:none;">
+                                                <label>Fecha de Ingreso: <em>*</em></label>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" class="form-control fecha disabled" value="2014">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
                                                 <div class="row">
-                                                    <div class="col-lg-4" id="data_2">
+                                                    <div class="col-lg-4 mostrarFechaInicio" id="data_2" style="display:none;">
                                                         <label>Fecha de Inicio: <em>*</em></label>
                                                         <div class="input-group date">
                                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                                             <input type="text" class="form-control fecha" id="UDFecha_inicio" name="UDFecha_inicio" value="<?php echo fecha_format(nvl($usuario['UDFecha_inicio'])); ?>" minlength="10" maxlength="10">
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4" id="data_2">
+                                                    <div class="col-lg-4 mostrarFechaFinal" id="data_2" style="display:none;">
                                                         <label>Fecha de Final: <em>*</em></label>
                                                         <div class="input-group date">
                                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -243,7 +252,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+                                            <?php if( is_permitido(null,'generarplantilla','save') && $usuario[0]['UDValidado'] != '3' ) { ?>
                                                 <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
                                             <?php } ?>
 
@@ -275,12 +284,20 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="form-group">
+                                        <div class="form-group dosLic" style="display: none;">
+                                            <label>Nivel de Estudios: <em>*</em></label>
+                                            <select id="ULNivel_estudio" name="ULNivel_estudio" class="form-control MostrarCarreras" >
+                                                <option value="">-Seleccionar-</option>
+                                                    <option value="1">Licenciatura</option>
+                                                    <option value="2">Ingeniería</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group TodasLic" style="display: none;">
                                             <label>Nivel de Estudios: <em>*</em></label>
                                             <select id="ULNivel_estudio" name="ULNivel_estudio" class="form-control MostrarCarreras" >
                                                 <option value="">-Seleccionar-</option>
                                                 <?php foreach ($estudios as $e => $listEst) { ?>
-                                                    <option value="<?= $listEst['LGradoEstudio'] ?>"><?= $listEst['LGradoEstudio'] ?></option>
+                                                    <option value="<?= $listEst['id_gradoestudios'] ?>"><?= $listEst['grado_estudios'] ?></option>
                                                 <?php } ?> 
                                             </select>
                                         </div>
@@ -329,15 +346,15 @@
                                             
                                             <div class="form-group">
                                                 <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <label>No. de Cédula Profesional: <em>*</em></label>
+                                                    <div class="col-lg-3">
+                                                        <label>No. de Cédula Profesional: </label>
                                                         <input id="ULCedulaProf" name="ULCedulaProf" value="<?php echo nvl($usuario['ULCedulaProf']); ?>" type="text" class="form-control "  minlength="6" maxlength="10" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <br>
                                         </div>
-                                        <?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+                                        <?php if( is_permitido(null,'generarplantilla','save') && $usuario[0]['UDValidado'] != '3' ) { ?>
                                             <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
                                         <?php } ?>
 
@@ -658,7 +675,7 @@
 		
 		$.ajax({
 			type: "POST",
-			url: "<?php echo base_url("Docente/mostrarPlazas"); ?>",
+			url: "<?php echo base_url("Docente/mostrarPlazas_skip"); ?>",
 			data: {idUsuario : idUsuario, idPlantel : document.getElementById("UPlantel").value}, 
 			dataType: "html",
 			beforeSend: function(){
@@ -674,7 +691,6 @@
 	}
 
     function datosEstudios(idUsuario){
-        
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("docente/mostrarEstudios"); ?>",
@@ -685,9 +701,18 @@
                 $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
             },
             success: function(data){
-                $(".resultEstudios").empty();
-                $(".resultEstudios").append(data);  
-                $(".loading").html("");
+                if (data == 0){
+                    $('.TodasLic').hide();            
+                    $('.dosLic').show();
+                    $(".loading").html("");
+                } else {
+                    $('.dosLic').hide();            
+                    $('.TodasLic').show();
+                    $(".resultEstudios").empty();
+                    $(".resultEstudios").append(data);  
+                    $(".loading").html("");
+                    
+                }
             }
         });
     }
@@ -695,40 +720,60 @@
     $(document).on("change", ".datosNombramiento", function (event) {
         var idNombramiento = $("#UDTipo_Nombramiento option:selected").val();
 
-        if (idNombramiento == 4) {
+        if (idNombramiento == 3) {
             $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();            
             $('.mostrarOficio').show();
-            $('.mostrarFechasNom').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
+            $('.mostrarDocNom').show();
+            $('.mostrarObservaciones').show();
+        } else if (idNombramiento == 4) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
             $('.mostrarObservaciones').show();
         } else if (idNombramiento == 5) {
             $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
-            $('.mostrarFechasNom').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
             $('.mostrarObservaciones').show();
         } else if (idNombramiento == 6) {
-            $('.mostrarFechaIng').show();
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
-            $('.mostrarFechasNom').hide();
-            $('.mostrarDocNom').hide();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
+            $('.mostrarDocNom').show();
             $('.mostrarObservaciones').show();
         } else if (idNombramiento == 7) {
-            $('.mostrarFechaIng').show();
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').show();
             $('.mostrarOficio').show();
-            $('.mostrarFechasNom').hide();
+            $('.mostrarFechaInicio').hide();
+            $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             $('.mostrarObservaciones').show();
         } else if (idNombramiento == 8) {
-            $('.mostrarFechaIng').show();
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
-            $('.mostrarFechasNom').hide();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             $('.mostrarObservaciones').show();
         } else {
             $('.mostrarFechaIng').show();
+            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').hide();
-            $('.mostrarFechasNom').hide();
+            $('.mostrarFechaInicio').hide();
+            $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').hide();
             $('.mostrarObservaciones').show();
         }
@@ -753,6 +798,7 @@
 
                 if(data[1] != ''){
                     $(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+                    $("#UDHoras_CB").val('0');
                 } else {
                     $(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
                     $("#UDHorasGrupo").val('0');
@@ -760,6 +806,7 @@
                 $("#UDHorasApoyo").val(data[2]);
                 if(data[2] != ''){
                     $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+                    $("#UDHoras_CB").val('0');
                 } else {
                     $(".UDHorasApoyo").removeClass("disabled").attr("disabled", false);
                     $("#UDHorasApoyo").val('0');
@@ -769,6 +816,7 @@
                     $("#UDHorasGrupo").val('0');
                     $(".UDHorasApoyo").addClass("disabled").attr("disabled", false);
                     $("#UDHorasApoyo").val('0');
+                    $("#UDHoras_CB").val('0');
 
                 } else {
 

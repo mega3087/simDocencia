@@ -7,7 +7,7 @@
 				<th>Titulado</th>
 				<th>No. Cédula Profesional</th>
 				<th>Documento</th>
-				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>	
+				<?php if( is_permitido(null,'generarplantilla','save') && $valido[0]['UDValidado'] != '3' ) { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -16,7 +16,8 @@
 		<?php foreach($data as $key => $list) { 
 			
 			if( $list['ULTitulo_file'] != '') {
-				$urltitulo = 'Documentos/Licenciaturas/'.$list['ULUsuario'].'/'.$list['ULTitulo_file'];
+				$urltitulo = $list['ULTitulo_file'];
+				//$urltitulo = 'Documentos/Licenciaturas/'.$list['ULUsuario'].'/'.$list['ULTitulo_file'];
 				$UPTitulo_file = "<a href='".base_url($urltitulo)."' target='_blanck'><button type='button' class='btn btn-sm btn-success' ><i class='fa fa-file-archive-o'></i> Archivo</button></a>";
 			}
 			if($list['ULCedula_file'] != '') {
@@ -31,7 +32,7 @@
 				<td><?php echo $list['ULCedulaProf']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<!--<td><?php echo nvl($UPCedula_file); ?></td>-->
-				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>	
+				<?php if( is_permitido(null,'generarplantilla','save') && $valido[0]['UDValidado'] != '3' ) { ?>
 				<td>
 					<?php echo nvl($borrar); ?>
 				</td>

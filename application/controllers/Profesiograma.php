@@ -14,27 +14,29 @@ class Profesiograma extends CI_Controller {
     function index() {
                
         $data['idMat'] = '';//$_POST['materia'];
-        $data['CPLTipo'] = get_session('CPLTipo');
-        
+        $data['plantel'] = $this->plantel_model->get(get_session('UPlantel'));
+        $data['CPLTipo'] = $data['plantel']['CPLTipo'];
+
         $selectGrado = 'id_gradoestudios, grado_estudios';
         $this->db->where('activo','1');
         $data['GradoEstudio'] = $this->gradoestudios_model->find_all(null, $selectGrado);;
         
-        $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
-        if (get_session('CPLTipo') == '35') {
-            $CPLTipo = '1';
-            $this->db->where('plan_estudio', $CPLTipo);
-        } elseif (get_session('CPLTipo') == '36') {
-            $CPLTipo = '2';
-            $this->db->where('plan_estudio', $CPLTipo);
-        }
-
+        
+        
         $this->db->join('nogradoestudios','id_gradoestudios = LIdentificador');
         $this->db->order_by('LIdentificador','ASC');
         $this->db->order_by('Licenciatura','ASC');
         $data['lics'] = $this->licenciaturas_model->find_all();
-
+        
         foreach ($data['lics'] as $l => $listLic) {
+            $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
+            if ($data['plantel']['CPLTipo'] == '35') {
+                $CPLTipo = '1';
+                $this->db->where('plan_estudio', $CPLTipo);
+            } elseif ($data['plantel']['CPLTipo'] == '36') {
+                $CPLTipo = '2';
+                $this->db->where('plan_estudio', $CPLTipo);
+            }
             //$idmaterias = explode(',',$listLic['LIdmateria']);
             $this->db->where_in('id_materia',$listLic['LIdmateria'],false);
             $this->db->where('activo','1');
@@ -44,32 +46,6 @@ class Profesiograma extends CI_Controller {
 
         }
       
-        /*$this->db->where('activo','1');
-        $this->db->order_by('semmat','ASC');
-        $data['materias'] = $this->materias_model->find_all(null, $selectMat); 
-        
-        foreach ($data['materias'] as $m => $mat) {            
-            $selectLic = '*';
-            $this->db->join('nogradoestudios','id_gradoestudios = LIdentificador');
-            $this->db->where("FIND_IN_SET('".$mat["id_materia"]."',LIdmateria)!=''");
-            $data['materias'][$m]['lics'] = $this->licenciaturas_model->find_all(null, $selectLic);
-        }
-
-        /*$selectLic = '*';
-        $this->db->where("LIdmateria != ''");
-        $data['lics'] = $this->licenciaturas_model->find_all(null, $selectLic);
-        foreach ($data['lics'] as $l => $lics) {   
-            for ($i=0; $i <= count($lics['LIdmateria']); $i++) { 
-                $idMat = explode(',',$lics['LIdmateria']);
-                
-                $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
-                $this->db->where('id_materia',$idMat[$i]);
-                $this->db->where('activo','1');
-                $this->db->order_by('semmat','ASC');
-                $data['lics'][$l]['materias'][$i] = $this->materias_model->find_all(null, $selectMat);
-            }
-
-        }*/
         $data['modulo'] = $this->router->fetch_class();
         $data['subvista'] = 'profesiograma/Mostrar_view';
 
@@ -153,13 +129,15 @@ class Profesiograma extends CI_Controller {
         $GPSemestre =  $this->input->post('semestre');
         $planEstudio = $this->input->post('planEstudio');
 
+        $data['plantel'] = $this->plantel_model->get(get_session('UPlantel'));
+        
         $data['materias'] = array();        
         
         $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
-        if (get_session('CPLTipo') == '35') {
+        if ($data['plantel']['CPLTipo'] == '35') {
             $CPLTipo = '1';
             $this->db->where('plan_estudio', $CPLTipo);
-        } elseif (get_session('CPLTipo') == '36') {
+        } elseif ($data['plantel']['CPLTipo'] == '36') {
             $CPLTipo = '2';
             $this->db->where('plan_estudio', $CPLTipo);
         }
@@ -201,16 +179,18 @@ class Profesiograma extends CI_Controller {
         $GPSemestre =  $this->input->post('semestre');
         $planEstudio = $this->input->post('planEstudio');
 
+        $data['plantel'] = $this->plantel_model->get(get_session('UPlantel'));
+
         $data['materias'] = array();        
 
         $this->db->where('IdLicenciatura',$IdLicenciatura);
         $ids = $this->licenciaturas_model->find();
         
         $selectMat = 'id_materia, materia, modulo, semmat, plan_estudio, activo';
-        if (get_session('CPLTipo') == '35') {
+        if ($data['plantel']['CPLTipo'] == '35') {
             $CPLTipo = '1';
             $this->db->where('plan_estudio', $CPLTipo);
-        } elseif (get_session('CPLTipo') == '36') {
+        } elseif ($data['plantel']['CPLTipo'] == '36') {
             $CPLTipo = '2';
             $this->db->where('plan_estudio', $CPLTipo);
         }

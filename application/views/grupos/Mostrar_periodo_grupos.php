@@ -63,6 +63,12 @@
         </tbody>
     </table>
 </div>
+<div class="form-group">
+    <div class='loadingCap'></div>
+    <div class='msgCap'></div>
+    <div id='errorCap'></div>
+</div>
+
 <div class="modal-footer">
     <?php if( is_permitido(null,'grupos','saveCapAlumnos') ){ ?>
         <button type="button" class="btn btn-primary pull-right saveCap"> <i class="fa fa-save"></i> Guardar</button>
@@ -84,10 +90,11 @@ $(document).ready(function() {
                 $(".loadingCap").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
             },
             success: function(data){
-                var data = data.split(";");
-                if(data[0]==' OK'){
+                var data = data.split("::");
+                
+                if(data[1]=='OK'){
                     $(".msgCap").empty();
-                    $(".msgCap").append(data[1]);
+                    $(".msgCap").append(data[0]);
                     $('#FormCap')[0].reset();
                     $(".loadingCap").html("");
                     abrirReporte();

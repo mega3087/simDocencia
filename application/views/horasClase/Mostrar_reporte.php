@@ -1,6 +1,6 @@
 <br>
 <h2 class="text-center">REPORTE DE MATRICULA Y No. DE GRUPOS</h2>
-<h3 class="text-center">SEMESTRE 20<?=substr($semestre,0,2)?>-<?=substr($semestre,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?></h3>
+<h3 class="text-center">SEMESTRE 20<?=substr($semestre,0,2)?>-<?=substr($semestre,3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?></h3>
 <br>
 <?php
 $noCap = count($Capacitaciones);

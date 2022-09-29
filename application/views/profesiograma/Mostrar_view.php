@@ -22,7 +22,7 @@
 			<div class="ibox-title">
 				<label class="col-lg-1 control-label" style="text-align: right;">Centro Escolar:</label>
 				<div class="col-lg-1">
-					<select name="plantel" id="plantel" class="form-control" <?php if( $CPLTipo != '') echo"disabled";?>>
+					<select name="plantel" id="plantel" class="form-control" <?php if( $CPLTipo == '35' || $CPLTipo == '36') echo"disabled";?>>
 						<option <?php if( $CPLTipo == '37' ) echo"selected";?> value="37">Todos</option>
 						<option <?php if( $CPLTipo == '35' ) echo"selected";?> value="35">Plantel</option>
 						<option <?php if( $CPLTipo == '36' ) echo"selected";?> value="36">CEMSAD</option>

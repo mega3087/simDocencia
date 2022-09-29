@@ -7,7 +7,7 @@ if($plantel[0]['CPLTipo'] == '35') {
 }  ?>
 <br>
 <h2 class="text-center">NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
-<h3 class="text-center">SEMESTRE 20<?=substr($periodos,0,2)?>-<?=substr($periodos,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?></h3>
+<h3 class="text-center">SEMESTRE 20<?=substr($periodos,0,2)?> <?=substr($periodos,3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?></h3>
 <br>
 <div class="table responsive">
 	<table class="table table-striped table-bordered table-hover dataTable">

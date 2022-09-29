@@ -52,7 +52,7 @@
 								?>
 								<tr>
 									<td class="text-left"><?php echo folio($cont); ?></td> 
-									<td class="text-left"><?php echo substr($list['CPEPeriodo'],0,2)?>-<?= substr($list['CPEPeriodoSem'],-1) == 1 ? 'A':'B'; ?></td>								
+									<td class="text-left"><?php echo substr($list['CPEPeriodo'],0,2)?>-<?= substr($list['CPEPeriodoSem'],-1) == 1 ? 'A (Febrero-Agosto)':'B (Agosto-Febrero)'; ?></td>								
 									<td class="text-left"><?php echo $list['InicioPeriodo']; ?></td>
 									<td class="text-left"><?php echo $list['FinPeriodo']; ?></td>
                                     <td class="text-center">
@@ -108,8 +108,8 @@
                     <div class="col-lg-5" id="CPEPeriodoSem">
                         <select name="CPEPeriodoSem" id="CPEPeriodoSem" class="form-control">
                             <option value="">-Periodo-</option>
-                            <option value="1">A</option>
-                            <option value="2">B</option>
+                            <option value="1">A (Febrero-Agosto)</option>
+                            <option value="2">B (Agosto-Febrero)</option>
                         </select>
                     </div>
                 </div>

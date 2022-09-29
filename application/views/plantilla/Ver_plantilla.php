@@ -1,6 +1,7 @@
 <div class="table-responsive">
 	<form action="<?php echo base_url("generarplantilla/validar"); ?>" name="formValidar" id="formValidar" method="POST" class="wizard-big form-vertical">
 		<div class="col-lg-12">
+			<input type="hidden" name="idPlantel" id="idPlantel" value="<?php echo $plantel[0]['CPLClave']; ?>">
 			<!--<table>
 				<tr>
 					<td rowspan="2" class="no-border text-left"><img src="<?=base_url("assets/img/logo_edomex.png")?>" width="100px" alt="" /></td>
@@ -16,13 +17,13 @@
 						DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br>
 						PLANTILLA DE PERSONAL DOCENTE<br>
 						PLANTEL Y/O CENTRO EMSAD: <b><?php echo $plantel[0]['CPLNombre']; ?></b> <br>
-						SEMESTRE:<b> 20<?= substr($periodos[0]['CPEPeriodo'],0,2); ?>-<?= substr($periodos[0]['CPEPeriodo'],3,1) == 1? 'A (Febrero-Julio)' : 'B (Agosto-Enero)'?></b><br>
+						SEMESTRE:<b> 20<?= substr($periodos[0]['CPEPeriodo'],0,2); ?> <?= substr($periodos[0]['CPEPeriodo'],3,1) == 1? '(Febrero-Agosto)' : '(Agosto-Febrero)'?></b><br>
 						FECHA: <b><?php echo date('d/m/Y'); ?></b> <br>
 					</td>
 				</tr>
 			</table><br>
 
-			<table class="table table-striped table-bordered table-hover dataTables-example">
+			<table class="table table-striped table-bordered table-hover dataTables-example" id="Exportar_a_Excel">
 				<thead>
                 <tr>
                     <th rowspan ="2" style="text-align: center; vertical-align: middle;">No</th>
@@ -53,6 +54,9 @@
 					<?php if( is_permitido(null,'generarplantilla','validar') ) { ?>
 					<th rowspan ="2" style="text-align: center; vertical-align: middle;">OBSERVACIONES</th>
 					<?php } ?>
+					<?php if( is_permitido(null,'generarplantilla','revisarPlantilla') ) { ?>
+					<th rowspan ="2" style="text-align: center; vertical-align: middle;"><label><input type="checkbox" class="opcion" id="selectall" value=""/>Todos</label> </th>
+					<?php } ?>
 
                 </tr>
                 <tr>
@@ -69,7 +73,7 @@
 				$idPlantel = $this->encrypt->encode($listDoc['UDPlantel']); ?>
 				
 					<tr>
-						<td class="text-left"><b><?= $i; ?><input type="hidden" name="UDClave[]" id="UDClave" value="<?= $listDoc['UDClave']; ?>"></b></td> 
+						<td class="text-left"><b><?= $i; ?></b></td> 
 						<td class="text-left"> 
 							<table style="border:0px" >
 								<tr style="border:0px"><td style="border:0px">
@@ -229,22 +233,56 @@
 						<?php if( is_permitido(null,'generarplantilla','validar') ) { ?>
 						<td>
 							<table style="border:0px">
+							<tr style="border:0px">
+								<td style="border:0px; text-align: center;" >
+								<button title="OBSERVACIONES" class="btn btn-warning btn-circle pull-left no-imprimir" nombre="pObservaciones<?= $d ?>" value="" type="button" data-toggle="popover" data-placement="auto left" data-content="--------------------------------------"><i class="fa fa-comment"></i></button>
+								OBSERVACIONES
+								</td>
+							</tr>								
+							</table>
+						</td>
+						<?php } ?>
+						<?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+						<td>
+							<table style="border:0px">
 								<tr style="border:0px"><td style="border:0px; text-align: center;" >
-									<!--<input type="checkbox" name="idPlantilla[]" id="idPlantilla" value="<?= $listDoc['UDClave']; ?>"><?= $listDoc['UDClave']; ?>-->
-									<button title="Observaciones" class="btn btn-warning btn-circle pull-left" nombre="PObservaciones" value="" type="button" data-toggle="popover" data-placement="auto left" data-content=""><i class="fa fa-comment"></i></button>
+									<input type="checkbox" class="opcion" name="opcion[]" value="<?= $listDoc['UDClave']; ?>" />
+									<!--<input type="checkbox" class="opcion" name="idPlantilla[]" id="idPlantilla" >-->					
 								</td></tr>								
 							</table>
 						</td>
 						<?php } ?>
 					</tr>
-                <?php $i++; } ?>
+					<?php $i++; } ?>
+					<tr>
+						<td colspan="5" class="text-center">
+							TOTALDE HORAS POR ASIGNATURA, GRUPOS, H/S/M POR SEMESTRE Y HORAS TOTALES
+						</td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+						<td class="text-center"></td>
+					</tr>
 			</table>
 		</div>
 	</form>
 </div>
 
+<div class="loadingRevision"></div>
+<div id="resultRevision"></div>
+<div id="errorRevision"></div>
+
 <br><br>
-<?php if (is_permitido(null,'generarplantilla','save')) { ?>
+
+<?php if (is_permitido(null,'generarplantilla','revisarPlantilla')) { ?>
 <div class="form-group">
 	<div class="col-lg-1"></div>
 	<div class="col-lg-10">
@@ -261,33 +299,14 @@
 	</div>
 </div>
 <?php } ?>
-<div class="loading"></div>
-<div id="result"></div>
+
+<!--<form action="<?= base_url("generarplantilla/exportarExcel")?>" method="post" target="_blank" id="FormularioExportacion">
+<button class="btn btn-primary btn-rounded btn-block botonExcel pull-center" type="button"> <i class="fa fa-save"></i> Exportar Excel</button>
+	<input type="hidden" id="datos_a_enviar" name="datos_a_enviar" />
+</form>-->
 
 <script>
 $(document).ready(function() {
-	$(".revision").click(function() {
-		$.ajax({
-			type: "POST",
-			url: "<?php echo base_url("generarplantilla/revisarPlantilla"); ?>",
-			data: $('#formValidar').serialize(),
-			dataType: "html",
-			beforeSend: function(){
-				//carga spinner
-				$(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-			},
-			success: function(data) {
-				var data = data.split("::");
-					if(data[1]=='OK'){
-						$("#result").empty();
-						$("#result").html(data[0]);
-						$(".loading").html('');
-						location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
-				}
-			}
-		});
-	});
-
 	$("[data-toggle]").click(function() {
 		var nombre = $(this).attr('nombre');
 		
@@ -302,6 +321,7 @@ $(document).ready(function() {
 		}else{
 			texto = $('input[name='+nombre+']').val();
 		}
+		
 		$('#'+$(this).attr('aria-describedby')+' .popover-content').html('<textarea id="'+nombre+'" class="form-control textarea" >'+texto+'</textarea>');
 		
 		$('.textarea').keyup(function(){
@@ -309,5 +329,51 @@ $(document).ready(function() {
 			$('input[name='+nombre+']').val( $(this).val() );
 		});
 	});
+
+	$(".revision").click(function() {
+		$.ajax({
+			type: "POST",
+			url: "<?php echo base_url("generarplantilla/revisarPlantilla"); ?>",
+			data: $('#formValidar').serialize(),
+			dataType: "html",
+			beforeSend: function(){
+				//carga spinner
+				$(".loadingRevision").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+			},
+			success: function(data) {
+				var data = data.split("::");
+					if(data[1]=='OK'){	
+						$("#resultRevision").empty();
+						$("#resultRevision").html(data[0]);
+						$(".loadingRevision").html('');
+						$("#errorRevision").html('');
+						verPlantilla(data[2]);
+						//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
+					} else {
+						$("#errorRevision").empty();
+                   		$("#errorRevision").append(data);
+                    	$(".loadingRevision").html("");
+				}
+			}
+		});
+	});
+
+	$(".botonExcel").click(function(event) {
+		$("#datos_a_enviar").val( $("<div>").append( $("#Exportar_a_Excel").eq(0).clone()).html());
+		$("#FormularioExportacion").submit();
+	});
 });
+
+	$("#selectall").on("click", function() {
+        $(".opcion").prop("checked", this.checked);
+    });
+
+    // if all checkbox are selected, check the selectall checkbox and viceversa
+    $(".opcion").on("click", function() {
+    if ($(".opcion").length == $(".opcion:checked").length) {
+        $("#selectall").prop("checked", true);
+    } else {
+        $("#selectall").prop("checked", false);
+    }
+    });
 </script>

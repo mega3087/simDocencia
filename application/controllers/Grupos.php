@@ -12,7 +12,7 @@ class Grupos extends CI_Controller {
     }
 
     public function index() {
-        if(is_permitido(null,'grupos','ver_grupos') && get_session('URol') == '6') {
+        if(is_permitido(null,'grupos','ver_grupos') && get_session('URol') == '16') {
             redirect('grupos/ver_grupos');
         }
 
@@ -27,7 +27,7 @@ class Grupos extends CI_Controller {
 
         $this->db->where('CPEStatus','1');
         $this->db->order_by('CPEPeriodo','DESC');
-        $this->db->limit('10');
+        $this->db->limit('1');
         $data['periodos'] = $this->periodos_model->find_all();
 
         foreach ($data['planteles'] as $key => $listP) {
@@ -462,9 +462,9 @@ class Grupos extends CI_Controller {
             $this->grupos_model->update($k,$datos);
         }
         
-        set_mensaje("Los Grupos se Agregarón Correctamente",'success::');
-        echo "OK;";
+        set_mensaje("Los Alumnos se Agregarón Correctamente",'success::');
         muestra_mensaje();
+        echo "::OK";
     }
 
     public function ImprimirGrupos_skip($idPlantel = null, $periodo = null) {
@@ -499,8 +499,8 @@ class Grupos extends CI_Controller {
 
         $this->db->where('CPLClave', $idPlantel);
         $data['Director'] = $this->plantel_model->find_all();
-        $ciclo = "SEMESTRE 20".substr($GRPeriodo,0,2)."-";
-        $anio = substr($GRPeriodo,3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)';
+        $ciclo = "SEMESTRE 20".substr($GRPeriodo,0,2)." ";
+        $anio = substr($GRPeriodo,3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)';
         $this->load->library('Dpdf');
         $data['subvista'] = 'grupos/Ver_pdf_view';
         $data['titulo'] = "<p style='font-size:11px;'>COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br><b>DIRECCIÓN ACADÉMICA</b><br> DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br> <b>PLANTEL Y/O CEMSAD: ". $data['Director'][0]['CPLNombre']."</b><br>".$ciclo.$anio."</p>";

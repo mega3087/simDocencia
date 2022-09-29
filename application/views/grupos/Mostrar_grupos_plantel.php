@@ -48,7 +48,7 @@
                                             
                                             <?php foreach ($periodos as $key => $listPer) { ?>
                                                 <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                                        <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?>
+                                                        <?='20'.substr($listPer['CPEPeriodo'],0,2)?> <?=substr($listPer['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?>
                                                 </option>
                                             <?php } ?>
                                         </select>
@@ -69,7 +69,7 @@
                                         <select name="semReportes" id="semReportes" class="form-control semReportes disabled">
                                             <?php foreach ($periodos as $key => $listPer) { ?>
                                                 <option value="<?php echo $listPer['CPEPeriodo']; ?>">
-                                                    <?=substr($listPer['CPEPeriodo'],0,2)?>-<?=substr($listPer['CPEPeriodo'],3,1)==1?'A (Febrero-Julio)':'B (Agosto-Enero)'?>
+                                                    <?='20'.substr($listPer['CPEPeriodo'],0,2)?> <?=substr($listPer['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?>
                                                 </option>
                                             <?php } ?>
                                         </select>

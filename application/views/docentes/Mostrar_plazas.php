@@ -11,7 +11,7 @@
 				<!--<th>No. de Oficio</th>
 				<th>Documentos</th>-->
 				<?php //} ?>
-				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && nvl($data[0]['UDValidado']) != '3' ) { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -30,10 +30,10 @@
 					<?php echo nvl($list['TPNombre']); ?>
 				</td>
 				<td>
-					<?php if( $list['UDFecha_ingreso'] != '0000-00-00') { 
-						echo fecha_format($list['UDFecha_ingreso']);
+					<?php if( nvl($list['UDFecha_ingreso']) != '0000-00-00') { 
+						echo fecha_format(nvl($list['UDFecha_ingreso']));
 					} else {
-						echo fecha_format($list['UDFecha_inicio']).' al '.fecha_format($list['UDFecha_final']);
+						echo fecha_format(nvl($list['UDFecha_inicio'])).' al '.fecha_format(nvl($list['UDFecha_final']));
 					}
 					?>
 				</td>
@@ -41,7 +41,7 @@
 				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
 				<td>
 					<?php $total = '0';
-					$total = $list['UDHoras_grupo'] + $list['UDHoras_apoyo'] + $list['UDHoras_CB'] + $list['UDHoras_provicionales'];
+					$total = nvl($list['UDHoras_grupo']) + nvl($list['UDHoras_apoyo']) + nvl($list['UDHoras_CB']) + nvl($list['UDHoras_provicionales']);
 					echo $total;
 					?>
 				</td>
@@ -52,7 +52,7 @@
 					<!--<td></td>
 					<td></td>-->
 				<?php // } ?>
-				<?php if( is_permitido(null,'generarplantilla','save') ) { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && nvl($list['UDValidado']) != '3' ) { ?>
 				<td>
                     <?php echo nvl($borrar); ?>
 				</td>
