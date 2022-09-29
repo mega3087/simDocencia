@@ -277,28 +277,6 @@
 <!-- Jquery Validate -->
 <script>
 $(document).on('change','input[type="checkbox"]' ,function(e) {
-    $("[data-toggle]").click(function() {
-		var nombre = $(this).attr('nombre');
-		
-		var i = 0;
-		var y = 0;
-		var texto = '';
-		$('input[name='+nombre+']').each(function(){
-			i = 1;
-		});
-		if(i == 0){
-			$(this).parent().append('<input type="hidden" name="'+nombre+'" value="" />');
-		}else{
-			texto = $('input[name='+nombre+']').val();
-		}
-		
-		$('#'+$(this).attr('aria-describedby')+' .popover-content').html('<textarea id="'+nombre+'" class="form-control textarea" >'+texto+'</textarea>');
-		
-		$('.textarea').keyup(function(){
-			nombre = $(this).attr('id');
-			$('input[name='+nombre+']').val( $(this).val() );
-		});
-	});
     
     if(this.id=="primero") {
         //var semestre = $('input:checkbox[name=psemestre[]]:checked').val();

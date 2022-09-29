@@ -412,6 +412,47 @@
 			
 		}
 
+		function enviarCorrecciones_skip() {
+			$data = post_to_array('_skip');
+			
+			$observaciones = array();
+			foreach ($data['pObservaciones'] as $valorObs){
+				if($valorObs != null && !empty($valorObs)){
+					array_push($observaciones, $valorObs);
+				}
+			}
+
+			foreach ($data['idUDClave'] as $x => $ids) {
+				$udobser = array (
+					'UDValidado' => '4',
+					'UDObservaciones_revision' => $observaciones[$x],
+					'UDUsuario_observaciones' => get_session('UNCI_usuario'),
+					'UDFecha_observaciones' => date('Y-m-d H:i:s')
+				);
+
+				$this->usuariodatos_model->update($ids, $udobser);
+				
+				$pldatos = array (
+					'pestatus' => '3',
+					'pusuario_revision' => get_session('UNCI_usuario'),
+					'pfecha_revision' => date('Y-m-d H:i:s')
+				);
+
+				//Cambiar estatus en plantilla Final a 3 Revisado, habilitar correciones
+				$this->db->set($pldatos);
+				$this->db->where('idPUDatos', $ids);
+				$this->db->update('noplantillafinal'); 
+				
+			}
+
+			set_mensaje("Las Observaciones se enviaron correctamente al Plantel.",'success::');
+			muestra_mensaje();
+			echo "::OK";
+			echo "::".$data['idPlantel'];
+					
+			
+		}
+
 		public function exportarExcel() {
 			$this->load->view('plantilla/ExportarExcel');
 		}

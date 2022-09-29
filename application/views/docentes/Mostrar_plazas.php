@@ -11,7 +11,7 @@
 				<!--<th>No. de Oficio</th>
 				<th>Documentos</th>-->
 				<?php //} ?>
-				<?php if( is_permitido(null,'generarplantilla','save') && nvl($data[0]['UDValidado']) != '3' ) { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -52,7 +52,7 @@
 					<!--<td></td>
 					<td></td>-->
 				<?php // } ?>
-				<?php if( is_permitido(null,'generarplantilla','save') && nvl($list['UDValidado']) != '3' ) { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
 				<td>
                     <?php echo nvl($borrar); ?>
 				</td>

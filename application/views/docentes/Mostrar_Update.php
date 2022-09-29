@@ -252,7 +252,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <?php if( is_permitido(null,'generarplantilla','save') && $usuario[0]['UDValidado'] != '3' ) { ?>
+                                            <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
                                                 <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
                                             <?php } ?>
 
@@ -354,7 +354,7 @@
                                             </div>
                                             <br>
                                         </div>
-                                        <?php if( is_permitido(null,'generarplantilla','save') && $usuario[0]['UDValidado'] != '3' ) { ?>
+                                        <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
                                             <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
                                         <?php } ?>
 

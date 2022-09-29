@@ -7,7 +7,7 @@
 				<th>Titulado</th>
 				<th>No. Cédula Profesional</th>
 				<th>Documento</th>
-				<?php if( is_permitido(null,'generarplantilla','save') && $valido[0]['UDValidado'] != '3' ) { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -32,7 +32,7 @@
 				<td><?php echo $list['ULCedulaProf']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<!--<td><?php echo nvl($UPCedula_file); ?></td>-->
-				<?php if( is_permitido(null,'generarplantilla','save') && $valido[0]['UDValidado'] != '3' ) { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
 				<td>
 					<?php echo nvl($borrar); ?>
 				</td>

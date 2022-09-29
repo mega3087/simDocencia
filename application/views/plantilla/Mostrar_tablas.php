@@ -31,8 +31,9 @@
                 <?php } if ($list['UDValidado'] == '3') { ?>
                     <b class="text-warning"><i class="fa fa-clock-o"></i> Pendiente por Revisar</b>
                 <?php } elseif ($list['UDValidado'] == '4') { ?>
-                    <button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
-                    <i class="fa fa-pencil"></i> Editar</button>
+                    <b class="text-danger"><i class="fa fa-times"></i> Corregir</b>
+                    <!--<button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                    <i class="fa fa-pencil"></i> Editar</button>-->
                 <?php } elseif ($list['UDValidado'] == '5') { ?>
                     <b class="text-success"><i class="fa fa-check"></i> Aprobado</b>
                 <?php } ?>

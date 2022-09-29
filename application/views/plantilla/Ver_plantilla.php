@@ -235,8 +235,10 @@
 							<table style="border:0px">
 							<tr style="border:0px">
 								<td style="border:0px; text-align: center;" >
-								<button title="OBSERVACIONES" class="btn btn-warning btn-circle pull-left no-imprimir" nombre="pObservaciones<?= $d ?>" value="" type="button" data-toggle="popover" data-placement="auto left" data-content="--------------------------------------"><i class="fa fa-comment"></i></button>
-								OBSERVACIONES
+								<input type="checkbox" class="checkshow<?= $listDoc['UDClave']; ?>" name="idUDClave[]" value="<?= $listDoc['UDClave']; ?>">
+								<div class="div_a_mostrar<?= $listDoc['UDClave']; ?>">
+									<textarea name="pObservaciones[]" id="pObservaciones<?= $listDoc['UDClave']; ?>" rows="5" cols="30" ></textarea>
+								</div>
 								</td>
 							</tr>								
 							</table>
@@ -253,6 +255,28 @@
 						</td>
 						<?php } ?>
 					</tr>
+					<script>
+						$(function() {
+						// obtener campos ocultar div
+						var checkbox = $(".checkshow<?= $listDoc['UDClave']; ?>");
+						var hidden = $(".div_a_mostrar<?= $listDoc['UDClave']; ?>");
+						//var populate = $("#populate");
+							
+						hidden.hide();
+							checkbox.change(function() {
+								if (checkbox.is(':checked')) {
+								//hidden.show();
+									$(".div_a_mostrar<?= $listDoc['UDClave']; ?>").fadeIn("200")
+								} else {
+									//hidden.hide();
+									$(".div_a_mostrar<?= $listDoc['UDClave']; ?>").fadeOut("200")
+									$("#pObservaciones<?= $listDoc['UDClave']; ?>").val(""); // limpia los valores de lols input al ser ocultado
+									//$('input[type=checkbox]').prop('checked',false);// limpia los valores de checkbox al ser ocultado
+									
+							}
+						});
+						});
+					</script>
 					<?php $i++; } ?>
 					<tr>
 						<td colspan="5" class="text-center">
@@ -295,7 +319,7 @@
 	<div class="form-group">
 	<div class="col-lg-1"></div>
 	<div class="col-lg-10">
-		<button class="btn btn-primary btn-rounded btn-block save_rechazar pull-center" type="button"> <i class="fa fa-save"></i> Guardar</button>
+		<button class="btn btn-primary btn-rounded btn-block save_rechazar pull-center enviarCorrecciones" type="button"> <i class="fa fa-exchange"></i> Enviar Correcciones</button>
 	</div>
 </div>
 <?php } ?>
@@ -307,28 +331,6 @@
 
 <script>
 $(document).ready(function() {
-	$("[data-toggle]").click(function() {
-		var nombre = $(this).attr('nombre');
-		
-		var i = 0;
-		var y = 0;
-		var texto = '';
-		$('input[name='+nombre+']').each(function(){
-			i = 1;
-		});
-		if(i == 0){
-			$(this).parent().append('<input type="hidden" name="'+nombre+'" value="" />');
-		}else{
-			texto = $('input[name='+nombre+']').val();
-		}
-		
-		$('#'+$(this).attr('aria-describedby')+' .popover-content').html('<textarea id="'+nombre+'" class="form-control textarea" >'+texto+'</textarea>');
-		
-		$('.textarea').keyup(function(){
-			nombre = $(this).attr('id');
-			$('input[name='+nombre+']').val( $(this).val() );
-		});
-	});
 
 	$(".revision").click(function() {
 		$.ajax({
@@ -347,6 +349,33 @@ $(document).ready(function() {
 						$("#resultRevision").html(data[0]);
 						$(".loadingRevision").html('');
 						$("#errorRevision").html('');
+						verPlantilla(data[2]);
+						//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
+					} else {
+						$("#errorRevision").empty();
+                   		$("#errorRevision").append(data);
+                    	$(".loadingRevision").html("");
+				}
+			}
+		});
+	});
+
+	$(".enviarCorrecciones").click(function() {
+		$.ajax({
+			type: "POST",
+			url: "<?php echo base_url("generarplantilla/enviarCorrecciones_skip"); ?>",
+			data: $('#formValidar').serialize(),
+			dataType: "html",
+			beforeSend: function(){
+				//carga spinner
+				$(".loadingRevision").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+			},
+			success: function(data) {
+				var data = data.split("::");
+					if(data[1]=='OK'){	
+						$("#resultRevision").empty();
+						$("#resultRevision").html(data[0]);
+						$(".loadingRevision").html('');
 						verPlantilla(data[2]);
 						//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
 					} else {
@@ -377,3 +406,5 @@ $(document).ready(function() {
     }
     });
 </script>
+
+<!--small chat box-->
