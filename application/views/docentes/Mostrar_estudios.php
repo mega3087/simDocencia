@@ -7,14 +7,15 @@
 				<th>Titulado</th>
 				<th>No. Cédula Profesional</th>
 				<th>Documento</th>
-				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($valido[0]['UDValidado']) == '' || nvl($valido[0]['UDValidado']) == '1' ) || nvl($valido[0]['UDValidado']) == '2') { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach($data as $key => $list) { 
-			
+		<?php 
+		if ($contar != '0') { 
+		foreach($data as $key => $list) { 
 			if( $list['ULTitulo_file'] != '') {
 				$urltitulo = $list['ULTitulo_file'];
 				//$urltitulo = 'Documentos/Licenciaturas/'.$list['ULUsuario'].'/'.$list['ULTitulo_file'];
@@ -26,18 +27,21 @@
 			}
 			$borrar = "<button type='button' value=".$this->encrypt->encode($list['ULClave'])." class='btn btn-sm btn-danger quitarEstudios' title='Borrar' ><i class='fa fa-trash'></i></button>";?>
 			<tr>
-				<td><?php echo $list['ULNivel_estudio']; ?></td>
+				<td><?php echo $list['grado_estudios']; ?></td>
 				<td><?php echo $list['Licenciatura']; ?></td>
 				<td><?php echo $list['ULTitulado']; ?></td>
 				<td><?php echo $list['ULCedulaProf']; ?></td>
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<!--<td><?php echo nvl($UPCedula_file); ?></td>-->
-				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($valido[0]['UDValidado']) == '' || nvl($valido[0]['UDValidado']) == '1' ) || nvl($valido[0]['UDValidado']) == '2') { ?>
 				<td>
 					<?php echo nvl($borrar); ?>
 				</td>
 				<?php } ?>
 			</tr>
+		<?php } 
+		} else { ?>
+		<tr><td class="text-center" colspan="6">Sin Datos</td></tr>
 		<?php } ?>
 		</tbody>
 	</table>

@@ -82,8 +82,8 @@
 			</li>
 			<?php } ?>
 			
-			<?php if( is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'Docente','index') or is_permitido(null,'grupos','index') or is_permitido(null,'horasClase','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'GenerarPlantilla','index')) { ?>
-			<li class="<?php if(nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='Docente' or nvl($modulo)=='grupos' or nvl($modulo)=='horasClase' or nvl($modulo)=='plantilla' or nvl($modulo)=='GenerarPlantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
+			<?php if( is_permitido(null,'profesiograma','index') or is_permitido(null,'periodos','index') or is_permitido(null,'Docente','index') or is_permitido(null,'grupos','index') or is_permitido(null,'horasClase','index') or is_permitido(null,'plantilla','index') or is_permitido(null,'generarplantilla','index')) { ?>
+			<li class="<?php if(nvl($modulo)=='profesiograma' or nvl($modulo)=='periodos' or nvl($modulo)=='Docente' or nvl($modulo)=='grupos' or nvl($modulo)=='horasClase' or nvl($modulo)=='plantilla' or nvl($modulo)=='generarplantilla' or nvl($modulo)=='terna' ) echo "active"; ?>">
 				<a href="#"><i class="fa fa-building-o"></i> <span class="nav-label">Docencia</span> <span class="fa arrow"></span></a>
 				<ul class="nav nav-second-level collapse" style="height: 0px;">
 					<?php if(is_permitido(null,'profesiograma','index')) { ?>
@@ -99,10 +99,10 @@
 					<li <?php if( nvl($modulo) == 'Docente' ) echo 'class="active"'; ?>><a href='<?php echo base_url("Docente");?>' >Docentes</a></li>
 					<?php } ?>
 					<?php if(is_permitido(null,'plantilla','index')) { ?>
-					<li <?php if( nvl($modulo) == 'plantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("plantilla");?>' >Plantilla</a></li>
+					<li <?php if( nvl($modulo) == 'plantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("plantilla");?>' >Plantilla RH</a></li>
 					<?php } ?>
-					<?php if(is_permitido(null,'GenerarPlantilla','index')) { ?>
-					<li <?php if( nvl($modulo) == 'GenerarPlantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("GenerarPlantilla");?>' >Plantilla</a></li>
+					<?php if(is_permitido(null,'generarplantilla','index')) { ?>
+					<li <?php if( nvl($modulo) == 'generarplantilla' ) echo 'class="active"'; ?>><a href='<?php echo base_url("generarplantilla");?>' >Plantilla Doc</a></li>
 					<?php } ?>
 				</ul>
 			</li>

@@ -33,15 +33,15 @@
 							$i = 1;
 							foreach ($planteles as $key => $list) {
 								$PClave_skip = $this->encrypt->encode($list['CPLClave']);	
-                                $urlCrear = base_url("GenerarPlantilla/crear/".$this->encrypt->encode($list['CPLClave'])."");
+                                $urlCrear = base_url("generarplantilla/crear/".$this->encrypt->encode($list['CPLClave'])."");
 							?>
 								<tr>
 								<td class="text-left"><?php echo $i; ?></td>
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
 									<td>
-										<?php if( is_permitido(null,'GenerarPlantilla','verPlantilla') ){ ?>
-											<a href="<?php echo base_url("GenerarPlantilla/crear/$PClave_skip"); ?>" class="btn btn-default btn-sm eye"><i class="fa fa-eye"></i> Ver Plantilla</a>
+										<?php if( is_permitido(null,'generarplantilla','verPlantilla') ){ ?>
+											<a href="<?php echo base_url("generarplantilla/crear/$PClave_skip"); ?>" class="btn btn-default btn-sm eye"><i class="fa fa-eye"></i> Ver Plantilla</a>
 										<?php } ?>
 									</td>
 								</tr>

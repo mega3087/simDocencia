@@ -10,7 +10,15 @@
             <!-- Start tabs heading -->
             <div class="panel-heading no-padding">
                 <ul class="nav nav-tabs">
-                    <li class="active nav-border nav-border-top-danger">
+                    <li class="<?php if($plantillas) echo"active"; ?>" nav-border nav-border-top-danger">
+                        <a href="#plantillas" data-toggle="tab">
+                            <i class="fa fa-list-alt fg-danger"></i>
+                            <div>
+                                <span class="text-strong">Plantillas</span>                                
+                            </div>
+                        </a>
+                    </li>
+					<li class="<?php if(!$plantillas) echo"in active"; ?>" nav-border nav-border-top-danger">
                         <a href="#docentes" data-toggle="tab">
                             <i class="fa fa-users fg-danger"></i>
                             <div>
@@ -46,27 +54,52 @@
                 <div class="panel panel-default shadow no-margin">
                     <div class="panel-body">
                         <div class="tab-content">
-                            <div class="tab-pane fade in active" id="docentes">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item">
-                                            <button class="btn btn-outline btn-primary" id="UDTipo_Base" onclick='tablaBase()' value="1"  type="button"> <i class="fa fa-users"></i> Docentes BASE</button>
-                                        </li>
-                                        <li class="breadcrumb-item">
-                                        <button class="btn btn-outline btn-primary" id="UDTipo_Idoneo" onclick='tablaIdoneo()' value="2" type="button"> <i class="fa fa-users"></i> Docentes IDONEOS</button>    
-                                        </li>
-                                        <li class="breadcrumb-item">
-                                        <button class="btn btn-outline btn-primary" id="UDTipo_Usicamm" onclick='tablaUsicamm()' value="3" type="button"> <i class="fa fa-users"></i> Docentes USICAMM</button>
-                                        </li>
-                                        <li class="breadcrumb-item">
-                                            <button class="btn btn-outline btn-primary" id="UDTipo_Externo" onclick='tablaExterno()' value="4" type="button"> <i class="fa fa-users"></i> Docentes EXTERNOS</button>
-                                        </li>
-                                    </ol>
-                                    <br><br>
-                                    <input type="hidden" name="cicloEsc" id="cicloEsc" value="<?= substr($periodos[0]['CPEPeriodo'],3,1); ?>"> 
-                                    <div class="loading"></div>
-                                    <div class="table-responsive mostrarTabla"></div>
+							<div class="tab-pane fade <?php if($plantillas) echo"in active"; ?>" id="plantillas">
+								<div class="table-responsive">
+									<?phpif($plantillas) echo"active"; ?>
+									<table class="table table-striped table-bordered table-hover" >
+										<tr>
+											<th>No.</th>
+											<th>Semestre</th>
+											<th>Fechas Periodo</th>
+											<th>Estatus</th>
+										</tr>
+										<?php 
+										foreach($plantillas as $key => $list){ 
+										$periodo = str_replace("-1"," (Febrero-Agosto)",$list['PPeriodo']);
+										$periodo = str_replace("-2"," (Agosto-Febrero)",$periodo);
+										?>
+										<tr>
+											<td><?php echo($key+1); ?></td>
+											<td>20<?php echo $periodo; ?></td>
+											<td><?php echo fecha_format($list['PFechaInicial'])." - ".fecha_format($list['PFechaFinal']); ?></td>
+											<td><?php echo $list['PEstatus']; ?></td>
+										</tr>
+										<?php } ?>
+									</table>
+								</div>
                             </div>
-                                <div class="tab-pane fade form-horizontal" id="agregar-materias">
+                            <div class="tab-pane fade <?php if(!$plantillas) echo"in active"; ?>" id="docentes">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item">
+										<button class="btn btn-outline btn-primary" id="UDTipo_Base" onclick='tablaBase()' value="1"  type="button"> <i class="fa fa-users"></i> Docentes BASE</button>
+									</li>
+									<li class="breadcrumb-item">
+									<button class="btn btn-outline btn-primary" id="UDTipo_Idoneo" onclick='tablaIdoneo()' value="2" type="button"> <i class="fa fa-users"></i> Docentes IDONEOS</button>    
+									</li>
+									<li class="breadcrumb-item">
+									<button class="btn btn-outline btn-primary" id="UDTipo_Usicamm" onclick='tablaUsicamm()' value="3" type="button"> <i class="fa fa-users"></i> Docentes USICAMM</button>
+									</li>
+									<li class="breadcrumb-item">
+										<button class="btn btn-outline btn-primary" id="UDTipo_Externo" onclick='tablaExterno()' value="4" type="button"> <i class="fa fa-users"></i> Docentes EXTERNOS</button>
+									</li>
+								</ol>
+								<br><br>
+								<input type="hidden" name="cicloEsc" id="cicloEsc" value="<?= substr($periodos[0]['CPEPeriodo'],3,1); ?>"> 
+								<div class="loading"></div>
+								<div class="table-responsive mostrarTabla"></div>
+                            </div>
+                            <div class="tab-pane fade form-horizontal" id="agregar-materias">
                                 <form action="<?php echo base_url("generarplantilla/save"); ?>" name="formGuardar" id="formGuardar" method="POST" class="wizard-big form-vertical">
                                     <input type="hidden" name="idPPlantel" id="plantelId" value="<?= $plantel; ?>"> 
                                     <input type="hidden" name="idPUsuario" id="idUsuario" value="">
@@ -256,20 +289,18 @@
                                         </div>
                                     </div>
                                 </form>
-                                </div>
-                                <div class="tab-pane fade form-horizontal" id="ver-plantilla">
-                                    <div class="form-group">
-                                            <div class="loadingPlantilla"></div>
-                                            <div class="plantilla"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            
+                            </div>
+							<div class="tab-pane fade form-horizontal" id="ver-plantilla">
+								<div class="form-group">
+									<div class="loadingPlantilla"></div>
+									<div class="plantilla"></div>
+								</div>
+							</div>
                         </div>
+                            
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -288,7 +319,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
             data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
@@ -312,7 +343,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
             data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
@@ -336,7 +367,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
             data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
@@ -361,7 +392,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         var semestre = 4;
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
             data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
@@ -385,7 +416,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
             data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
@@ -410,7 +441,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         }
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
             data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre},
             dataType: "html",
             beforeSend: function(){
@@ -425,16 +456,15 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     }
 });
-</script>
 
-<script type="text/javascript">
+
     function tablaBase(){
         var plantel = document.getElementById('plantelId').value;
         var UDTipo_Docente = document.getElementById('UDTipo_Base').value;
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -455,7 +485,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -476,7 +506,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -497,7 +527,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/mostrarTablas_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/mostrarTablas_skip"); ?>",
             data: {plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){
@@ -512,12 +542,10 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
         });
     }
 
-</script>
-<script>
     $(".save").click(function() {
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/save"); ?>",
+            url: "<?php echo base_url("generarplantilla/save"); ?>",
             data: $('#formGuardar').serialize(),
             dataType: "html",
             beforeSend: function(){
@@ -560,16 +588,15 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
     }
 
     function uncheckAll() {
-        document.querySelectorAll('#form input[type=checkbox]').forEach(function(checkElement) {
-            checkElement.checked = false;
-        });
+		$("#formGuardar input[type=checkbox]").each(function(){
+			$(this).attr('checked',false);
+		});
     }
 
-    function datosPlantilla(idPUsuario){   
-        
+    function datosPlantilla(idPUsuario){
 		$.ajax({
 			type: "POST",
-			url: "<?php echo base_url("GenerarPlantilla/datosPlantilla_skip"); ?>",
+			url: "<?php echo base_url("generarplantilla/datosPlantilla_skip"); ?>",
 			data: {idPUsuario : idPUsuario, idPlantel : document.getElementById("plantelId").value, periodo : document.getElementById('periodo').value}, 
 			dataType: "html",
 			beforeSend: function(){
@@ -587,7 +614,7 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
     function verPlantilla(idPlantel) {
         $.ajax({
 			type: "POST",
-			url: "<?php echo base_url("GenerarPlantilla/verplantilla"); ?>",
+			url: "<?php echo base_url("generarplantilla/verplantilla"); ?>",
 			data: {idPlantel : idPlantel}, 
 			dataType: "html",
 			success: function(data){

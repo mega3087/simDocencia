@@ -39,6 +39,7 @@
 								<th>Correo Electrónico</th>
 								<th>RFC</th>
                                 <th>CURP</th>
+								<th>Nombramiento(s)</th>
                                 <th width="200px">Acción</th>
 							</tr>	
 						</thead>
@@ -49,21 +50,17 @@
 								$UNCI_usuario_skip = $this->encrypt->encode($list['UNCI_usuario']); 
 								$borrar = "<button type='button' value=".$UNCI_usuario_skip." class='btn btn-sm btn-danger quitarDocente'><i class='fa fa-trash'></i> Quitar</button>"; ?>
 									<tr>
-										<td class="text-left"><?php echo $i; ?></td> 
-										<td class="text-left"><?php echo $list['UApellido_pat']." ".$list['UApellido_mat'].' '.$list['UNombre']; ?></td>
-										<td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
-										<td class="text-left"><?php echo $list['URFC']; ?></td>
-										<td class="text-left"><?php echo $list['UCURP']; ?></td>								
-										<td class="text-center">
-										<?php if($list['UDTipo_Nombramiento'] == '1') {
-											echo '<b class="text-info"><i class="fa fa-check"></i> Docente Base</b>';
-										} elseif ($list['UDTipo_Nombramiento'] == '2') {
-											echo '<b class="text-info"><i class="fa fa-check"></i> Docente SPD(IDONEO)</b>';
-										} elseif ($list['UDTipo_Nombramiento'] == '3') {
-											echo '<b class="text-info"><i class="fa fa-check"></i> Docente USICAMM</b>';
-										} elseif ($list['UDTipo_Nombramiento'] == '4') {
-											echo '<b class="text-info"><i class="fa fa-check"></i> Docente EXTERNO(TERNA)</b>';
-										} ?><br>
+										<td class="text-left" style="vertical-align: center;" ><?php echo $i; ?></td> 
+										<td class="text-left" style="vertical-align: center;"><?php echo $list['UApellido_pat']." ".$list['UApellido_mat'].' '.$list['UNombre']; ?></td>
+										<td class="text-left" style="vertical-align: center;"><?php echo $list['UCorreo_electronico']; ?></td>
+										<td class="text-left" style="vertical-align: center;"><?php echo $list['URFC']; ?></td>
+										<td class="text-left" style="vertical-align: center;"><?php echo $list['UCURP']; ?></td>								
+										<td class="text-center" style="vertical-align: center;">
+											<?php foreach ($list['nombramientos'] as $n => $nom) {
+												echo '<b class="text-info"><i class="fa fa-check"></i>'.$nom['TPNombre'].'</b><br>';
+											} ?>
+										</td>
+										<td class="text-center" style="vertical-align: center;">
 										<a href="<?= base_url()?>Docente/Update/<?=$idPlantel?>/<?= $UNCI_usuario_skip?>">
 											<button class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Editar</button>
 										</a>

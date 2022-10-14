@@ -9,7 +9,7 @@
     <div class="col-lg-9">
         <select name="idPUDatos" id="nombramiento" class="form-control">
                 <?php foreach($nombramientos as $nom => $listNom) { ?>
-                <option value="<?= $listNom['UDClave']; ?>"><?=$listNom['TPNombre']?></option>
+                <option value="<?= $listNom['UDClave']; ?>"><?=$listNom['TPNombre']?> (<?=$listNom['HorasTot']?> H/S/M)</option>
             <?php  } ?>
         </select>
     </div>

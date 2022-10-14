@@ -16,7 +16,7 @@
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
 				<div class="pull-right">
-				<?php if( is_permitido(null,'plantilla','load') ){ ?>
+				<?php if( is_permitido(null,'plantilla','load-') ){ ?>
 					<button 
 					class="btn btn-primary open"
 					data-target="#modal_plantilla" 
@@ -45,9 +45,11 @@
 								foreach($plantilla as $key => $list){
 									$PClave_skip = $this->encrypt->encode($list['PClave']);						
 									$PPlantilla_skip = base_url("files/get_file/".$this->encrypt->encode($list['PPlantilla'])."");	
+									$PPeriodo = str_replace('-1','-A',$list['PPeriodo']);
+									$PPeriodo = str_replace('-2','-B',$PPeriodo);
 								?>
 								<tr>
-									<td class="text-left"><?php echo $list['PPeriodo']; ?></td>
+									<td class="text-left"><?php echo $PPeriodo; ?></td>
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
 									<td class="text-left"><?php echo fecha_format($list['PFecha_modificacion']); ?></td>
 									<td class="text-left"><a href='<?=$PPlantilla_skip?>' target='_blank'>Ver</a></td>							
@@ -57,7 +59,7 @@
 											data-target="#modal_plantilla" 
 											data-toggle="modal"
 											data-pclave_skip="<?php echo $PClave_skip; ?>" 
-											data-pperiodo="<?php echo $list['PPeriodo']; ?>"
+											data-pperiodo="<?php echo $PPeriodo; ?>"
 											data-pplantel="<?php echo $list['PPlantel']; ?>"
 											data-pplantilla="<?php echo $list['PPlantilla']; ?>"
 											data-pplantilla_skip="<?php echo $PPlantilla_skip; ?>"
@@ -92,13 +94,13 @@
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="">Periodo: <em>*</em></label>
 					<div class="col-lg-9">
-						<input type="text" id="PPeriodo" name="PPeriodo" value="" maxlength='150' class="form-control uppercase" required />
+						<input type="text" id="PPeriodo" name="PPeriodo" value="" maxlength='150' class="form-control uppercase disabled" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="">Plantel: <em>*</em></label>
 					<div class="col-lg-9">
-						<select name="PPlantel" id="PPlantel" class="form-control">
+						<select name="PPlantel" id="PPlantel" class="form-control disabled" disabled >
 							<?php if( $nivel>=2 ){ ?>
 							<option <?php if($filtro=="0") echo"selected"; ?> value="">TODOS</option>
 							<?php } ?>

@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Docente extends CI_Controller {
     public function __contruct () {
         $this->load->helper('file');
@@ -16,13 +15,21 @@ class Docente extends CI_Controller {
 
     public function index() {
         $data = array();
-        if(is_permitido(null,'Docente','ver_docentes') && get_session('URol') == '16') {
+        if(get_session('URol') == '16') {
             redirect('Docente/ver_docentes');
         }
 
+        //$planteles =  get_session('UPlanteles');
+
         $select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
-        $this->db->where('CPLTipo',35);
-        $this->db->or_where('CPLTipo',36);
+        if (get_session('URol') == '15') {
+            $this->db->where_in('CPLClave',get_session('UPlanteles'),false);
+            //$this->db->where( "FIND_IN_SET( '".get_session('UPlanteles')."',CPLClave)" );
+            $this->db->where('(CPLTipo = 35 OR CPLTipo = 36)');
+        } else {
+            $this->db->where('(CPLTipo = 35 OR CPLTipo = 36)');
+        }
+        
         $this->db->where('CPLActivo',1);
         $this->db->order_by('CPLClave','ASC');
         
@@ -50,17 +57,27 @@ class Docente extends CI_Controller {
         $this->db->where('UDPlantel',$idPlantel);
         $data['datosUser'] = $this->usuariodatos_model->find_all();
         
-        $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro, UDTipo_Nombramiento,UDValidado";
+        $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro";
         $this->db->join('nocrol','URol = CROClave');
-        $this->db->join('nousuariodatos','UDUsuario = UNCI_usuario','left');
+        
         $this->db->where("UEstado",'Activo');
         $this->db->where("CROClave NOT IN ('3','10','12')");
         $this->db->where('FIND_IN_SET ("'.$idPlantel.'",UPlantel)');
         $this->db->group_by('UNCI_usuario');
         $this->db->order_by('UApellido_pat', 'ASC');
-        $this->db->order_by('UDTipo_Nombramiento', 'ASC');
-        $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
         
+        $data['docentes'] = $this->usuario_model->find_all(null, $selectU);
+
+        foreach ($data['docentes'] as $d => $doc) {
+
+            $selectNomb = 'UDTipo_Nombramiento, UDTipo_materia, TPNombre';
+            $this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
+            $this->db->where('UDUsuario', $doc['UNCI_usuario']);
+            $this->db->where('UDActivo', '1');
+            $this->db->order_by('UDTipo_Nombramiento', 'ASC');
+            $data['docentes'][$d]['nombramientos'] = $this->usuariodatos_model->find_all(null, $selectNomb);
+        }
+    
         $data['estado_civil'] = $this->estciv_model->find_all();
         $data['tipoDocente'] = $this->tipopersonal_model->find_all();
 
@@ -92,7 +109,7 @@ class Docente extends CI_Controller {
         $idUser = $this->encrypt->decode($idUser);  
         
         if($idUser != '0') {
-            $selectU = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado, UFecha_registro, UDTipo_Nombramiento,UDValidado";
+            $selectU = "*";
             $this->db->join('nocrol','URol = CROClave');
             $this->db->join('nousuariodatos','UDUsuario = UNCI_usuario','left');
             $this->db->where('UNCI_usuario', $idUser);
@@ -130,7 +147,9 @@ class Docente extends CI_Controller {
 
         $this->db->order_by('nomplaza','ASC');
         $data['plazas'] = $this->plazadocente_model->find_all();
-        
+
+        $data["config"] = $this->config_model->find();
+                
         $data['modulo'] = $this->router->fetch_class();
         $data['subvista'] = 'docentes/Mostrar_Update';
 
@@ -172,7 +191,7 @@ class Docente extends CI_Controller {
                         set_mensaje("Número Total de horas exceden las<b> 40</b>.");
                         muestra_mensaje();
                     } else {
-                        if ($data['UDTipo_Nombramiento'] == '6' && $data['UDHoras_CB'] > '5') {
+                        if (($data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6' || $data['UDTipo_Nombramiento'] == '7' || $data['UDTipo_Nombramiento'] == '8') && $data['UDHoras_CB'] > '5') {
                             set_mensaje("Número de horas no pueden exceder las<b> 5 horas por Nombramiento.</b>");
                             muestra_mensaje();
                         } else {
@@ -194,7 +213,9 @@ class Docente extends CI_Controller {
                             } else {
                                 $data['UDNombramiento_file'] = '';
                             }
-                            
+                            $idPlantilla = $this->plantilla_model->plantilla_actual($data['UDPlantel']);
+                            $data['UDPlantilla'] = $idPlantilla;
+
                             $data['UDActivo'] = '1';
                             $data['UDValidado'] = '1';
                             $data['UDUsuario_registro'] = get_session('UNCI_usuario');
@@ -219,7 +240,7 @@ class Docente extends CI_Controller {
     public function mostrarPlazas_skip () {
         $idUsuario = $this->input->post('idUsuario');
         $idPlantel = $this->input->post('idPlantel');
-        
+                
         $this->db->join('noplazadocente','idPlaza = UDPlaza','left');
         $this->db->join('noctipopersonal',' UDTipo_Nombramiento = TPClave','left');
 
@@ -227,7 +248,11 @@ class Docente extends CI_Controller {
         $this->db->where('UDPlantel',$idPlantel);
         $this->db->where('UDActivo','1');
         $data['data'] = $this->usuariodatos_model->find_all();
+
+        $data['contar'] = count($data['data']);
         
+        echo $data['data'][0]['UDTipo_Nombramiento']."::";
+
         $this->load->view('docentes/Mostrar_plazas', $data);
     }
 
@@ -253,6 +278,8 @@ class Docente extends CI_Controller {
         $this->db->where('UDPlantel',$idPlantel);
         $this->db->where('UDActivo','1');
         $data['data'] = $this->usuariodatos_model->find_all();
+
+        $data['contar'] = count($data['data']);
 
         $this->load->view('docentes/Mostrar_plazas', $data);
     }
@@ -325,10 +352,11 @@ class Docente extends CI_Controller {
     public function mostrarEstudios () {
         $idUsuario = $this->input->post('idUsuario');
         $idPlantel = $this->input->post('idPlantel');
-        
-        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
-        $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura');
+        $data['contar'] = 0;
 
+        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, grado_estudios, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
+        $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura','left');
+        $this->db->join('nogradoestudios','ULLicenciatura = id_gradoestudios','left');
         $this->db->where('ULUsuario',$idUsuario);
         $this->db->where('ULPlantel',$idPlantel);
         $this->db->where('ULActivo','1');
@@ -339,12 +367,13 @@ class Docente extends CI_Controller {
         $this->db->where('UDPlantel',$idPlantel);
         $this->db->where('UDActivo','1');
         $data['valido'] = $this->usuariodatos_model->find_all(null, $select);
+
+        $data['contar'] = count($data['data']);
         
-        if (count($data['data']) != 0){
-            $this->load->view('docentes/Mostrar_estudios', $data);
-        } else {
-            echo count($data['data']);
-        }
+        echo $data['contar'].'::';
+
+        $this->load->view('docentes/Mostrar_estudios', $data);
+        
     }   
 
     public function deleteEstudios() {
@@ -373,43 +402,80 @@ class Docente extends CI_Controller {
         $this->db->where('ULActivo','1');
         $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
 
+        $data['contar'] = count($data['data']);
+
         $this->load->view('docentes/Mostrar_estudios', $data);
     }
     
     public function Save() {
         $data = post_to_array('_skip');
-
+       
         if (isset($data)){
-            $user = array(
-                'UNombre' => $data['UNombre'],
-                'UApellido_pat' => $data['UApellido_pat'],
-                'UApellido_mat' => $data['UApellido_mat'],
-                'UCURP' => $data['UCURP'],
-                'UFecha_nacimiento' => $data['UFecha_nacimiento'],
-                'URFC' => $data['URFC'],
-                'UDomicilio' => $data['UDomicilio'],
-                'UColonia' => $data['UColonia'],
-                'UMunicipio' => $data['UMunicipio'],
-                'UCP' => $data['UCP'],
-                'UTelefono_movil' => $data['UTelefono_movil'],
-                'UTelefono_casa' => $data['UTelefono_casa'],
-                'UCorreo_electronico' => $data['UCorreo_electronico'],
-                'ULugar_nacimiento' => $data['ULugar_nacimiento'],
-                'UEstado_civil' => $data['UEstado_civil'],
-                'USexo' => $data['USexo'],
-                'UPlantel' => $data['UPlantel'],
-                'URol' => 7,
-                'UEstado' => 'Activo',
-                'UFecha_registro' => date('Y-m-d H:i:s'),
-                'UUsuario_registro' => get_session('UNCI_usuario')
-            );
-
-            if ($data['UNCI_usuario'] == ''){                
+            if ($data['UNCI_usuario'] == ''){    
+                $user = array(
+                    'UClave_servidor' => $data['UClave_servidor'],
+                    'UNombre' => $data['UNombre'],
+                    'UApellido_pat' => $data['UApellido_pat'],
+                    'UApellido_mat' => $data['UApellido_mat'],
+                    'UCURP' => $data['UCURP'],
+                    'UFecha_nacimiento' => $data['UFecha_nacimiento'],
+                    'URFC' => $data['URFC'],
+                    'UDomicilio' => $data['UDomicilio'],
+                    'UColonia' => $data['UColonia'],
+                    'UMunicipio' => $data['UMunicipio'],
+                    'UCP' => $data['UCP'],
+                    'UTelefono_movil' => $data['UTelefono_movil'],
+                    'UTelefono_casa' => $data['UTelefono_casa'],
+                    'UCorreo_electronico' => $data['UCorreo_electronico'],
+                    'URed_social' => $data['URed_social'],                
+                    'ULugar_nacimiento' => $data['ULugar_nacimiento'],
+                    'UISSEMYM' => $data['UISSEMYM'],
+                    'UClave_elector' => $data['UClave_elector'],
+                    'UEstado_civil' => $data['UEstado_civil'],
+                    'USexo' => $data['USexo'],
+                    'UHijos' => $data['UHijos'],                
+                    'UPlantel' => $data['UPlantel'],
+                    'UTipoDocente' => $data['UTipoDocente'],
+                    'URol' => 7,
+                    'UEstado' => 'Activo',
+                    'UFecha_registro' => date('Y-m-d H:i:s'),
+                    'UUsuario_registro' => get_session('UNCI_usuario')
+                );                
+                
                 $id = $this->usuario_model->insert($user);
                 set_mensaje("El Docente se guardo con éxito",'success::');
                 echo"::$id";
                 echo"::OK";
             } else {
+
+                $user = array(
+                    'UClave_servidor' => $data['UClave_servidor'],
+                    'UClave_servidor_centro' => $data['UClave_servidor_centro'],
+                    'UNombre' => $data['UNombre'],
+                    'UApellido_pat' => $data['UApellido_pat'],
+                    'UApellido_mat' => $data['UApellido_mat'],
+                    'UCURP' => $data['UCURP'],
+                    'UFecha_nacimiento' => $data['UFecha_nacimiento'],
+                    'URFC' => $data['URFC'],
+                    'UDomicilio' => $data['UDomicilio'],
+                    'UColonia' => $data['UColonia'],
+                    'UMunicipio' => $data['UMunicipio'],
+                    'UCP' => $data['UCP'],
+                    'UTelefono_movil' => $data['UTelefono_movil'],
+                    'UTelefono_casa' => $data['UTelefono_casa'],
+                    'UCorreo_electronico' => $data['UCorreo_electronico'],
+                    'URed_social' => $data['URed_social'],                
+                    'ULugar_nacimiento' => $data['ULugar_nacimiento'],
+                    'UISSEMYM' => $data['UISSEMYM'],
+                    'UClave_elector' => $data['UClave_elector'],
+                    'UEstado_civil' => $data['UEstado_civil'],
+                    'USexo' => $data['USexo'],
+                    'UHijos' => $data['UHijos'],                
+                    'UTipoDocente' => $data['UTipoDocente'],
+                    'UFecha_modificacion' => date('Y-m-d H:i:s'),
+                    'UUsuario_modificacion' => get_session('UNCI_usuario')
+                ); 
+
                 $this->usuario_model->update($data['UNCI_usuario'],$user);
                 //set_mensaje("Se modificaron con éxito",'success::');
                 echo '::'.$data['UNCI_usuario']; 

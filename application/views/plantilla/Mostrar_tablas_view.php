@@ -6,7 +6,8 @@
             <th>Correo Electrónico</th>
             <th>RFC</th>
             <th>CURP</th>
-            <th width="130px">Seleccionar</th>
+            <th>Horas asignadas</th>
+            <th width="130px">Acción</th>
         </tr>	
     </thead>
     <tbody>
@@ -20,13 +21,14 @@
                 <td class="text-left"><?php echo $list['UCorreo_electronico']; ?></td>
                 <td class="text-left"><?php echo $list['URFC']; ?></td>
                 <td class="text-left"><?php echo $list['UCURP']; ?></td>
+                <td class="text-left"><?php echo number_format($list['HorasAsig'],0)." de ".number_format($list['HorasTot'],0); ?> ( <?php echo $porcentaje = number_format($list['HorasAsig']/$list['HorasTot']*100,0); ?>% )</td>
                 <td class="text-center">
-                <?php if ($list['UDValidado'] == '1' && is_permitido(null,'generarplantilla','save')) { ?>
+                <?php if ($porcentaje < 100 && $list['UDValidado'] < '3' && is_permitido(null,'generarplantilla','save')) { ?>
                     <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Asignar Materias</button>
-                <?php } if ($list['UDValidado'] == '1' && is_permitido(null,'generarplantilla','validar')) { ?>
+                <?php } if ($porcentaje < 100 && is_permitido(null,'generarplantilla','validar')) { ?>
                     <b class="text-success"><i class="fa fa-clock-o"></i> Asignando Materias</b>
-                <?php } if ($list['UDValidado'] == '2') { ?>
+                <?php } if ($porcentaje==100 and $list['UDValidado'] < '3') { ?>
                     <b class="text-info"><i class="fa fa-check"></i> Materias Asignadas</b>
                 <?php } if ($list['UDValidado'] == '3') { ?>
                     <b class="text-warning"><i class="fa fa-clock-o"></i> Pendiente por Revisar</b>
@@ -90,7 +92,7 @@
         
         $.ajax({
             type: "POST",
-            url: "<?php echo base_url("GenerarPlantilla/asignarMaterias_skip"); ?>",
+            url: "<?php echo base_url("generarplantilla/asignarMaterias_skip"); ?>",
             data: {idUser : idUser, plantel : plantel, UDTipo_Docente : UDTipo_Docente},
             dataType: "html",
             beforeSend: function(){

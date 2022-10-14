@@ -27,7 +27,7 @@
 		<?php muestra_mensaje(); ?>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h2>Docente::<b> <?php echo nvl($usuario[0]['UApellido_pat']); ?> <?php echo nvl($usuario[0]['UApellido_mat']); ?> <?php echo nvl($usuario[0]['UNombre']); ?></b></h2>
+				<h2>Docente: <b> <?php echo nvl($usuario[0]['UApellido_pat']); ?> <?php echo nvl($usuario[0]['UApellido_mat']); ?> <?php echo nvl($usuario[0]['UNombre']); ?></b></h2>
 			</div> 
 			<div class="ibox-content">
                 <div class="wrapper wrapper-content animated fadeInRight">
@@ -47,23 +47,44 @@
                                         <div class="col-lg-1"></div>
                                         <div class="col-lg-10">
                                             <div class="form-group">
-                                                <label>CURP.: <em>*</em></label>
-                                                <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario[0]['UCURP']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UCURP'])) echo "disabled";?> required"  minlength="18" maxlength="18"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Nombre(s) / Apellido Paterno / Apellido Materno: <em>*</em></label>
                                                 <div class="row">
-                                                    <div class="col-lg-4">
-                                                        <input id="UNombre" name="UNombre" value="<?php echo nvl($usuario[0]['UNombre']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UNombre'])) echo "disabled";?> required">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input id="UApellido_pat" name="UApellido_pat" value="<?php echo nvl($usuario[0]['UApellido_pat']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UApellido_pat'])) echo "disabled";?> required">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input id="UApellido_mat" name="UApellido_mat" value="<?php echo nvl($usuario[0]['UApellido_mat']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UApellido_mat'])) echo "disabled";?> required">
+                                                    <div class="col-lg-5">
+                                                        <label class="control-label" for="">Clave Servidor: <em>*</em><br /></label>
+                                                        <input type="text" id="UClave_servidor" name="UClave_servidor" value="<?php echo nvl($usuario[0]['UClave_servidor']); ?>" maxlength='150' class="form-control uppercase <?php if (nvl($usuario[0]['UClave_servidor'])) echo 'disabled' ?>" />
                                                     </div>
                                                 </div>
                                             </div>                                            
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label>CURP.: <em>*</em></label>
+                                                        <input id="UCURP" name="UCURP" value="<?php echo nvl($usuario[0]['UCURP']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['UCURP'])) echo 'disabled'?> required"  minlength="18" maxlength="18"/>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <?php if($config['COUsarCURP']){ ?>
+                                                            <button type="button" class="btn btn-default btn-sm valida_curp"><i class="fa"> Validar CURP</i></button>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+                                                <div id="result_curp"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label>Nombre(s): <em>*</em></label>
+                                                        <input type="text" placeholder="Nombre(s)" id="UNombre" name="UNombre" value="<?php echo nvl($usuario[0]['UNombre']); ?>" maxlength='150' class="form-control uppercase <?php if ($config['COUsarCURP']) echo "disabled";?> required">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Apellido Paterno: <em>*</em></label>
+                                                        <input type="text" placeholder="Paterno" id="UApellido_pat" name="UApellido_pat" value="<?php echo nvl($usuario[0]['UApellido_pat']); ?>" maxlength='150' class="form-control uppercase <?php if ($config['COUsarCURP']) echo 'disabled'?> required" />
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Apellido Materno: <em>*</em></label>
+                                                        <input type="text" placeholder="Paterno" id="UApellido_mat" name="UApellido_mat" value="<?php echo nvl($usuario[0]['UApellido_mat']); ?>" maxlength='150' class="form-control uppercase <?php if ($config['COUsarCURP']) echo 'disabled'?> required" />
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            
                                             <div class="form-group" id="data_2">
                                                 <label>Fecha de nacimiento: <em>*</em></label>
                                                 <div class="input-group date">
@@ -76,8 +97,16 @@
                                                 <input type="text" id="ULugar_nacimiento" name="ULugar_nacimiento" value="<?php echo nvl($usuario[0]['ULugar_nacimiento']); ?>" maxlength='150' class="form-control <?php if (nvl($usuario[0]['ULugar_nacimiento'])) echo "disabled";?> required"/>
                                             </div>
                                             <div class="form-group">
+                                                <label>Clave ISSEMYM: </label>
+                                                    <input type="text" id="UISSEMYM" name="UISSEMYM" value="<?php echo nvl($usuario[0]['UISSEMYM']); ?>" maxlength='150' class="form-control <?php if (nvl($usuario[0]['UISSEMYM'])) echo "disabled";?> required" />
+                                            </div>
+                                            <div class="form-group">
                                                 <label>R.F.C.: <em>*</em></label>
                                                 <input id="URFC" name="URFC" value="<?php echo nvl($usuario[0]['URFC']); ?>" type="text" class="form-control <?php if (nvl($usuario[0]['URFC'])) echo "disabled";?> required"  minlength="13" maxlength="13" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Clave de Elector: <em>*</em></label>
+                                                    <input type="text" id="UClave_elector" name="UClave_elector" value="<?php echo nvl($usuario[0]['UClave_elector']); ?>" maxlength='20' class="form-control uppercase <?php if (nvl($usuario[0]['UClave_elector'])) echo "disabled";?> required" />
                                             </div>
                                             <div class="form-group">
                                                 <label>Domicilio: <em>*</em></label>
@@ -108,6 +137,18 @@
                                                 <input type="text" id="UCorreo_electronico" name="UCorreo_electronico" value="<?php echo nvl($usuario[0]['UCorreo_electronico']); ?>" maxlength='150' class="form-control email <?php if (nvl($usuario[0]['UCorreo_electronico'])) echo "disabled";?> required" />
                                             </div>
                                             <div class="form-group">
+                                                <label>Red Social: <em>*</em></label>
+                                                <input type="text" id="URed_social" name="URed_social" value="<?php echo nvl($usuario[0]['URed_social']); ?>" maxlength='150' class="form-control <?php if (nvl($usuario[0]['URed_social'])) echo "disabled";?> required" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Sexo: <em>*</em></label>
+                                                <select name="USexo" id="USexo" class="form-control <?php if (nvl($usuario[0]['USexo'])) echo "disabled";?> required" >
+                                                    <option value="">- Seleccionar Sexo -</option>
+                                                    <option <?php if( 'Hombre' == nvl($usuario[0]['USexo'])) echo"selected"; ?> value="Hombre">Hombre</option>
+                                                    <option <?php if( 'Mujer' == nvl($usuario[0]['USexo'])) echo"selected"; ?> value="Mujer">Mujer</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
                                                 <label>Estado civil: <em>*</em></label>
                                                 <select name="UEstado_civil" id="UEstado_civil" class="form-control <?php if (nvl($usuario[0]['UEstado_civil'])) echo "disabled";?> required" >
                                                     <option value="">- Seleccionar Estado Civil -</option>
@@ -117,12 +158,26 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
-                                                <label>Sexo: <em>*</em></label>
-                                                <select name="USexo" id="USexo" class="form-control <?php if (nvl($usuario[0]['USexo'])) echo "disabled";?> required" >
-                                                    <option value="">- Seleccionar Sexo -</option>
-                                                    <option <?php if( 'Hombre' == nvl($usuario[0]['USexo'])) echo"selected"; ?> value="Hombre">Hombre</option>
-                                                    <option <?php if( 'Mujer' == nvl($usuario[0]['USexo'])) echo"selected"; ?> value="Mujer">Mujer</option>
+                                                <label>Hijos: <em>*</em></label>
+                                                <select name="UHijos" id="UHijos" class="form-control <?php if (nvl($usuario[0]['UHijos'])) echo "disabled";?> required">
+                                                    <option value=""></option>
+                                                    <?php for($i=0;$i<20;$i++){ ?>
+                                                    <option <?php if( $i == nvl($usuario[0]['UHijos'])) echo"selected"; ?> value="<?=$i?>"><?=$i?></option>
+                                                    <?php } ?>
                                                 </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label>Administrativo<em>*</em></label> <input id="UTipoDocente" name="UTipoDocente" type="radio" value="Adm" <?php if( nvl($usuario[0]['UTipoDocente']) == 'Adm') echo"checked"; ?>> 
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Docente<em>*</em></label> <input id="UTipoDocente" name="UTipoDocente" type="radio" value="Doc" <?php if( nvl($usuario[0]['UTipoDocente']) == 'Doc') echo"checked"; ?>>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Ambos<em>*</em></label> <input id="UTipoDocente" name="UTipoDocente" type="radio" value="Amb" <?php if( nvl($usuario[0]['UTipoDocente']) == 'Amb') echo"checked"; ?>>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -133,16 +188,18 @@
                                     <div class="row">
                                         <div class="col-lg-1"></div>
                                         <div class="col-lg-10">
-                                            <div class="form-group">
-                                                <label>Tipo Nombramiento:</label>
-                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control datosNombramiento" placeholder="Seleccionar Tipo Docente">
-                                                    <option value="">- Seleccionar Nombramiento -</option>
-                                                    <?php foreach($tipoDocente as $key_t => $list_t){ ?>
-                                                    <option  value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
-                                                    <?php } ?>
-                                                </select>                                                
-                                            </div>
 
+                                            <div class="form-group">
+                                                <label>Tipo Nombramiento: <em>*</em></label>
+                                                <select name="UDTipo_Nombramiento" id="UDTipo_Nombramiento" class="form-control datosNombramiento" placeholder="Seleccionar Tipo Docente">
+														<div class="form-group">
+														<option value="">- Seleccionar Nombramiento -</option>
+														<?php foreach($tipoDocente as $key_t => $list_t){ ?>
+														<option class="<?php if($list_t['TPClave']>4)echo"nombTod"; ?>" value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
+														<?php } ?>
+														</div>
+                                                </select>
+											</div>
                                             <div class="form-group">
                                                 <label>Plaza:<em>*</em></label>
                                                 <select name="UDPlaza" id="UDPlaza" class="form-control datosPlaza">
@@ -252,7 +309,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+                                            <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
                                                 <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
                                             <?php } ?>
 
@@ -290,6 +347,7 @@
                                                 <option value="">-Seleccionar-</option>
                                                     <option value="1">Licenciatura</option>
                                                     <option value="2">Ingeniería</option>
+                                                    <option value="5">Perfil</option>
                                             </select>
                                         </div>
                                         <div class="form-group TodasLic" style="display: none;">
@@ -354,7 +412,7 @@
                                             </div>
                                             <br>
                                         </div>
-                                        <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+                                        <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
                                             <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
                                         <?php } ?>
 
@@ -683,9 +741,19 @@
 				$(".loadingPlazas").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
 			},
 			success: function(data){
-				$(".resultPlazas").empty();
-				$(".resultPlazas").append(data);  
-				$(".loadingPlazas").html("");
+                var data = data.split("::");                
+                if (data[0] == 1 || data[0] == 2 || data[0] == 3 || data[0] == 4){
+                    $('.nombTod').attr("disabled",false);
+                    $(".resultPlazas").empty();
+                    $(".resultPlazas").append(data[1]);  
+                    $(".loadingPlazas").html("");
+                } else {
+                    $('.nombTod').attr("disabled",true);
+                    $(".resultPlazas").empty();
+                    $(".resultPlazas").append(data[1]);  
+                    $(".loadingPlazas").html("");
+                    
+                }
 			}
 		});
 	}
@@ -701,15 +769,18 @@
                 $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
             },
             success: function(data){
-                if (data == 0){
+                var data = data.split("::");
+                if (data[0] == 0){
                     $('.TodasLic').hide();            
                     $('.dosLic').show();
+                    $(".resultEstudios").empty();
+                    $(".resultEstudios").append(data[1]);  
                     $(".loading").html("");
                 } else {
                     $('.dosLic').hide();            
                     $('.TodasLic').show();
                     $(".resultEstudios").empty();
-                    $(".resultEstudios").append(data);  
+                    $(".resultEstudios").append(data[1]);  
                     $(".loading").html("");
                     
                 }
@@ -837,6 +908,35 @@
     });
     
     $('.chosen-select').chosen(); 
+
+    //$(".valida_curp").click(function() {
+    $("#UCURP, .valida_curp").on('change click',function() {
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url("personal/ver_curp"); ?>",
+            data: $(this.form).serialize(),
+            dataType: "html",
+            beforeSend: function(){
+                //carga spinner
+                $(".loading").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+            },
+            success: function(data){
+                var data = data.split("|");
+                $("#UApellido_pat").val( data[1] );
+                $("#UApellido_mat").val( data[2] );
+                $("#UNombre").val( data[3] );
+                $("#UFecha_nacimiento").val( data[4] );
+                if( data[5]=='H'){
+                    $("#USexo").val( 'Hombre' );
+                }else if( data[5]=='M'){
+                    $("#USexo").val( 'Mujer' );
+                }
+                $("#result_curp").empty();
+                $("#result_curp").append(data[0]);
+                $(".loading").html("");
+            }
+        });
+    });//----->fin
 });
 </script>
 <style>

@@ -17,7 +17,7 @@
 						DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br>
 						PLANTILLA DE PERSONAL DOCENTE<br>
 						PLANTEL Y/O CENTRO EMSAD: <b><?php echo $plantel[0]['CPLNombre']; ?></b> <br>
-						SEMESTRE:<b> 20<?= substr($periodos[0]['CPEPeriodo'],0,2); ?> <?= substr($periodos[0]['CPEPeriodo'],3,1) == 1? '(Febrero-Agosto)' : '(Agosto-Febrero)'?></b><br>
+						SEMESTRE:<b> 20<?= substr($periodos['CPEPeriodo'],0,2); ?> <?= substr($periodos['CPEPeriodo'],3,1) == 1? '(Febrero-Agosto)' : '(Agosto-Febrero)'?></b><br>
 						FECHA: <b><?php echo date('d/m/Y'); ?></b> <br>
 					</td>
 				</tr>
@@ -62,9 +62,9 @@
                 <tr>
                     <th style="text-align: center;">MAT.</th>
                     <th style="text-align: center;">VESP.</th>
-                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '1'; } else { echo '2';} ?></th>
-                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '3'; } else { echo '4';} ?></th>
-                    <th style="text-align: center;"><?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2') { echo '5'; } else { echo '6';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos['CPEPeriodo'],3,1) == '2') { echo '1'; } else { echo '2';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos['CPEPeriodo'],3,1) == '2') { echo '3'; } else { echo '4';} ?></th>
+                    <th style="text-align: center;"><?php if (substr($periodos['CPEPeriodo'],3,1) == '2') { echo '5'; } else { echo '6';} ?></th>
                 </tr>
             	</thead>
                 <?php 
@@ -125,9 +125,9 @@
                         </td> 
 						<td>
 							<table style="border:0px">
-								<tr style="border:0px"><td style="border:0px"><b><?= $listDoc['estudios'][0]['ULTitulado']; ?></b></td></tr>
+								<tr style="border:0px"><td style="border:0px"><b><?= nvl($listDoc['estudios'][0]['ULTitulado']); ?></b></td></tr>
 								<?php foreach ($listDoc['estudios'] as $e => $listEst) { ?>
-									<tr style="border:0px"><td style="border:0px"><?= $listEst['ULNivel_estudio'].' en '.$listEst['Licenciatura']; ?></td></tr>
+									<tr style="border:0px"><td style="border:0px"><?= nvl($listEst['ULNivel_estudio']).' en '.nvl($listEst['Licenciatura']); ?></td></tr>
 								<?php } ?>
 								<tr style="border:0px"><td style="border:0px"><?= nvl($listDoc['plazas'][0]['UDObservaciones']); ?></td></tr>
 							</table>

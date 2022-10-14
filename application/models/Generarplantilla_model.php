@@ -4,7 +4,7 @@
 
 	class Generarplantilla_model extends My_Model
 	{
-		protected $_table = 'noplantillafinal';
+		protected $_table = 'noplantilladetalle';
 		protected $primary_key = 'idPlantilla';
 
 		function __construct()

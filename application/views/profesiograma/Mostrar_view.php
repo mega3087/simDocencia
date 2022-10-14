@@ -128,7 +128,7 @@
 												<?php } ?>
 											</table>
 										</td>
-										<?php if (is_permitido(null,'profesiograma','save')) { ?>
+										<?php if (is_permitido(null,'profesiograma','delete')) { ?>
 										<td class="text-center">
 											<table style="border:0px">
 											<?php foreach ($listLics['materias'] as $m => $listMat) { ?>

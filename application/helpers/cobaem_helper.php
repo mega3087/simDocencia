@@ -738,7 +738,6 @@
 	
 	function excelheaders($file = null)
     {
-
         //Redireccionar la salida de navegador web de un cliente ( Excel5 )
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="'.$file.'.xls"');
@@ -752,6 +751,30 @@
         header ('Pragma: public'); // HTTP/1.0
 
     }
+	
+	function periodo($periodo=null){
+		$CI = & get_instance();
+		$where = null;
+		
+		if(!$periodo){
+			$where = "CURDATE() BETWEEN CONCAT(CPEAnioInicio,CPEMesInicio,CPEDiaInicio) AND CONCAT(CPEAnioFin,CPEMesFin,CPEDiaFin)";
+		}else{
+			$where = "CPEPeriodo = $periodo";
+		}
+		
+		$data = $CI->periodos_model->find($where);
+		if($data){
+			$periodo = array(
+				"PEPeriodo" => $data['CPEPeriodo'],
+				"PEFecha_inicial" => $data['CPEAnioInicio']."-".$data['CPEMesInicio']."-".$data['CPEDiaInicio'],
+				"PEFecha_final" => $data['CPEAnioFin']."-".$data['CPEMesFin']."-".$data['CPEDiaFin']
+			);
+		}else{
+			exit("Sin periodo actual!!");
+		}
+		
+		return $periodo;
+	}
 
 	
 	

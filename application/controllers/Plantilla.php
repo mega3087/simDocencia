@@ -65,7 +65,7 @@
 					set_mensaje("La Plantilla del periodo [<b> ".$data['PPeriodo']." </b>] se registro con éxito",'success::');
 				}else{
 					$this->plantilla_model->update($PClave,$data);
-					set_mensaje("La Plantilla con clave [<b> ".$data['PPeriodo']." </b>] se actualizó con éxito",'success::');
+					set_mensaje("La Plantilla del periodo [<b> ".$data['PPeriodo']." </b>] se actualizó con éxito",'success::');
 				}
 				echo "OK";
 			}
@@ -83,8 +83,6 @@
 		function _set_rules($c='',$data = array()){
 			
 			if($c=='p'){
-				$this->form_validation->set_rules('PPeriodo', 'Periodo', "trim|required");
-				$this->form_validation->set_rules('PPlantel', 'Plantel', "trim|required");
 				$this->form_validation->set_rules('PPlantilla', 'Plantilla', "trim|required");
 			}
 			// fin de la funcion _set_rules

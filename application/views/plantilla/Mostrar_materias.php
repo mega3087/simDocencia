@@ -15,10 +15,10 @@
                     <td style="width: 400px;"><input type="checkbox" name="pidMateria[]" id="id_materia" value="<?= $listM[0]['id_materia']; ?>"> <?php echo $listM[0]['materia']; ?></td>
                     <td><input name="multiplo[]" id="multipo<?= $listM[0]['id_materia']; ?>" class="form-control disabled" value="<?= $listM[0]['hsm']; ?>"></td>
                     <td>
-                        <input type="number" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" name="nogrupoMatutino[]" placeholder="0" value="" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
+                        <input type="text" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" name="nogrupoMatutino[]" placeholder="0" value="" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
                     </td>
                     <td>
-                        <input type="number" id="nogrupoVespertino<?= $listM[0]['id_materia']; ?>" name="nogrupoVespertino[]" placeholder="0" value="" min="0" max="10" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/>
+                        <input type="text" id="nogrupoVespertino<?= $listM[0]['id_materia']; ?>" name="nogrupoVespertino[]" placeholder="0" value="" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/>
                     </td>
                     <td class="text-center"><input type="text" id="spTotal<?= $listM[0]['id_materia']; ?>" name="spTotal[]" class="form-control disabled"></td>
                 </tr>

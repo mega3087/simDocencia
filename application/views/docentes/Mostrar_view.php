@@ -31,11 +31,12 @@
 						</thead>
 						<tbody>
 							<?php 
+							$i = 1;
 							foreach ($planteles as $key => $list) {
 								$CPLClave_skip = $this->encrypt->encode($list['CPLClave']);
 							?>
 								<tr>
-									<td class="text-left"><?php echo $list['CPLClave']; ?></td> 
+									<td class="text-left"><?php echo $i; ?></td> 
 									<td class="text-left"><?php echo $list['CPLNombre']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCCT']; ?></td>
 									<td class="text-left"><?php echo $list['CPLCorreo_electronico']; ?></td>
@@ -45,7 +46,7 @@
 									</a>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php $i++; } ?>
 						</tbody>
 					</table>
 				</div>
