@@ -60,7 +60,7 @@ $noCap = count($Capacitaciones);
                             echo "<td></td>";
                         } 
                     }?>
-                    <td colspan="2"><?= $list['noGrupos'] ?></td>
+                    <td style="text-align:center;" colspan="2"><?= $list['noGrupos'] ?></td>
             </tr>
         <?php } ?>
         <tr>

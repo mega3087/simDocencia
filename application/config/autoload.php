@@ -172,5 +172,6 @@ $autoload['model'] = array(
 							'grupos_model',
 							'plazadocente_model',
 							'gradoestudios_model',
-							'generarplantilla_model'						
+							'generarplantilla_model',
+							'plantillabitacora_model'				
 						);

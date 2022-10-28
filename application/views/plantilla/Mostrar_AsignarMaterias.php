@@ -9,7 +9,8 @@
     <div class="col-lg-9">
         <select name="idPUDatos" id="nombramiento" class="form-control">
                 <?php foreach($nombramientos as $nom => $listNom) { ?>
-                <option value="<?= $listNom['UDClave']; ?>"><?=$listNom['TPNombre']?> (<?=$listNom['HorasTot']?> H/S/M)</option>
+                <option value="<?= $listNom['UDClave']; ?>" <?php if ($datosPlantilla['idPUDatos'] == $listNom['UDClave']) { echo "selected"; } ?>><?=$listNom['TPNombre']?> (<?=$listNom['HorasTot']?> H/S/M)</option>
+                <!--<option value="<?= $listNom['UDClave']; ?>" <?php if ($datosPlantilla['idPUDatos'] == $listNom['UDClave']) { echo "selected"; } ?>><?=$listNom['TPNombre']?> (<?= $listNom['UDHoras_grupo'] + $listNom['UDHoras_apoyo']; ?> H/S/M) <?php if ($listNom['UDHoras_CB']) { echo $listNom['UDHoras_CB']." CB-I";} ?> </option>-->
             <?php  } ?>
         </select>
     </div>
@@ -20,7 +21,7 @@
     <div class="col-lg-9">
         <select name="pidLicenciatura" id="licenciatura" class="form-control">
                 <?php foreach($estudios as $est => $listEst) { ?>
-                <option value="<?= $listEst['IdLicenciatura']; ?>"><?php echo $listEst['LGradoEstudio'].' en '.$listEst['Licenciatura']; ?></option>
+                <option value="<?= $listEst['IdLicenciatura']; ?>" <?php if ($datosPlantilla['pidLicenciatura'] == $listEst['IdLicenciatura']) { echo "selected"; } ?> ><?php echo $listEst['LGradoEstudio'].' en '.$listEst['Licenciatura']; ?></option>
             <?php  } ?>
         </select>
     </div>

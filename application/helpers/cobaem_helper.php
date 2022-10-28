@@ -646,7 +646,7 @@
 		
 		$where = array( "acceptTerms" => "on");
 		if( is_permitido(null,"fump","nivel_7") ){ //*
-			$nivel = 8;
+			$nivel = 9;
 		}elseif( is_permitido(null,"fump","nivel_6") ){ //Nomina
 			$nivel = 6;
 		}elseif( is_permitido(null,"fump","nivel_5") ){	//D.General
@@ -759,7 +759,7 @@
 		if(!$periodo){
 			$where = "CURDATE() BETWEEN CONCAT(CPEAnioInicio,CPEMesInicio,CPEDiaInicio) AND CONCAT(CPEAnioFin,CPEMesFin,CPEDiaFin)";
 		}else{
-			$where = "CPEPeriodo = $periodo";
+			$where = "CPEPeriodo = '$periodo'";
 		}
 		
 		$data = $CI->periodos_model->find($where);
@@ -772,7 +772,6 @@
 		}else{
 			exit("Sin periodo actual!!");
 		}
-		
 		return $periodo;
 	}
 

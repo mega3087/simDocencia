@@ -20,22 +20,26 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 		* @param char $permanente Y/T
 		* @return array
 		*/		
-		function nombramientos($idPlantel = null, $idTipoNombramiento = null, $permanente = 'T'){
+		function nombramientos($idPlantel = null, $idTipoNombramiento = null, $permanente = 'T', $horasApoyo = false){
 			//var
 			$periodo = periodo();
 			$result = array();
 			$idPlantilla = $this->plantilla_model->plantilla_actual($idPlantel);
 			
+			if($horasApoyo)
+				$horasApoyo = "+SUM(UDHoras_apoyo)";
 			
 			$select = "
 				UNCI_usuario, UClave_servidor, UApellido_pat, UNombre, UApellido_mat, 
 				UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, 
 				UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, 
 				ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, 
-				UEstado, UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDValidado,
+				UEstado, UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDValidado, UDHoras_grupo, 
 				SUM(IF(UDTipo_Nombramiento IN (1,2,3,4), 1, 0)) AS num,
-				SUM(UDHoras_grupo)+SUM(UDHoras_apoyo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) AS HorasTot,
-				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario) AS HorasAsig
+				SUM(UDHoras_grupo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) $horasApoyo AS HorasTot,
+				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1) AS HorasAsig,
+				(SELECT noplantilla.PEstatus FROM noplantilla WHERE PClave = $idPlantilla GROUP BY PClave) AS PEstatus,
+				(SELECT noplantilladetalle.pestatus FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1 AND noplantilladetalle.pestatus = 'Correción' GROUP BY idPUsuario) AS PEstatusDetalle
 			";
 			if($permanente=='Y'){
 				$this->db->where("UDPermanente","Y");

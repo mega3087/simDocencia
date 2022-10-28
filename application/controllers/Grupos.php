@@ -115,9 +115,9 @@ class Grupos extends CI_Controller {
                 for ($i = 1; $i <= $data['NoGruposMat1']; $i++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
-                        $datos['GRPMat'] = '7';
+                        $datos['GRPlanEst'] = '1';
                     } elseif ($data['CPLTipo'] == '36') {
-                        $datos['GRPMat'] = '9';
+                        $datos['GRPlanEst'] = '2';
                     }
 
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];
@@ -157,9 +157,9 @@ class Grupos extends CI_Controller {
                 for ($v = 1; $v <= $data['NoGruposVes1']; $v++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
-                        $datos['GRPMat'] = '7';
+                        $datos['GRPlanEst'] = '1';
                     } elseif ($data['CPLTipo'] == '36') {
-                        $datos['GRPMat'] = '9';
+                        $datos['GRPlanEst'] = '2';
                     }   
     
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];
@@ -200,9 +200,9 @@ class Grupos extends CI_Controller {
                 for ($i = 1; $i <= $data['NoGruposMat2']; $i++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
-                        $datos['GRPMat'] = '7';
+                        $datos['GRPlanEst'] = '1';
                     } elseif ($data['CPLTipo'] == '36') {
-                        $datos['GRPMat'] = '9';
+                        $datos['GRPlanEst'] = '2';
                     }   
 
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];
@@ -240,9 +240,9 @@ class Grupos extends CI_Controller {
                 for ($v = 1; $v <= $data['NoGruposVes2']; $v++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
-                        $datos['GRPMat'] = '7';
+                        $datos['GRPlanEst'] = '1';
                     } elseif ($data['CPLTipo'] == '36') {
-                        $datos['GRPMat'] = '9';
+                        $datos['GRPlanEst'] = '2';
                     }   
     
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];
@@ -283,9 +283,9 @@ class Grupos extends CI_Controller {
                 for ($i = 1; $i <= $data['NoGruposMat3']; $i++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
-                        $datos['GRPMat'] = '7';
+                        $datos['GRPlanEst'] = '1';
                     } elseif ($data['CPLTipo'] == '36') {
-                        $datos['GRPMat'] = '9';
+                        $datos['GRPlanEst'] = '2';
                     }
     
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];
@@ -324,9 +324,9 @@ class Grupos extends CI_Controller {
                     for ($v = 1; $v <= $data['NoGruposVes3']; $v++) {
                     $datos['GRCPlantel'] = $data['GRCPlantel'];
                     if ($data['CPLTipo'] == '35') {
-                        $datos['GRPMat'] = '7';
+                        $datos['GRPlanEst'] = '1';
                     } elseif ($data['CPLTipo'] == '36') {
-                        $datos['GRPMat'] = '9';
+                        $datos['GRPlanEst'] = '2';
                     }   
     
                     $datos['GRPeriodo'] = $data['CPEPeriodo'];

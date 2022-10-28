@@ -4,14 +4,10 @@
 			<tr>
 				<th>Tipo Nombramiento</th>
 				<th>Fecha Ingreso</th>
-				<th>Plaza</th>
+				<th>Plaza / No Horas</th>
 				<th>Tipo Materias</th>
-				<th>No. de Horas</th>
-				<?php //if(nvl($data[0]['UDTipo_Nombramiento']) == '4') { ?>
-				<!--<th>No. de Oficio</th>
-				<th>Documentos</th>-->
-				<?php //} ?>
-				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+				<?php //if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2' || nvl($data[0]['UDPermanente']) == 'N') { ?>
+				<?php if( nvl($data[0]['UDPermanente']) == 'N') { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -37,22 +33,25 @@
 					}
 					?>
 				</td>
-				<td><?php echo nvl($list['nomplaza']); ?></td>
-				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
 				<td>
-					<?php $total = '0';
-					$total = nvl($list['UDHoras_grupo']) + nvl($list['UDHoras_apoyo']) + nvl($list['UDHoras_CB']) + nvl($list['UDHoras_provicionales']);
-					echo $total;
-					?>
+					<?php 
+					$total = '0';
+					$total = nvl($list['UDHoras_grupo']) + nvl($list['UDHoras_apoyo']) + nvl($list['UDHoras_provicionales']);
+					if ($list['idPlaza'] == '11' || $list['idPlaza'] == '12' || $list['idPlaza'] == '13' || $list['idPlaza'] == '14' || $list['idPlaza'] == '15') {
+						if (empty($list['UDHoras_CB'])) {
+							$horas = $list['UDHoras_grupo'];
+						} else {
+							$horas = $list['UDHoras_CB'];
+						}
+						echo nvl($list['nomplaza'])."(".$horas. "horas)";
+					} else {
+						echo nvl($list['nomplaza'])."(".$total." horas)";
+						if (nvl($list['UDHoras_CB'])) 
+						echo " y ".nvl($list['UDHoras_CB'])." horas/semana/mes como CB-I";
+					} ?>
 				</td>
-				<?php //if(nvl($list['UDTipo_Nombramiento']) == '4') { ?>
-				<!--<td><?php echo nvl($list['UDNumOficio']); ?></td>
-				<td><?php echo nvl($UDNombramiento_file);?></td>-->
-				<?php // } else { ?>
-					<!--<td></td>
-					<td></td>-->
-				<?php // } ?>
-				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
+				<?php if( nvl($data[0]['UDPermanente']) == 'N' && is_permitido(null,'generarplantilla','save')) { ?>
 				<td>
                     <?php echo nvl($borrar); ?>
 				</td>

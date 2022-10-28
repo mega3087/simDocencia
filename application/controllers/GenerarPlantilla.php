@@ -18,16 +18,20 @@
 				redirect('generarplantilla/crear/'.$this->encrypt->encode(get_session('UPlantel')));
 			}
 			
-			//var
-			$data = array();
-
+			//$planteles =  get_session('UPlanteles');
 			$select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
-			$this->db->where('CPLTipo',35);
-			$this->db->or_where('CPLTipo',36);
-			$this->db->where('CPLActivo',1);
-			$this->db->order_by('CPLClave','ASC');			
-        	$data['planteles'] = $this->plantel_model->find_all(null, $select);
+			if (get_session('URol') == '15') {
+				$this->db->where_in('CPLClave',get_session('UPlanteles'),false);
+				//$this->db->where( "FIND_IN_SET( '".get_session('UPlanteles')."',CPLClave)" );
+				$this->db->where('(CPLTipo = 35 OR CPLTipo = 36)');
+			} else {
+				$this->db->where('(CPLTipo = 35 OR CPLTipo = 36)');
+			}
 			
+			$this->db->where('CPLActivo',1);
+			$this->db->order_by('CPLClave','ASC');
+			$data['planteles'] = $this->plantel_model->find_all(null, $select);
+	
 			$data['modulo'] = $this->router->fetch_class();
 			$data['subvista'] = 'plantilla/Mostrar_view2';			
 			$this->load->view('plantilla_general', $data);
@@ -56,10 +60,9 @@
 		public function mostrarTablas_skip() {
 			$plantel = $this->input->post('plantel');
 			$UDTipo_Nombramiento =  $this->input->post('UDTipo_Docente');
-			$idPlantilla = $this->plantilla_model->plantilla_actual($plantel);
 			
 			$data['docentes'] = $this->usuariodatos_model->nombramientos($plantel, $UDTipo_Nombramiento);
-			
+						
 			$this->load->view('plantilla/Mostrar_tablas_view', $data);
 
 		}
@@ -68,7 +71,11 @@
 			$idUsuario = $this->input->post('idUser');
 			$plantel = $this->input->post('plantel');
 			$UDTipo_Nombramiento =  $this->input->post('UDTipo_Docente');
+			$idPlanDetalle = $this->input->post('idPlanDetalle');
+			$data['UDTipo_Nombramiento'] = $UDTipo_Nombramiento;
 
+			$data['datosPlantilla'] = $this->generarplantilla_model->get($idPlanDetalle);
+			
 			$data['idUser'] = $idUsuario;
 			$select = "UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, UFecha_nacimiento, UCorreo_electronico, URFC, UCURP, UClave_elector, UDomicilio, UColonia, UMunicipio, UCP, UTelefono_movil, UTelefono_casa, ULugar_nacimiento, UEstado_civil, USexo, UEscolaridad, UPlantel, UEstado";
 			$this->db->join('nocrol','URol = CROClave', 'left');
@@ -80,10 +87,10 @@
 			$data['docentes'] = $this->usuario_model->find_all(null, $select);
 
 			$selectNom = '
-				SUM(UDHoras_grupo)+SUM(UDHoras_apoyo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) AS HorasTot,
-				UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDTipo_materia, 
+				SUM(UDHoras_grupo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) AS HorasTot,
+				UDClave, UDUsuario, UDParaescolares, UDPlantel, UDTipo_Nombramiento, UDTipo_materia, 
 				UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, 
-				UDPlaza, UDActivo, nomplaza, TPClave, TPNombre
+				UDPlaza, UDActivo, UDPermanente, nomplaza, TPClave, TPNombre
 			';
 			$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
 			$this->db->join('noplazadocente','idPlaza = UDPlaza','left');
@@ -99,7 +106,7 @@
 			$this->db->where('ULPlantel',$plantel);
 			$this->db->where('ULActivo','1');
 			//$this->db->limit('1');
-			$data['estudios'] = $this->usuariolic_model->find_all(null);		
+			$data['estudios'] = $this->usuariolic_model->find_all(null);
 
 			$this->load->view('plantilla/Mostrar_AsignarMaterias', $data);			
 
@@ -111,10 +118,15 @@
 			$periodo  = $this->input->post('periodo');
 			$idLic    = $this->input->post('licenciatura');
 			$semestre = $this->input->post('semestre');
-			$data['opcion'] = 'materias';
+			$idPlanDetalle = $this->input->post('idPlanDetalle');
+			
+			if (!$semestre) exit();
 
-			$this->db->where('UDClave', $UDClave);
-			$tipoMat = $this->usuariodatos_model->find();
+			$data['opcion'] = 'materias';
+			
+			$data['datosPlantilla'] = $this->generarplantilla_model->get($idPlanDetalle);
+			
+			$tipoMat = $this->usuariodatos_model->get($UDClave);
 			
 			if($idLic == ''){
 				set_mensaje("Favor de seleccionar Estudios del Docente.");
@@ -137,10 +149,16 @@
 				$idMat = explode(',',$data['ids'][0]['LIdmateria']);
 				
 				foreach ($idMat as $k => $mats) {
+					if ($data['datosPlantilla'] ) {
+						$this->db->where('id_materia',$data['datosPlantilla']['pidMateria']);
+					}
+
 					$this->db->where('id_materia',$mats);
 					$this->db->where('semmat',$semestre);
 					$this->db->where('plan_estudio',$plan_estudio);
-					$this->db->where('campo_cono', $tipoMat['UDTipo_materia']);
+					if($tipoMat['UDParaescolares'] == 'N') {
+						$this->db->where('campo_cono', $tipoMat['UDTipo_materia']);				
+					}
 					$this->db->where('activo','1');
 					$this->db->order_by('semmat','ASC');
 					$arreglo[$k] = $this->materias_model->find_all();
@@ -152,6 +170,8 @@
 					}
 				}
 
+				if (!$arrayAux) exit('Sin datos que Mostrar');
+
 				$data['arrayMaterias'] = $arrayAux;
 
 				$this->load->view('plantilla/Mostrar_materias', $data);		
@@ -161,6 +181,12 @@
 
 		public function save() {
 			$data = post_to_array('_skip');
+			
+			if($data['idPlanDetalle']) {
+				$data['datosPlantilla'] = $this->generarplantilla_model->get($data['idPlanDetalle']);
+			}
+			
+			$idPlantilla = $this->plantilla_model->plantilla_actual($data['idPPlantel']);
 
 			if(nvl($data['nogrupoMatutino'])) {
 				$matutino = array();
@@ -202,6 +228,11 @@
 
 			$selsum = 'SUM(ptotalHoras) as horasTotales';
 			$this->db->where('idPUDatos',$data['idPUDatos']);
+			$this->db->where('idPlantilla',$idPlantilla);
+			$this->db->where('pactivo','1');
+			if($data['idPlanDetalle']) {
+				$this->db->where("idPlanDetalle != ".$data['idPlanDetalle']);
+			}
 			$sumNombramiento = $this->generarplantilla_model->find_all(null, $selsum);
 
 			if(nvl($data['spTotal'])) {
@@ -214,27 +245,20 @@
 				if ($sumahoras > $totalHoras) {
 					set_mensaje("El número de horas exceden al número de horas del Nombramiento.");
 					muestra_mensaje();
-				} else {
-					$this->db->where('UDClave', $data['idPUDatos']);
-					$validado = $this->usuariodatos_model->find();
 					
-					$this->db->where('idPUsuario', $data['idPUsuario']);
-					$this->db->where('pidLicenciatura', $data['pidLicenciatura']);
-					$this->db->group_by('idPUDatos');
-					$asignatura = $this->generarplantilla_model->find();
-
-					/*if ($validado['UDValidado'] > '1' && count($asignatura) > '1') {
-						set_mensaje("Ya se guardaron los datos del Docente.");
-						muestra_mensaje();
-					} else {*/
+				} else {
 						
-						foreach ($data['pidMateria'] as $mat => $listS) {
+					foreach ($data['pidMateria'] as $mat => $listS) {
+						$this->db->where('idPlantilla', $idPlantilla);
+						$this->db->where('idPUsuario', $data['idPUsuario']);
+						$this->db->where('pidMateria', $data['pidMateria'][$mat]);
+						$this->db->where('pactivo','1');
+						$validado = $this->generarplantilla_model->find();
+						
+						if (empty($validado)) {
 							$sel = 'semmat';
 							$this->db->where('id_materia', $listS);
 							$semmat = $this->materias_model->find_all(null, $sel);
-							
-							$idPlantilla = $this->plantilla_model->plantilla_actual($data['idPPlantel']);
-							
 							
 							$datos = array(
 								'idPPlantel' => $data['idPPlantel'],
@@ -249,28 +273,65 @@
 								'pnogrupoVespertino' => nvl($vespertino[$mat]),
 								'ptotalHoras' => nvl($spTotal[$mat]),
 								'pactivo' => 1,
-								'pestatus' => 1,
+								'pestatus' => 'Activa',
 								'pusuario_creacion' => get_session('UNCI_usuario'),
 								'pfecha_creacion' => date('Y-m-d H:i:s')
 							);
 							
 							$this->generarplantilla_model->insert($datos);
+														
+							set_mensaje("Los datos se agregarón correctamente",'success::');
+							muestra_mensaje();
+							echo "::OK";
+							echo "::".$data['idPUsuario'];
+							echo "::".$data['datosnom'][0]['UDTipo_Nombramiento'];
+						} else {
+							if($validado['idPlanDetalle'] == $data['idPlanDetalle']){
+								if (!$spTotal[$mat]) {
+									$activo = '0';
+								} else {
+									$activo = '1';
+								}
+								$datos = array (
+									'pnogrupoMatutino' => nvl($matutino[$mat]),
+									'pnogrupoVespertino' => nvl($vespertino[$mat]),
+									'ptotalHoras' => nvl($spTotal[$mat]),
+									'pactivo' => $activo,
+								);
+								
+								$this->generarplantilla_model->update($data['idPlanDetalle'], $datos);
+								set_mensaje("Los datos se agregarón correctamente",'success::');
+								muestra_mensaje();
+								echo "::OK";
+								echo "::".$data['idPUsuario'];
+								echo "::".$data['datosnom'][0]['UDTipo_Nombramiento'];
+
+							} else {
+								
+								$sumGrupoMat = 0;
+								$sumGrupoMat = $validado['pnogrupoMatutino'] + nvl($matutino[$mat]);
+								$sumGrupoVes = 0;
+								$sumGrupoVes = $validado['pnogrupoVespertino'] + nvl($vespertino[$mat]);
+								$sumTotalHoras = 0;
+								$sumTotalHoras = $validado['ptotalHoras'] + nvl($spTotal[$mat]);
+								
+								$datos = array (
+									'pnogrupoMatutino' => $sumGrupoMat,
+									'pnogrupoVespertino' => $sumGrupoVes,
+									'ptotalHoras' => $sumTotalHoras,
+								);
+								
+								$this->generarplantilla_model->update($validado['idPlanDetalle'], $datos);
+								set_mensaje("Los datos se agregarón correctamente",'success::');
+								muestra_mensaje();
+								echo "::OK";
+								echo "::".$data['idPUsuario'];
+								echo "::".$data['datosnom'][0]['UDTipo_Nombramiento'];
+							}
 						}
-						//Cambiar estatus para 1 que es Editar
-						$updatos = array(
-							'UDValidado' => '2'
-						);
-						
-						$this->usuariodatos_model->update($data['idPUDatos'], $updatos);
-						
-						set_mensaje("Los datos se agregarón correctamente",'success::');
-						muestra_mensaje();
-						echo "::OK";
-						echo "::".$data['idPUsuario'];
-					//}
+					}
 				}
-			}
-			
+			}			
 		}
 		
 		public function datosPlantilla_skip() {
@@ -278,7 +339,12 @@
 			$idPlantel = $this->input->post('idPlantel');
 			$data['periodos'] = $this->input->post('periodo');
 
+			$data['UDTipo_Nombramiento'] = $this->input->post('UDTipo_Docente');
+
 			$data['opcion'] = 'plantilla';
+
+			$idPlantilla = $this->plantilla_model->plantilla_actual($idPlantel);
+			$data['datosPlantilla'] = $this->plantilla_model->get($idPlantilla);
 			
 			$select = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDFecha_ingreso, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, UDPlaza, UDFecha_inicio, UDFecha_final, UDObservaciones, UDValidado';
 			$this->db->where('UDUsuario', $idPUsuario );
@@ -287,56 +353,46 @@
 			$data['datos'] = $this->usuariodatos_model->find_all(null, $select);
 
 			foreach ($data['datos'] as $d => $listDat) {
-				$selectPlant = 'idPlantilla, idPUsuario, idPPlantel, idPUDatos, pidLicenciatura, pperiodo, psemestre, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras, pidMateria, materia, hsm, plan_estudio, semmat';
+				$selectPlant = 'idPlanDetalle, idPlantilla, idPUsuario, idPPlantel, idPUDatos, pidLicenciatura, pperiodo, psemestre, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras, pidMateria, materia, hsm, plan_estudio, semmat, idPBitacora, pbObservaciones';
 				$this->db->join('nomaterias', 'id_materia = pidMateria', 'left');
+				$this->db->join('noplantillabitacora', 'idPlanDetalle = idBPlanDetalle', 'left');
 				$this->db->where('idPUDatos', $listDat['UDClave']);
-				$this->db->where('pestatus', '1');
+				$this->db->where('idPlantilla', $idPlantilla);
+				$this->db->where('pactivo', '1');
 				$this->db->order_by('idPUDatos','ASC');
 				$this->db->order_by('psemestre','ASC');
 				
 				$data['datos'][$d]['plantilla'] = $this->generarplantilla_model->find_all(null, $selectPlant);
 			}
-						
+
 			$this->load->view('plantilla/Mostrar_materias', $data);	
 		}
 
 		public function verplantilla() {
-			$idPlantel = $this->input->post('idPlantel');			
-			$idPlantilla = $this->plantilla_model->plantilla_actual($idPlantel);
 			
-			if (is_permitido(null,'generarplantilla','save')) { 
-				$validar = "2";
-			} 
-			if (is_permitido(null,'generarplantilla','validar')) {
-				$validar = "3";
-			}
-
+			$this->db->where('PClave', $this->input->post('idPlantilla'));
+			$data['plantilla'] = $this->plantilla_model->find();
+						
+			$select = 'PClave, idPlanDetalle, PPlantel, noplantilla.PPeriodo, pd.idPUsuario, noplantilla.PEstatus,
+			UDClave, UDUsuario, UDPlantel, UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, URFC, UDTipo_Nombramiento';
+			$this->db->where("PClave",$data['plantilla']['PClave']);
+			$this->db->join("noplantilladetalle AS pd","PClave = idPlantilla","LEFT");
+			$this->db->join('nousuario','UNCI_usuario = idPUsuario','LEFT');
+			$this->db->join('nousuariodatos','idPUsuario = UDUsuario','LEFT');
+			$this->db->group_by('UNCI_usuario');
+			$data['docentes'] = $this->plantilla_model->find_all(null, $select);
 			
-			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
-			$select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
-			$this->db->where('CPLClave',$idPlantel);
+			$idPlantel 	= $data['docentes'][0]['PPlantel'];
+			$periodo	= $data['docentes'][0]['PPeriodo'];
+			echo"<pre>";
+			//print_r($data['docentes']);
+			echo"</pre>";
 			
-        	$data['plantel'] = $this->plantel_model->find_all(null, $select);
-
-			$this->db->where('CPEStatus','1');
-			$this->db->order_by('CPEPeriodo','DESC');
-			$data['periodos'] = $this->periodos_model->find();
-
-			$selectUser = 'UDClave, UDUsuario, UDPlantel, UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, URFC, UDTipo_Nombramiento'; //ULCedulaProf;
+			$this->db->select('CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector');
+        	$data['plantel'] = $this->plantel_model->get($idPlantel);
 			
-			if (get_session('URol') != '1'){
-				$this->db->where('UDValidado',$validar);			
-			}
+			$data['periodo'] = periodo($periodo);
 			
-			//$this->db->join('nousuariolic','ULClave = UDClave','left');
-			$this->db->join('nousuario','UNCI_usuario = UDUsuario','left');
-			$this->db->where('UDPlantel',$idPlantel);
-			$this->db->where('UDPlantilla',$idPlantilla);			
-			$this->db->order_by('UDTipo_Nombramiento','ASC');
-			$this->db->order_by('UApellido_pat','ASC');
-			$this->db->group_by('UDUsuario');
-
-			$data['docentes'] = $this->usuariodatos_model->find_all(null, $selectUser);
 			
 			foreach ($data['docentes'] as $u => $listUser) {
 				$select = "UDClave, UDFecha_ingreso, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, UDPlaza, nomplaza, UDFecha_inicio, UDFecha_final, UDObservaciones,UDNumOficio";
@@ -348,17 +404,19 @@
 				
 				$data['docentes'][$u]['plazas'] = $this->usuariodatos_model->find_all(null, $select);
 
-				$selects = "ULClave, ULNivel_estudio, ULLicenciatura, Licenciatura, ULCedulaProf, ULTitulado";
+				$selects = "ULClave, ULNivel_estudio, ULLicenciatura, LGradoEstudio, Licenciatura, ULCedulaProf, ULTitulado";
 				$this->db->join('nolicenciaturas','IdLicenciatura = ULLicenciatura','left');
 				$this->db->where('ULUsuario',$listUser['UNCI_usuario']);
 				$this->db->where('ULPlantel',$listUser['UDPlantel']);
 
 				$data['docentes'][$u]['estudios'] = $this->usuariolic_model->find_all(null, $selects);
 
-				$selectMat = "idPlantilla, idPUDatos, pidLicenciatura, pperiodo, psemestre, pidMateria, materia, hsm, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras";
+				$selectMat = "idPlanDetalle, idPlantilla, idPUDatos, pidLicenciatura, pperiodo, psemestre, pidMateria, materia, hsm, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras";
 				$this->db->join('nomaterias','id_materia = pidMateria','left');
 				$this->db->where('idPUsuario',$listUser['UNCI_usuario']);
 				$this->db->where('idPPlantel',$listUser['UDPlantel']);
+				$this->db->where('idPlantilla',$data['plantilla']['PClave']);
+				$this->db->where('pactivo','1');
 				$this->db->order_by('idPUDatos','ASC');
 				$this->db->order_by('psemestre','ASC');
 
@@ -373,87 +431,92 @@
 
 			}
 			
-			//echo json_encode($data['docentes']);
-
+			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
 			$this->load->view('plantilla/Ver_plantilla_view', $data);
 		}
 
 		public function revisarPlantilla () {
 			$data = post_to_array('_skip');
+			
+			$datos = array(
+				'PEstatus' => 'Revision'
+			);
+			$this->plantilla_model->update($data['idPlantilla'], $datos);
 
-			if(empty($data['opcion'])) {
-				set_mensaje("Por favor seleccionar para mandar a Revisión.");
-				muestra_mensaje();
-			} else {
-				
-				foreach ($data['opcion'] as $x => $listIds) {
-					$updatos = array (
-						'UDValidado' => '3'
-					);
+			foreach ($data['UDClave'] as $x => $listIds) {
+				/*$updatos = array (
+					'UDValidado' => '3'
+				);
 
-					//Cambiar estatus en Datos del Usuario a 3 Revisión
-					$this->usuariodatos_model->update($listIds, $updatos);
-					$pldatos = array (
-						'pestatus' => '2',
-						'pusuario_envio' => get_session('UNCI_usuario'),
-						'pfecha_envio' => date('Y-m-d H:i:s')
-					);
-					//Cambiar estatus en plantilla Final a 2 Revisión
-					$this->db->set($pldatos);
-					$this->db->where('idPUDatos', $listIds);
-					$this->db->update('noplantillafinal'); 
-				}
-	
-				set_mensaje("Los Plantilla se envio correctamente a Revisión.",'success::');
-				muestra_mensaje();
-				echo "::OK";
-				echo "::".$data['idPlantel'];
+				/Cambiar estatus en Datos del Usuario a 3 Revisión
+				$this->usuariodatos_model->update($listIds, $updatos);*/
+				$pldatos = array (
+					'pestatus' => 'Revision',
+					'pusuario_envio' => get_session('UNCI_usuario'),
+					'pfecha_envio' => date('Y-m-d H:i:s')
+				);
+				//Cambiar estatus en plantilla Final a 2 Revisión
+				$this->db->set($pldatos);
+				$this->db->where('idPUDatos', $listIds);
+				$this->db->where('idPlantilla', $data['idPlantilla']);
+				$this->db->update('noplantilladetalle');
 			}
+
+			set_mensaje("Los Plantilla se envio correctamente a Revisión.",'success::');
+			muestra_mensaje();
+			echo "::OK";
+			echo "::".$data['idPlantilla'];			
 			
 		}
 
 		function enviarCorrecciones_skip() {
 			$data = post_to_array('_skip');
 			
-			$observaciones = array();
-			foreach ($data['pObservaciones'] as $valorObs){
-				if($valorObs != null && !empty($valorObs)){
-					array_push($observaciones, $valorObs);
+			foreach ($data['idPlanDetalle'] as $x => $ids) {
+				if (nvl($data[$ids]) != '' ) {
+					$pldatos = array (
+						'idBPlantilla' => $data['idPlantilla'], //Validado
+						'idBPlanDetalle' =>  $ids,
+						'pbObservaciones' =>$data[$ids],
+						'pbusuario' => get_session('UNCI_usuario'),
+						'pbfecha' => date('Y-m-d H:i:s')
+
+					);
+
+					$this->plantillabitacora_model->insert($pldatos);
+					
+					$this->db->where('idPlanDetalle',$ids);
+					$idUDatos = $this->generarplantilla_model->find();
+					/*$updatos = array (
+						'UDValidado' => '4'
+					);
+					//Cambiar estatus en Datos del Usuario a 4 Correccion
+					$this->usuariodatos_model->update($idUDatos['idPUDatos'], $updatos);*/
 				}
-			}
 
-			foreach ($data['idUDClave'] as $x => $ids) {
-				$udobser = array (
-					'UDValidado' => '4',
-					'UDObservaciones_revision' => $observaciones[$x],
-					'UDUsuario_observaciones' => get_session('UNCI_usuario'),
-					'UDFecha_observaciones' => date('Y-m-d H:i:s')
-				);
-
-				$this->usuariodatos_model->update($ids, $udobser);
-				
-				$pldatos = array (
-					'pestatus' => '3',
+				$datos = array (
+					'pestatus' => 'Correción',
 					'pusuario_revision' => get_session('UNCI_usuario'),
 					'pfecha_revision' => date('Y-m-d H:i:s')
 				);
 
-				//Cambiar estatus en plantilla Final a 3 Revisado, habilitar correciones
-				$this->db->set($pldatos);
-				$this->db->where('idPUDatos', $ids);
-				$this->db->update('noplantillafinal'); 
+				//Cambiar estatus en plantilla Detalle a Revisado, habilitar correciones
+				$this->db->set($datos);
+				$this->db->where('idPlantilla', $ids);
+				$this->db->update('noplantilladetalle');
 				
-			}
 
+			}
+			
 			set_mensaje("Las Observaciones se enviaron correctamente al Plantel.",'success::');
 			muestra_mensaje();
 			echo "::OK";
-			echo "::".$data['idPlantel'];
+			echo "::".$data['idPlantilla'];
 					
 			
 		}
 
-		public function exportarExcel() {
+		public function exportarExcel_skip() {
 			$this->load->view('plantilla/ExportarExcel');
 		}
     }

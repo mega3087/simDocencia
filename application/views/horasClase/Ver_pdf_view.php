@@ -1,5 +1,5 @@
 
-<?php $Horas1_2 = 31; $Horas3_4 = 35;   $Horas5 = 30;   $Horas6 = 34;  $totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0; ?>
+<?php $totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0; ?>
 <h2 class="text-center" style="color: #333;">NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
 <div class="row" >
     <table style="width:100%; font-size: 11px;">
@@ -13,9 +13,9 @@
             <?php if ($list['GRSemestre'] == 1 || $list['GRSemestre'] == 2) { ?>
             <tr>
                 <th height="30px"><?= $list['GRSemestre']; ?> ° SEMESTRE</th>
-                <th colspan="2" class="text-center" height="30px"><?= $Horas1_2; ?></th>
+                <th colspan="2" class="text-center" height="30px"><?= $list['thghsm']; ?></th>
                 <th class="text-center" height="30px"><?= $list['noGrupos']; ?></th>
-                <th colspan="2" class="text-center" height="30px"><?php $totalPri = $Horas1_2 * $list['noGrupos']; echo $totalPri;?></th>
+                <th colspan="2" class="text-center" height="30px"><?php $totalPri = $list['thghsm'] * $list['noGrupos']; echo $totalPri;?></th>
             </tr>
             <?php } elseif ($list['GRSemestre'] == 3  || $list['GRSemestre'] == 4) { ?>
             <tr>
@@ -28,7 +28,7 @@
                     </table>
                 </td>
 
-                <th class="text-center"><?= $Horas3_4; ?></th>
+                <th class="text-center"><?= $list['thghsm']; ?></th>
 
                 <td>
                     <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
@@ -44,7 +44,7 @@
                     <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
-                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas3_4; ?></td></tr>
+                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $list['thghsm']; ?></td></tr>
                         <?php } ?>    
                     <?php } ?>
                     </table>
@@ -54,7 +54,7 @@
                 <th colspan="3" class="text-center" height="30px">TOTAL DE GRUPOS: </th>
                 <th class="text-center" style="background: #B9B9B9; " height="30px"> <?= $list['noGrupos'] ?> </th>
                 <th class="text-center" style="background: #B9B9B9; " height="30px"> TOTAL DEL HORAS: </th>
-                <th class="text-center" style="background: #B9B9B9; " height="30px"> <?php $totalTer = $list['noGrupos'] * $Horas3_4; echo $totalTer; ?> </th>
+                <th class="text-center" style="background: #B9B9B9; " height="30px"> <?php $totalTer = $list['noGrupos'] * $list['thghsm']; echo $totalTer; ?> </th>
             </tr>
             <?php } elseif ($list['GRSemestre'] == 5 ) { ?>
             <tr>
@@ -66,7 +66,7 @@
                         <?php endforeach; ?>                            
                     </table>
                 </td>
-                <th class="text-center"><?= $Horas5; ?></th>
+                <th class="text-center"><?= $list['thghsm']; ?></th>
 
                 <td>
                     <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
@@ -82,7 +82,7 @@
                     <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
-                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas5; ?></td></tr>
+                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $list['thghsm']; ?></td></tr>
                         <?php } ?>    
                     <?php } ?>
                     </table>
@@ -92,7 +92,7 @@
                 <th colspan="3" class="text-center" height="30px">TOTAL DE GRUPOS: </th>
                 <th class="text-center" style="background: #B9B9B9; " height="30px"> <?= $list['noGrupos'] ?> </th>
                 <th class="text-center" style="background: #B9B9B9; " height="30px"> TOTAL DEL HORAS: </th>
-                <th class="text-center" style="background: #B9B9B9; " height="30px"> <?php $totalQui = $list['noGrupos'] * $Horas5; echo $totalQui; ?> </th>
+                <th class="text-center" style="background: #B9B9B9; " height="30px"> <?php $totalQui = $list['noGrupos'] * $list['thghsm']; echo $totalQui; ?> </th>
             </tr>
             <?php } elseif ($list['GRSemestre'] == 6 ) { ?>
             <tr>
@@ -104,7 +104,7 @@
                         <?php endforeach; ?>                            
                     </table>
                 </td>
-                <th class="text-center"><?= $Horas6; ?></th>
+                <th class="text-center"><?= $list['thghsm']; ?></th>
 
                 <td>
                     <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
@@ -120,7 +120,7 @@
                     <table style="width:100%; font-size: 11px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
-                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas6; ?></td></tr>
+                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $list['thghsm']; ?></td></tr>
                         <?php } ?>    
                     <?php } ?>
                     </table>
@@ -130,7 +130,7 @@
                 <th colspan="3" class="text-center" height="30px">TOTAL DE GRUPOS: </th>
                 <th class="text-center" style="background: #B9B9B9; " height="30px"> <?= $list['noGrupos'] ?> </th>
                 <th class="text-center" style="background: #B9B9B9; " height="30px"> TOTAL DEL HORAS: </th>
-                <th class="text-center" style="background: #B9B9B9; " height="30px"> <?php $totalSex = $list['noGrupos'] * $Horas6; echo $totalSex; ?> </th>
+                <th class="text-center" style="background: #B9B9B9; " height="30px"> <?php $totalSex = $list['noGrupos'] * $list['thghsm']; echo $totalSex; ?> </th>
             </tr>
             <?php } ?>
         <?php } ?> 

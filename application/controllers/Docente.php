@@ -20,7 +20,6 @@ class Docente extends CI_Controller {
         }
 
         //$planteles =  get_session('UPlanteles');
-
         $select = 'CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector';
         if (get_session('URol') == '15') {
             $this->db->where_in('CPLClave',get_session('UPlanteles'),false);
@@ -73,6 +72,7 @@ class Docente extends CI_Controller {
             $selectNomb = 'UDTipo_Nombramiento, UDTipo_materia, TPNombre';
             $this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
             $this->db->where('UDUsuario', $doc['UNCI_usuario']);
+            $this->db->where('UDPlantel', $idPlantel);
             $this->db->where('UDActivo', '1');
             $this->db->order_by('UDTipo_Nombramiento', 'ASC');
             $data['docentes'][$d]['nombramientos'] = $this->usuariodatos_model->find_all(null, $selectNomb);
@@ -245,12 +245,14 @@ class Docente extends CI_Controller {
         $this->db->join('noctipopersonal',' UDTipo_Nombramiento = TPClave','left');
 
         $this->db->where('UDUsuario',$idUsuario);
-        $this->db->where('UDPlantel',$idPlantel);
+        $this->db->where_in('UDPlantel',$idPlantel);
         $this->db->where('UDActivo','1');
+        $this->db->order_by('UDTipo_Nombramiento','ASC');
+
         $data['data'] = $this->usuariodatos_model->find_all();
 
         $data['contar'] = count($data['data']);
-        
+
         echo $data['data'][0]['UDTipo_Nombramiento']."::";
 
         $this->load->view('docentes/Mostrar_plazas', $data);

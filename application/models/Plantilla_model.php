@@ -21,7 +21,9 @@
 		function plantilla_actual($idPlantel = null){
 			//var
 			$periodo = periodo();
-							
+			
+			if(!$idPlantel) return false;
+			
 			$where = array(
 				"PPeriodo" => $periodo['PEPeriodo'],
 				"PPlantel" => $idPlantel

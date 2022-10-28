@@ -1,10 +1,4 @@
-<?php 
-$totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0;
-if($plantel[0]['CPLTipo'] == '35') {
-    $Horas1_2 = 31; $Horas3_4 = 35;   $Horas5 = 30;   $Horas6 = 34;
-} else {
-    $Horas1_2 = 26; $Horas3_4 = 30;   $Horas5 = 25;   $Horas6 = 29;
-}  ?>
+<?php $totalPri = 0; $totalTer = 0; $totalQui = 0; $totalSex = 0; $totalGrupos=0; ?>
 <br>
 <h2 class="text-center">NÚMERO DE HORAS CLASE ASIGNADAS POR PLANTEL</h2>
 <h3 class="text-center">SEMESTRE 20<?=substr($periodos,0,2)?> <?=substr($periodos,3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'?></h3>
@@ -21,9 +15,9 @@ if($plantel[0]['CPLTipo'] == '35') {
             <?php if ($list['GRSemestre'] == 1 || $list['GRSemestre'] == 2) { ?>
             <tr>
                 <th><?= $list['GRSemestre']; ?> ° SEMESTRE</th>
-                <td colspan="2" class="text-center"><?= $Horas1_2; ?></td>
+                <td colspan="2" class="text-center"><?= $list['thghsm']; ?></td>
                 <td class="text-center"><?= $list['noGrupos']; ?></td>
-                <td colspan="2" class="text-center"><?php $totalPri = $Horas1_2 * $list['noGrupos']; echo $totalPri;?></td>
+                <td colspan="2" class="text-center"><?php $totalPri = $list['thghsm'] * $list['noGrupos']; echo $totalPri;?></td>
             </tr>
             <?php } elseif ($list['GRSemestre'] == 3  || $list['GRSemestre'] == 4) { ?>
             <tr>
@@ -36,7 +30,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                     </table>
                 </td>
 
-                <th class="text-center"><?= $Horas3_4; ?></th>
+                <th class="text-center"><?= $list['thghsm']; ?></th>
 
                 <td>
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
@@ -52,7 +46,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
-                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas3_4; ?></td></tr>
+                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $list['thghsm']; ?></td></tr>
                         <?php } ?>    
                     <?php } ?>
                     </table>
@@ -62,19 +56,19 @@ if($plantel[0]['CPLTipo'] == '35') {
                 <th colspan="3" class="text-center">TOTAL DE GRUPOS: </th>
                 <th class="text-center"> <?= $list['noGrupos'] ?> </th>
                 <th class="text-center"> TOTAL DEL HORAS: </th>
-                <th class="text-center"> <?php $totalTer = $list['noGrupos'] * $Horas3_4; echo $totalTer; ?> </th>
+                <th class="text-center"> <?php $totalTer = $list['noGrupos'] * $list['thghsm']; echo $totalTer; ?> </th>
             </tr>
             <?php } elseif ($list['GRSemestre'] == 5 ) { ?>
             <tr>
                 <th><?= $list['GRSemestre']; ?> ° SEMESTRE</th>
-                <td  class="text-left">
+                <td  class="text-center">
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                         <?php foreach ($GRPeriodo as $key => $listCap): ?>
                             <tr><td><?= $listCap['CCANombre']; ?></td></tr>
                         <?php endforeach; ?>                            
                     </table>
                 </td>
-                <th class="text-center"><?= $Horas5; ?></th>
+                <th class="text-center"><?= $list['thghsm']; ?></th>
 
                 <td>
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
@@ -90,7 +84,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
-                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas5; ?></td></tr>
+                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $list['thghsm']; ?></td></tr>
                         <?php } ?>    
                     <?php } ?>
                     </table>
@@ -100,7 +94,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                 <th colspan="3" class="text-center">TOTAL DE GRUPOS: </th>
                 <th class="text-center"> <?= $list['noGrupos'] ?> </th>
                 <th class="text-center"> TOTAL DEL HORAS: </th>
-                <th class="text-center"> <?php $totalQui = $list['noGrupos'] * $Horas5; echo $totalQui; ?> </th>
+                <th class="text-center"> <?php $totalQui = $list['noGrupos'] * $list['thghsm']; echo $totalQui; ?> </th>
             </tr>
             <?php } elseif ($list['GRSemestre'] == 6 ) { ?>
             <tr>
@@ -112,7 +106,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                         <?php endforeach; ?>                            
                     </table>
                 </td>
-                <th class="text-center"><?= $Horas6; ?></th>
+                <th class="text-center"><?= $list['thghsm']; ?></th>
 
                 <td>
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
@@ -128,7 +122,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                     <table style="width:100%; font-size: 13px;" class="no-border-bottom no-border-top no-border-left no-border-right">
                     <?php for ($b=0; $b < count($list['grupos']); $b++) { ?>
                         <?php for ($z=0; $z < count($list['grupos'][$b]); $z++) { ?>
-                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $Horas6; ?></td></tr>
+                        <tr><td class="text-center"><?= $list['grupos'][$b][$z]['noGrup'] * $list['thghsm']; ?></td></tr>
                         <?php } ?>    
                     <?php } ?>
                     </table>
@@ -138,7 +132,7 @@ if($plantel[0]['CPLTipo'] == '35') {
                 <th colspan="3" class="text-center">TOTAL DE GRUPOS: </th>
                 <th class="text-center"> <?= $list['noGrupos'] ?> </th>
                 <th class="text-center"> TOTAL DEL HORAS: </th>
-                <th class="text-center"> <?php $totalSex = $list['noGrupos'] * $Horas6; echo $totalSex; ?> </th>
+                <th class="text-center"> <?php $totalSex = $list['noGrupos'] * $list['thghsm']; echo $totalSex; ?> </th>
             </tr>
             <?php } ?>
         <?php } ?>  

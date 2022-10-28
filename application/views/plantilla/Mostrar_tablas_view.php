@@ -23,22 +23,33 @@
                 <td class="text-left"><?php echo $list['UCURP']; ?></td>
                 <td class="text-left"><?php echo number_format($list['HorasAsig'],0)." de ".number_format($list['HorasTot'],0); ?> ( <?php echo $porcentaje = number_format($list['HorasAsig']/$list['HorasTot']*100,0); ?>% )</td>
                 <td class="text-center">
-                <?php if ($porcentaje < 100 && $list['UDValidado'] < '3' && is_permitido(null,'generarplantilla','save')) { ?>
+                <?php if ($porcentaje < '100' && $list['PEstatus'] == 'Pendiente' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
                     <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Asignar Materias</button>
-                <?php } if ($porcentaje < 100 && is_permitido(null,'generarplantilla','validar')) { ?>
-                    <b class="text-success"><i class="fa fa-clock-o"></i> Asignando Materias</b>
-                <?php } if ($porcentaje==100 and $list['UDValidado'] < '3') { ?>
-                    <b class="text-info"><i class="fa fa-check"></i> Materias Asignadas</b>
-                <?php } if ($list['UDValidado'] == '3') { ?>
-                    <b class="text-warning"><i class="fa fa-clock-o"></i> Pendiente por Revisar</b>
-                <?php } elseif ($list['UDValidado'] == '4') { ?>
-                    <b class="text-danger"><i class="fa fa-times"></i> Corregir</b>
-                    <!--<button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
-                    <i class="fa fa-pencil"></i> Editar</button>-->
-                <?php } elseif ($list['UDValidado'] == '5') { ?>
-                    <b class="text-success"><i class="fa fa-check"></i> Aprobado</b>
+                <?php } ?> 
+                <?php if ($list['PEstatusDetalle'] == 'Revisión' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                    <b class="text-warning"><i class="fa fa-clock-o"></i> En Revisión</b>
                 <?php } ?>
+                <?php if ($porcentaje == '100' && $list['PEstatusDetalle'] == 'Pendiente' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                    <button class="btn btn-success btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                    <i class="fa fa-pencil"></i> Horas Asignadas</button>
+                <?php } ?>
+                <?php if ($list['PEstatusDetalle'] == 'Correción'  && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                    <button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                    <i class="fa fa-pencil"></i> Corregir</button>
+                <?php } ?>
+
+                <?php if ($porcentaje < '100' && $list['PEstatusDetalle'] == 'Revisión' &&  $list['PEstatus'] == 'Pendiente' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
+                    <b class="text-info"><i class="fa fa-clock-o"></i> Asignando Materias</b>
+                <?php } ?> 
+                <?php if ($list['PEstatus'] == 'Revisión' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
+                    <b class="text-warning"><i class="fa fa-clock-o"></i> En Revisión</b>
+                <?php } ?>
+                <?php if ($list['PEstatus'] == 'Revisión' && $list['PEstatusDetalle'] == 'Revisión' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
+                    <b class="text-warning"><i class="fa fa-clock-o"></i> Correciones Enviadas</b>
+                <?php } ?>
+                
+                
                 </td>
             </tr>
     <?php $i++; } ?>
@@ -73,27 +84,22 @@
 
 	});
 
-    function asignar(idUser, UDTipo_Docente){ 
+    function asignar(idUser, UDTipo_Docente, idPlanDetalle = null){ 
         var plantel = document.getElementById('plantelId').value;
         document.getElementById("idUsuario").value = idUser;
+       // $("#idUsuario").val(idUser);
         var cicloEsc = document.getElementById('cicloEsc').value;
-        limpiarFormulario();
-        
-        if (cicloEsc == 2) {
-            $(".mostrarMatPrimero").show();
-            $(".mostrarMatTercero").show();
-            $(".mostrarMatQuinto").show();
-        } else {
-            $(".mostrarMatSegundo").show();
-            $(".mostrarMatCuarto").show();
-            $(".mostrarMatSexto").show();
+
+        datosPlantilla(idUser, UDTipo_Docente);
+
+        if (idPlanDetalle == null) {
+            document.getElementById("idPlanDetalle").value = '';
         }
-        datosPlantilla(idUser);
         
         $.ajax({
             type: "POST",
             url: "<?php echo base_url("generarplantilla/asignarMaterias_skip"); ?>",
-            data: {idUser : idUser, plantel : plantel, UDTipo_Docente : UDTipo_Docente},
+            data: {idUser : idUser, plantel : plantel, UDTipo_Docente : UDTipo_Docente, idPlanDetalle : idPlanDetalle},
             dataType: "html",
             beforeSend: function(){
                 //carga spinner

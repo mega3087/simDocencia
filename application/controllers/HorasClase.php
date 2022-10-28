@@ -17,9 +17,21 @@ class HorasClase extends CI_Controller {
         $Periodo = $this->input->post('periodo');
 
         $data['periodos'] = $Periodo;
-        $selectPlantel = ('CPLClave, CPLTipo');
+        
         $this->db->where('CPLClave',$idPlantel);
-        $data['plantel'] = $this->plantel_model->find_all(null, $selectPlantel);
+        $data['plantel'] = $this->plantel_model->find();
+        
+        if ($data['plantel']['CPLTipo'] == '35') {
+            $GRPlanEst = '1';
+        } elseif ($data['plantel']['CPLTipo'] == '36') {
+            $GRPlanEst = '2';
+        }
+
+        if($data['plantel']['CPLCapDif'] == 'Y') {
+            $capdif = 'SUM(hsmDif)';
+        } else {
+            $capdif = 'SUM(hsm)';
+        }
         
         $selectCap = 'GRCPlantel, CCANombre, PCCapacitacion';
         $this->db->join('noplancap','GRCPlantel = PCPlantel');
@@ -30,12 +42,12 @@ class HorasClase extends CI_Controller {
 
         $data['GRPeriodo'] = $this->grupos_model->find_all(null, $selectCap);
 
-        $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
-        $this->db->where('GRCPlantel', $idPlantel);
-        $this->db->where('GRPeriodo', $Periodo);
-        $this->db->where('GRStatus','1');
-        $this->db->group_by('GRSemestre');
-        $data['periodo'] = $this->grupos_model->find_all(null, $select);
+        $this->db->select("*,(SELECT $capdif FROM nomaterias WHERE plan_estudio = $GRPlanEst AND semmat = GRSemestre AND (tipo = CCAAbrev  OR tipo ='BAS') )AS thghsm");
+        $this->db->from("(SELECT GRSemestre,GRCClave, COUNT(*) AS noGrupos FROM nogrupos WHERE GRCPlantel = $idPlantel AND GRPeriodo = '$Periodo' AND GRStatus = 1 GROUP BY GRSemestre) AS tb1");
+        $this->db->join("(SELECT CCAClave, CCAAbrev FROM noplancap INNER JOIN noccapacitacion ON CCAClave = PCCapacitacion WHERE PCPlantel = $idPlantel) AS tb2", "CCAClave = GRCClave", "LEFT");
+
+        $query = $this->db->get();
+        $data['periodo'] = $query->result_array();
 
         foreach ($data['periodo'] as $key => $listPer) {
             foreach ($data['GRPeriodo'] as $y => $cap) {
@@ -57,10 +69,15 @@ class HorasClase extends CI_Controller {
         $idPlantel = base64_decode($idPlantel);
         $Periodo = base64_decode($periodo);
         //$idPlantel = $this->encrypt->decode($idPlantel);
+        
+        $this->db->where('CPLClave',$idPlantel);
+        $data['plantel'] = $this->plantel_model->find();
 
-        $selectNom = "CPLClave, CPLNombre";
-        $this->db->where('CPLClave', $idPlantel);
-        $data['plantel'] = $this->plantel_model->find_all(null, $selectNom);
+        if ($data['plantel']['CPLTipo'] == '35') {
+            $GRPlanEst = '1';
+        } elseif ($data['plantel']['CPLTipo'] == '36') {
+            $GRPlanEst = '2';
+        }
         
         $selectCap = 'GRCPlantel, CCANombre, PCCapacitacion';
         $this->db->join('noplancap','GRCPlantel = PCPlantel');
@@ -71,12 +88,12 @@ class HorasClase extends CI_Controller {
 
         $data['GRPeriodo'] = $this->grupos_model->find_all(null, $selectCap);
 
-        $select = 'COUNT(GRSemestre) noGrupos, GRSemestre';
-        $this->db->where('GRCPlantel', $idPlantel);
-        $this->db->where('GRPeriodo', $Periodo);
-        $this->db->where('GRStatus','1');
-        $this->db->group_by('GRSemestre');
-        $data['periodo'] = $this->grupos_model->find_all(null, $select);
+        $this->db->select("*,(SELECT SUM(hsm) FROM nomaterias WHERE plan_estudio = $GRPlanEst AND semmat = GRSemestre AND (tipo = CCAAbrev  OR tipo ='BAS') )AS thghsm");
+        $this->db->from("(SELECT GRSemestre,GRCClave, COUNT(*) AS noGrupos FROM nogrupos WHERE GRCPlantel = $idPlantel AND GRPeriodo = '$Periodo' AND GRStatus = 1 GROUP BY GRSemestre) AS tb1");
+        $this->db->join("(SELECT CCAClave, CCAAbrev FROM noplancap INNER JOIN noccapacitacion ON CCAClave = PCCapacitacion WHERE PCPlantel = $idPlantel) AS tb2", "CCAClave = GRCClave", "LEFT");
+
+        $query = $this->db->get();
+        $data['periodo'] = $query->result_array();
 
         foreach ($data['periodo'] as $key => $listPer) {
             foreach ($data['GRPeriodo'] as $y => $cap) {

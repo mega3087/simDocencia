@@ -255,8 +255,8 @@
                                                         <input type="number" id="UDHorasApoyo" name="UDHorasApoyo" class="form-control UDHorasApoyo" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                     <div class="col-lg-4">
-                                                        <label>Horas CB-I / CB-II / CB-III: <em>*</em></label>
-                                                        <input type="number" class="form-control" id="UDHoras_CB" name="UDHoras_CB" value="0" minlength="1" maxlength="2">
+                                                        <label>Horas CB: <em>*</em></label>
+                                                        <input type="number" class="form-control UDHoras_CB" id="UDHoras_CB" name="UDHoras_CB" value="0" minlength="1" maxlength="2">
                                                     </div>
                                                     <!--<div class="col-lg-3">
                                                         <label>Horas Adicionales / Provicionales: <em>*</em></label>
@@ -879,19 +879,29 @@
                     $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
                     $("#UDHoras_CB").val('0');
                 } else {
-                    $(".UDHorasApoyo").removeClass("disabled").attr("disabled", false);
+                    $(".UDHorasApoyo").removeClass("disabled").attr("disabled", true);
                     $("#UDHorasApoyo").val('0');
                 }
                 if (idPlaza == '11' || idPlaza == '12' || idPlaza == '13' || idPlaza == '14' || idPlaza == '15') {
                     $(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
                     $("#UDHorasGrupo").val('0');
-                    $(".UDHorasApoyo").addClass("disabled").attr("disabled", false);
+                    $(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
                     $("#UDHorasApoyo").val('0');
+                    $(".UDHoras_CB").removeClass("disabled").attr("disabled", false);
                     $("#UDHoras_CB").val('0');
 
-                } else {
+                    $("#UDHorasGrupo").change(function(){
+                        if($(this).val() != ''){
+                            $(".UDHoras_CB").addClass("disabled").attr("disabled", true);
+                        }
+                    });
 
-                }
+                    $("#UDHoras_CB").change(function(){
+                        if($(this).val() != ''){
+                            $(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+                        }
+                    });
+                } 
                 $("#UDTipo_materia").val(data[3]);
 
             }

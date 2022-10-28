@@ -37,7 +37,7 @@
 
 	</head>
 	
-	<body class='pace-done -mini-navbar'> 
+	<body class='pace-done mini-navbar'> 
 		<div id='wrapper'>
 			<?php $this->load->view('main_navegation_view'); ?>
 			<div id='page-wrapper' class='gray-bg'>
