@@ -7,7 +7,7 @@
 				<th>Plaza / No Horas</th>
 				<th>Tipo Materias</th>
 				<?php //if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2' || nvl($data[0]['UDPermanente']) == 'N') { ?>
-				<?php if( nvl($data[0]['UDPermanente']) == 'N') { ?>
+				<?php if( is_permitido(null,'generarplantilla','save')) { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -51,15 +51,16 @@
 					} ?>
 				</td>
 				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
-				<?php if( nvl($data[0]['UDPermanente']) == 'N' && is_permitido(null,'generarplantilla','save')) { ?>
+				<?php //if( nvl($data[0]['UDPermanente']) == 'N' && is_permitido(null,'generarplantilla','save')) { 
+					if( is_permitido(null,'generarplantilla','save')) { ?>
 				<td>
-                    <?php echo nvl($borrar); ?>
+				<button type="button" class="btn btn-warning btn-sm" onclick="editarPlaza('<?= $list['UDTipo_Nombramiento'] ?>', '<?= $list['UDPlaza'] ?>','<?= $list['UDFecha_ingreso'] ?>','<?= $list['UDFecha_inicio'] ?>','<?= $list['UDFecha_final'] ?>','<?= $list['UDObservaciones'] ?>','<?= $list['UDNombramiento_file'] ?>','<?= $list['UDHoras_grupo'] ?>','<?= $list['UDHoras_apoyo'] ?>','<?= $list['UDHoras_CB'] ?>','<?= $list['UDTipo_materia'] ?>','<?= $list['UDClave']?>')"><i class="fa fa-pencil"></i> Editar </button>
+                    <?php // echo nvl($borrar); ?>
 				</td>
 				<?php } ?>
 			</tr>
 		<?php } 
 		} else { ?>
-		<input type="hidden" name="tipoNombramiento" id="tipoNombramiento" value="">
 		<tr><td class="text-center" colspan="6">Sin Datos</td></tr>
 		<?php } ?>
 		</tbody>
@@ -68,6 +69,7 @@
 
 <script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
 <script type="text/javascript">
+
 	$(".quitarPlaza").click(function(e) {
 		UDClave = $(this).val();
 		var idUsuario = document.getElementById("UNCI_usuario").value;
@@ -109,4 +111,119 @@
 		    }
 		});
 	});
+
+
+	function editarPlaza(UDTipo_Nombramiento, UDPlaza, UDFecha_ingreso, UDFecha_inicio, UDFecha_final, UDObservaciones, UDNombramiento_file, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDTipo_materia, UDClave){
+		document.getElementById("UDTipo_Nombramiento").value = UDTipo_Nombramiento;
+		document.getElementById("UDPlaza").value = UDPlaza;
+		document.getElementById("UDFecha_ingreso").value = UDFecha_ingreso;
+		document.getElementById("UDFecha_inicio").value = UDFecha_inicio;
+		document.getElementById("UDFecha_final").value = UDFecha_final;
+		document.getElementById("UDObservaciones").value = UDObservaciones;
+		document.getElementById("UDNombramiento_file").value = UDNombramiento_file;
+		document.getElementById("UDHorasGrupo").value = UDHoras_grupo;
+		document.getElementById("UDHorasApoyo").value = UDHoras_apoyo;
+		document.getElementById("UDHoras_CB").value = UDHoras_CB;
+		document.getElementById("UDTipo_materia").value = UDTipo_materia;
+		document.getElementById("UDClave").value = UDClave;
+
+		if (UDTipo_Nombramiento == 3) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();            
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
+            $('.mostrarDocNom').show();
+            
+        } else if (UDTipo_Nombramiento == 4) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
+            $('.mostrarDocNom').show();
+            
+        } else if (UDTipo_Nombramiento == 5) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
+            $('.mostrarDocNom').show();
+            
+        } else if (UDTipo_Nombramiento == 6) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').show();
+            $('.mostrarDocNom').show();
+            
+        } else if (UDTipo_Nombramiento == 7) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').show();
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').hide();
+            $('.mostrarFechaFinal').hide();
+            $('.mostrarDocNom').show();
+            
+        } else if (UDTipo_Nombramiento == 8) {
+            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng2014').hide();
+            $('.mostrarOficio').show();
+            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaFinal').hide();
+            $('.mostrarDocNom').show();
+            
+        } else {
+            $('.mostrarFechaIng').show();
+            $('.mostrarFechaIng2014').hide();
+            $('.mostrarOficio').hide();
+            $('.mostrarFechaInicio').hide();
+            $('.mostrarFechaFinal').hide();
+            $('.mostrarDocNom').hide();
+            
+        }
+		if(UDHorasGrupo != ''){
+			$(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+			$("#UDHoras_CB").val('0');
+		} else {
+			$(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
+			$("#UDHorasGrupo").val('0');
+		}
+
+		if(UDHorasApoyo != ''){
+			$(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+			$("#UDHoras_CB").val('0');
+		} else {
+			$(".UDHorasApoyo").removeClass("disabled").attr("disabled", true);
+			$("#UDHorasApoyo").val('0');
+		}
+		if (idPlaza == '11' || idPlaza == '12' || idPlaza == '13' || idPlaza == '14' || idPlaza == '15') {
+			$(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
+			$("#UDHorasGrupo").val('0');
+			$(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
+			$("#UDHorasApoyo").val('0');
+			$(".UDHoras_CB").removeClass("disabled").attr("disabled", false);
+			$("#UDHoras_CB").val('0');
+
+			$("#UDHorasGrupo").change(function(){
+				if($(this).val() != ''){
+					$(".UDHoras_CB").addClass("disabled").attr("disabled", true);
+				}
+				if ($(this).val() == 0) {
+					$(".UDHoras_CB").removeClass("disabled").attr("disabled", false);
+				}
+			});
+
+			$("#UDHoras_CB").change(function(){
+				if($(this).val() != ''){
+					$(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+				}
+				if($(this).val() == 0){
+					$(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
+				}
+			});
+		} 
+	}
 </script>

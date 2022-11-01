@@ -195,7 +195,7 @@
 														<div class="form-group">
 														<option value="">- Seleccionar Nombramiento -</option>
 														<?php foreach($tipoDocente as $key_t => $list_t){ ?>
-														<option class="<?php if($list_t['TPClave']>4)echo"nombTod"; ?>" value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
+														<option class="<?php if($list_t['TPClave']>4) echo"nombTod"; ?>" value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
 														<?php } ?>
 														</div>
                                                 </select>
@@ -222,7 +222,7 @@
                                                 <label>Fecha de Ingreso: <em>*</em></label>
                                                 <div class="input-group date">
                                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                    <input type="text" class="form-control fecha disabled" value="2014">
+                                                    <input type="text" class="form-control fecha">
                                                 </div>
                                             </div>
 
@@ -282,7 +282,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group mostrarObservaciones" style="display:none;">
+                                            <div class="form-group mostrarObservaciones">
                                                 <label>Observaciones: </label>
                                                 <div class="row">
                                                     <div class="col-lg-10">
@@ -308,15 +308,13 @@
                                                     <?php } ?>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+                                            </div>                                            
+                                                <input type="hidden" name="UDClave" id="UDClave" value="">
                                                 <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
-                                            <?php } ?>
-
                                             <div class="form-group col-lg-12">
                                                 <div class="loadingPlazas"></div>
                                                 <div id="errorPlazas"></div>
-                                                <div class="msgPlazas"></div>
+                                                <div class="msgPlazas"></div><br><br>
                                                 <div class="resultPlazas"></div>
                                             </div>
                                             
@@ -333,29 +331,20 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-lg-4">
-                                                <label>Titulado<em>*</em></label> <input id="Titulado" name="Titulado" type="radio" value="Titulado" checked> 
+                                                <label>Titulado<em>*</em></label> <input id="Titulado" name="Titulado" type="radio" value="Titulado"> 
                                                 </div>
                                                 <div class="col-lg-4">
-                                                <label>Pasante<em>*</em></label> <input id="Titulado" name="Titulado" type="radio" value="Pasante">
+                                                <label>Pasante<em>*</em></label> <input id="Pasante" name="Titulado" type="radio" value="Pasante">
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        <div class="form-group dosLic" style="display: none;">
+                                        <div class="form-group">
                                             <label>Nivel de Estudios: <em>*</em></label>
-                                            <select id="ULNivel_estudio" name="ULNivel_estudio" class="form-control MostrarCarreras" >
-                                                <option value="">-Seleccionar-</option>
-                                                    <option value="1">Licenciatura</option>
-                                                    <option value="2">Ingeniería</option>
-                                                    <option value="5">Perfil</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group TodasLic" style="display: none;">
-                                            <label>Nivel de Estudios: <em>*</em></label>
-                                            <select id="ULNivel_estudio" name="ULNivel_estudio" class="form-control MostrarCarreras" >
+                                            <select id="ULNivel_estudio" name="ULNivel_estudio" class="form-control" onchange="verEstudios(value);">
                                                 <option value="">-Seleccionar-</option>
                                                 <?php foreach ($estudios as $e => $listEst) { ?>
-                                                    <option value="<?= $listEst['id_gradoestudios'] ?>"><?= $listEst['grado_estudios'] ?></option>
+                                                    <option class="<?php if($listEst['id_gradoestudios'] == 3 || $listEst['id_gradoestudios'] == 4 || $listEst['id_gradoestudios'] == 6 || $listEst['id_gradoestudios'] == 7) { echo"estudTod"; }  ?>" value="<?=$listEst['id_gradoestudios'];?>"><?=$listEst['grado_estudios'];?></option>
                                                 <?php } ?> 
                                             </select>
                                         </div>
@@ -412,7 +401,8 @@
                                             </div>
                                             <br>
                                         </div>
-                                        <?php if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2') { ?>
+                                        <?php if( is_permitido(null,'generarplantilla','save')) { ?>
+                                            <input type="hidden" name="ULClave" id="ULClave" value="">
                                             <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
                                         <?php } ?>
 
@@ -472,29 +462,27 @@
 	});
 
 </script>
+<script>
+    function verEstudios(idEstudios) {
+        $.ajax({
+                type: "POST",
+                url: "<?php echo base_url("Docente/mostrarCarreras"); ?>",
+                data: {tipo : idEstudios},
+                dataType: "html",
+                beforeSend: function(){
+                    //carga spinner
+                    $(".loadingArchivo").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+                },
+                success: function(data){
+                    $(".resultCarrera").empty();
+                    $(".resultCarrera").append(data);  
+                    $(".loadingArchivo").html("");
+                }
+            });
+        }
+</script>
 <script type="text/javascript">
 	$(document).ready(function() {
-        //Mostrar las carreras correspondientes al nivel de estudios
-        $(document).on("change", ".MostrarCarreras", function () {
-        	var selectNivel = ($(this).val());
-            
-        	$.ajax({
-	            type: "POST",
-	            url: "<?php echo base_url("Docente/mostrarCarreras"); ?>",
-	            data: {tipo : selectNivel},
-	            dataType: "html",
-	            beforeSend: function(){
-	                //carga spinner
-	                $(".loadingArchivo").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-	            },
-	            success: function(data){
-	                $(".resultCarrera").empty();
-	                $(".resultCarrera").append(data);  
-	                $(".loadingArchivo").html("");
-	            }
-	        });
-		});
-
         //$(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
         //$(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
 
@@ -520,6 +508,8 @@
             formData.append("UDObservaciones", document.getElementById("UDObservaciones").value);
 
             formData.append("UDNombramiento_file", UDNombramiento_file.files[0]);
+
+            formData.append("UDClave", document.getElementById("UDClave").value);
             
             $.ajax({
                 type: "POST",
@@ -537,10 +527,10 @@
 	                    datosPlazas(data[2]);
 //                        $("#tipoNombramiento").val($data[3]);
 
+                        $("#UDTipo_Nombramiento").val('');
                         $("#UDFecha_ingreso").val('');
 						$("#UDPlaza").val('');
 						$("#UDTipo_materia").val('');
-						$("#v").val('');
                         $("#UDHorasGrupo").val('');
                         $("#UDHorasApoyo").val('');
                         $("#UDHoras_CB").val('');
@@ -550,6 +540,8 @@
                         $("#UDObservaciones").val('');
 
                         $("#UDNombramiento_file").val('');
+                        $("#UDClave").val('');
+                        
 	                    $(".loadingPlazas").html("");
 	                } else {
                         $("#errorPlazas").empty();
@@ -565,6 +557,7 @@
 		$(document).on("click", ".saveEstudios", function () {
                         
             let formData = new FormData(); 
+            formData.append("ULClave", document.getElementById("ULClave").value);
             formData.append("ULUsuario", document.getElementById("UNCI_usuario").value);
             formData.append("ULPlantel", document.getElementById("UPlantel").value);
             formData.append("ULNivel_estudio", document.getElementById("ULNivel_estudio").value);
@@ -588,9 +581,11 @@
 	                    $(".msgEstudios").empty();
 	                    $(".msgEstudios").append(data[0]);
 	                    datosEstudios(data[2]);
+                        $('#Titulado').prop('checked', false);
+                        $('#Pasante').prop('checked', false);
                         $('#ULNivel_estudio').val('').trigger('change');
                         $('#ULLicenciatura').val('').trigger('chosen:updated');
-                        $("#ULNivel_estudio").val("");
+                        //$("#ULNivel_estudio").val("");
                         
                         $("#ULCedulaProf").val("");
 
@@ -648,10 +643,10 @@
                     if(newIndex == '2'){
 						var idUsuario = document.getElementById("UNCI_usuario").value;
                         datosEstudios(idUsuario);
-                        var tiponombramiento = document.getElementById("tipoNombramiento").value;
+                        /*var tiponombramiento = document.getElementById("tipoNombramiento").value;
                         if (tiponombramiento == '1' ) {
                             $('#documento').hide();
-                        }
+                        }*/
 					}
 
                 }
@@ -727,10 +722,8 @@
 			}
 		});
 	}
-	
 
-	function datosPlazas(idUsuario){
-		
+    function datosPlazas(idUsuario){
 		$.ajax({
 			type: "POST",
 			url: "<?php echo base_url("Docente/mostrarPlazas_skip"); ?>",
@@ -771,14 +764,12 @@
             success: function(data){
                 var data = data.split("::");
                 if (data[0] == 0){
-                    $('.TodasLic').hide();            
-                    $('.dosLic').show();
+                    $('.estudTod').attr("disabled",true);
                     $(".resultEstudios").empty();
                     $(".resultEstudios").append(data[1]);  
                     $(".loading").html("");
                 } else {
-                    $('.dosLic').hide();            
-                    $('.TodasLic').show();
+                    $('.estudTod').attr("disabled",false);
                     $(".resultEstudios").empty();
                     $(".resultEstudios").append(data[1]);  
                     $(".loading").html("");
@@ -798,7 +789,7 @@
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').show();
+            
         } else if (idNombramiento == 4) {
             $('.mostrarFechaIng').hide();
             $('.mostrarFechaIng2014').hide();
@@ -806,7 +797,7 @@
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').show();
+            
         } else if (idNombramiento == 5) {
             $('.mostrarFechaIng').hide();
             $('.mostrarFechaIng2014').hide();
@@ -814,7 +805,7 @@
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').show();
+            
         } else if (idNombramiento == 6) {
             $('.mostrarFechaIng').hide();
             $('.mostrarFechaIng2014').hide();
@@ -822,7 +813,7 @@
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').show();
+            
         } else if (idNombramiento == 7) {
             $('.mostrarFechaIng').hide();
             $('.mostrarFechaIng2014').show();
@@ -830,7 +821,7 @@
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').show();
+            
         } else if (idNombramiento == 8) {
             $('.mostrarFechaIng').hide();
             $('.mostrarFechaIng2014').hide();
@@ -838,7 +829,7 @@
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
-            $('.mostrarObservaciones').show();
+            
         } else {
             $('.mostrarFechaIng').show();
             $('.mostrarFechaIng2014').hide();
@@ -846,7 +837,7 @@
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').hide();
-            $('.mostrarObservaciones').show();
+            
         }
 
     });
@@ -894,11 +885,17 @@
                         if($(this).val() != ''){
                             $(".UDHoras_CB").addClass("disabled").attr("disabled", true);
                         }
+                        if ($(this).val() == 0) {
+                            $(".UDHoras_CB").removeClass("disabled").attr("disabled", false);
+                        }
                     });
 
                     $("#UDHoras_CB").change(function(){
                         if($(this).val() != ''){
                             $(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
+                        }
+                        if($(this).val() == 0){
+                            $(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
                         }
                     });
                 } 

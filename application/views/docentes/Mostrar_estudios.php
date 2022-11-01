@@ -7,7 +7,7 @@
 				<th>Titulado</th>
 				<th>No. Cédula Profesional</th>
 				<th>Documento</th>
-				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($valido[0]['UDValidado']) == '' || nvl($valido[0]['UDValidado']) == '1' ) || nvl($valido[0]['UDValidado']) == '2') { ?>
+				<?php if( is_permitido(null,'generarplantilla','save')) { ?>
 				<th>Acción</th>
 				<?php } ?>
 			</tr>
@@ -30,12 +30,13 @@
 				<td><?php echo $list['grado_estudios']; ?></td>
 				<td><?php echo $list['Licenciatura']; ?></td>
 				<td><?php echo $list['ULTitulado']; ?></td>
-				<td><?php echo $list['ULCedulaProf']; ?></td>
+				<td><?php echo $list['ULCedulaProf']; ?></td>				
 				<td><?php echo nvl($UPTitulo_file); ?></td>
 				<!--<td><?php echo nvl($UPCedula_file); ?></td>-->
-				<?php if( is_permitido(null,'generarplantilla','save') && (nvl($valido[0]['UDValidado']) == '' || nvl($valido[0]['UDValidado']) == '1' ) || nvl($valido[0]['UDValidado']) == '2') { ?>
+				<?php if( is_permitido(null,'generarplantilla','save')) { ?>
 				<td>
-					<?php echo nvl($borrar); ?>
+				<button type="button" class="btn btn-warning btn-sm" onclick="editarEstudios('<?= $list['ULClave'] ?>','<?= $list['id_gradoestudios'] ?>','<?= $list['ULLicenciatura'] ?>','<?= $list['ULTitulado'] ?>','<?= $list['ULCedulaProf'] ?>')"><i class="fa fa-pencil"></i> Editar </button>
+					<?php //echo nvl($borrar); ?>
 				</td>
 				<?php } ?>
 			</tr>
@@ -90,4 +91,27 @@
 		    }
 		});
 	});
+
+	function editarEstudios(ULClave, id_gradoestudios, ULLicenciatura, ULTitulado, ULCedulaProf){
+		if (ULTitulado == 'Titulado') {			
+			$('#Titulado').prop('checked', true);
+		}
+		if (ULTitulado == 'Pasante'){
+			$('#Pasante').prop('checked', true);
+		}
+		
+		if (ULTitulado == 'Titulado') {			
+			$('#contentPasante').show();
+		} else {
+			$('#contentPasante').hide();
+		}
+		verEstudios(id_gradoestudios);
+		document.getElementById("ULClave").value = ULClave;
+		document.getElementById("ULNivel_estudio").value = id_gradoestudios;
+		document.getElementById("ULCedulaProf").value = ULCedulaProf;
+
+		$("#ULLicenciatura").val(ULLicenciatura.split(',') ).trigger("chosen:updated");
+		$("#ULLicenciatura").removeAttr( "disabled", true );
+		
+	}
 </script>

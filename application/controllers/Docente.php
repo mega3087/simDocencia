@@ -144,7 +144,7 @@ class Docente extends CI_Controller {
         $this->db->group_by('Licenciatura');
         $this->db->order_by('Licenciatura', 'ASC');
         $data['carreras'] = $this->licenciaturas_model->find_all();
-
+        
         $this->db->order_by('nomplaza','ASC');
         $data['plazas'] = $this->plazadocente_model->find_all();
 
@@ -158,12 +158,16 @@ class Docente extends CI_Controller {
 
     public function savePlazas() {
         $data = post_to_array('_skip');
-
-        $select = 'SUM(UDHoras_grupo + UDHoras_apoyo + UDHoras_CB) AS Total';
-        $this->db->where('UDUsuario',$data['UDUsuario']);
-        $this->db->where('UDPlantel',$data['UDPlantel']);
-        $this->db->where('UDActivo','1');
-        $totales = $this->usuariodatos_model->find_all(null, $select);
+        
+        if(nvl($data['UDClave']) != '') {
+            $totales = 0;    
+        } else {
+            $select = 'SUM(UDHoras_grupo + UDHoras_apoyo + UDHoras_CB) AS Total';
+            $this->db->where('UDUsuario',$data['UDUsuario']);
+            $this->db->where('UDPlantel',$data['UDPlantel']);
+            $this->db->where('UDActivo','1');
+            $totales = $this->usuariodatos_model->find_all(null, $select);
+        }
         
         if ($data['UDTipo_Nombramiento'] == '' || $data['UDPlaza'] == '' || $data['UDHoras_CB'] == '' ) {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
@@ -214,17 +218,45 @@ class Docente extends CI_Controller {
                                 $data['UDNombramiento_file'] = '';
                             }
                             $idPlantilla = $this->plantilla_model->plantilla_actual($data['UDPlantel']);
-                            $data['UDPlantilla'] = $idPlantilla;
+                            
+                            if (nvl($data['UDClave']) == '') {
+                                $datos['UDUsuario'] = $data['UDUsuario'];
+                                $datos['UDPlantel'] = $data['UDPlantel'];
+                                $datos['UDFecha_ingreso'] = $data['UDFecha_ingreso'];
+                                $datos['UDTipo_Nombramiento'] = $data['UDTipo_Nombramiento'];
+                                $datos['UDPlaza'] = $data['UDPlaza'];
+                                $datos['UDTipo_materia'] = $data['UDTipo_materia'];
+                                $datos['UDNumOficio'] = $data['UDNumOficio'];
+                                $datos['UDHoras_grupo'] = $data['UDHoras_grupo'];
+                                $datos['UDHoras_apoyo'] = $data['UDHoras_apoyo'];
+                                $datos['UDHoras_CB'] = $data['UDHoras_CB'];
+                                $datos['UDFecha_inicio'] = $data['UDFecha_inicio'];
+                                $datos['UDFecha_final'] = $data['UDFecha_final'];
+                                $datos['UDObservaciones'] = $data['UDObservaciones'];
+                                $datos['UDNombramiento_file'] = $data['UDNombramiento_file'];
+                                $datos['UDPlantilla'] = $idPlantilla;
+                                $datos['UDActivo'] = '1';
+                                $datos['UDValidado'] = '1';
+                                $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
+                                $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
+                                $this->usuariodatos_model->insert($datos);
 
-                            $data['UDActivo'] = '1';
-                            $data['UDValidado'] = '1';
-                            $data['UDUsuario_registro'] = get_session('UNCI_usuario');
-                            $data['UDFecha_registro'] = date('Y-m-d H:i:s');
-                            $this->usuariodatos_model->insert($data);
-                            set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
-                            muestra_mensaje();
-                            echo "::OK";
-                            echo "::".$data['UDUsuario'];
+                                set_mensaje("La plaza del Docente se guardo correctamente.",'success::');
+                                muestra_mensaje();
+                                echo "::OK";
+                                echo "::".$data['UDUsuario'];
+                            } else {
+                                $data['UDPlantilla'] = $idPlantilla;
+                                $data['UDUsuarioModificacion'] = get_session('UNCI_usuario');
+                                $data['UDFechaModificacion'] = date('Y-m-d H:i:s');
+                                $this->usuariodatos_model->update($data['UDClave'], $data);
+
+                                set_mensaje("La plaza del Docente se modifico correctamente.",'success::');
+                                muestra_mensaje();
+                                echo "::OK";
+                                echo "::".$data['UDUsuario'];
+                            }
+                            
                             //echo "::".$data['UDTipo_Nombramiento'];
                         }
                         
@@ -250,7 +282,7 @@ class Docente extends CI_Controller {
         $this->db->order_by('UDTipo_Nombramiento','ASC');
 
         $data['data'] = $this->usuariodatos_model->find_all();
-
+        
         $data['contar'] = count($data['data']);
 
         echo $data['data'][0]['UDTipo_Nombramiento']."::";
@@ -288,6 +320,7 @@ class Docente extends CI_Controller {
 
     public function saveEstudios() {
         $data= post_to_array('_skip');
+       
         //Subir Titulo Profesional
         if ($data['ULTitulado'] == 'Titulado') {    
             if ($data['ULNivel_estudio'] == '' || $data['ULLicenciatura'] == '') {
@@ -311,25 +344,30 @@ class Docente extends CI_Controller {
                 } else {
                     $data['ULTitulo_file'] = '';
                 }
-                /*if(isset($_FILES["ULCedula_file"])){
-                    /*Subir Cedula Profesional
-                    $nomCedula = 'Cedula'.$_POST['ULUsuario'];
-                    $fileCedula = $nomCedula.$nom;
-                    $targetFileCedula = $directorio . $fileCedula;
-                    //Con datos
-                    move_uploaded_file($_FILES["ULCedula_file"]["tmp_name"], $targetFileCedula);
-                    $data['ULCedula_file'] = $targetFileCedula;
-                }*/
                 
-                $data['ULActivo'] = '1';
-                $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
-                $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
+                if(!$data['ULClave']) {
+                    $data['ULActivo'] = '1';
+                    $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+                    $data['ULFechaRegistro'] = date('Y-m-d H:i:s');
+
+                    $this->usuariolic_model->insert($data);
+
+                    set_mensaje("Los datos se agregarón correctamente",'success::');
+                    muestra_mensaje();
+                    echo "::OK";
+                    echo "::".$data['ULUsuario'];
+                } else {
+                    $data['ULActivo'] = '1';
+                    $data['ULUsuarioModificacion'] = get_session('UNCI_usuario');
+                    $data['ULFechaModificacion'] = date('Y-m-d H:i:s');
                     
-                $this->usuariolic_model->insert($data);
-                set_mensaje("Los datos se agregarón correctamente",'success::');
-                muestra_mensaje();
-                echo "::OK";
-                echo "::".$data['ULUsuario'];
+                    $this->usuariolic_model->update($data['ULClave'],$data);
+
+                    set_mensaje("Los datos se Modificarón correctamente",'success::');
+                    muestra_mensaje();
+                    echo "::OK";
+                    echo "::".$data['ULUsuario'];
+                }
             }
 
         } else {
@@ -337,15 +375,37 @@ class Docente extends CI_Controller {
                 set_mensaje("Favor de ingresar todos los datos requeridos.");
                 muestra_mensaje();
             } else {
-                $data['ULActivo'] = '1';
-                $data['ULUsuarioRegistro'] = get_session('UNCI_usuario');
-                $data['UlFechaRegistro'] = date('Y-m-d H:i:s');
-                $this->usuariolic_model->insert($data);
+                $datos['ULUsuario'] = $data['ULUsuario'];
+                $datos['ULPlantel'] = $data['ULPlantel'];
+                $datos['ULNivel_estudio'] = $data['ULNivel_estudio'];
+                $datos['ULLicenciatura'] = $data['ULLicenciatura'];
+                $datos['ULTitulado'] = $data['ULTitulado'];
+                $datos['ULActivo'] = '1';
+
+               
+
+                if(!$data['ULClave']) {
+                    $datos['ULUsuarioRegistro'] = get_session('UNCI_usuario');
+                    $datos['ULFechaRegistro'] = date('Y-m-d H:i:s');
+                    $this->usuariolic_model->insert($datos);
+
+                    set_mensaje("Los datos se agregarón correctamente",'success::');
+                    muestra_mensaje();
+                    echo "::OK";
+                    echo "::".$data['ULUsuario'];
+
+                } else {
+                    $datos['ULUsuarioModificacion'] = get_session('UNCI_usuario');
+                    $datos['ULFechaModificacion'] = date('Y-m-d H:i:s');
+                    $this->usuariolic_model->update($data['ULClave'], $datos);
+
+                    set_mensaje("Los datos se Modificarón correctamente",'success::');
+                    muestra_mensaje();
+                    echo "::OK";
+                    echo "::".$data['ULUsuario'];
+                }
                 
-                set_mensaje("Los datos se agregarón correctamente",'success::');
-                muestra_mensaje();
-                echo "::OK";
-                echo "::".$data['ULUsuario'];
+                
             }
         }
         
@@ -356,20 +416,14 @@ class Docente extends CI_Controller {
         $idPlantel = $this->input->post('idPlantel');
         $data['contar'] = 0;
 
-        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, grado_estudios, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
+        $selectDatos = "ULClave, ULUsuario, ULPLantel, id_gradoestudios, grado_estudios, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
         $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura','left');
-        $this->db->join('nogradoestudios','ULLicenciatura = id_gradoestudios','left');
+        $this->db->join('nogradoestudios','LIdentificador = id_gradoestudios','left');
         $this->db->where('ULUsuario',$idUsuario);
         $this->db->where('ULPlantel',$idPlantel);
         $this->db->where('ULActivo','1');
         $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
-
-        $select = 'UDValidado';
-        $this->db->where('UDUsuario',$idUsuario);
-        $this->db->where('UDPlantel',$idPlantel);
-        $this->db->where('UDActivo','1');
-        $data['valido'] = $this->usuariodatos_model->find_all(null, $select);
-
+        
         $data['contar'] = count($data['data']);
         
         echo $data['contar'].'::';

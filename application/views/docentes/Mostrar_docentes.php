@@ -64,7 +64,7 @@
 										<a href="<?= base_url()?>Docente/Update/<?=$idPlantel?>/<?= $UNCI_usuario_skip?>">
 											<button class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Editar</button>
 										</a>
-										<?php echo $borrar; ?>										
+										<?php // echo $borrar; ?>
 										</td>
 									</tr>
 							<?php $i++; } ?>
