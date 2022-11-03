@@ -54,7 +54,9 @@
                     <th colspan="2" style="text-align: center; vertical-align:middle">NO. DE GRUPOS </th>
                     <th colspan="3" style="text-align: center; vertical-align:middle">H/S/M POR SEM. </th>
                     <th rowspan ="2" style="text-align: center; vertical-align:middle">TOTAL<br> HRS.<br> POR<br> ASIG.</th>
-                    <th rowspan ="2" colspan="2" style="text-align: center; vertical-align:middle"><?php if ($datosPlantilla['PEstatus'] == 'Pendiente') { ?>ACCIÓN <?php } elseif ($datosPlantilla['PEstatus'] == 'Revisón')  { ?>OBSERVACIONES<?php } ?></th>
+                    <th rowspan ="2" colspan="2" style="text-align: center; vertical-align:middle">
+                    <?php if ($datosPlantilla['PEstatus'] == 'Pendiente') { ?>ACCIÓN <?php } 
+                    if ($datosPlantilla['PEstatus'] == 'Revisión')  { ?>OBSERVACIONES<?php } ?></th>
                 </tr>
                 <tr>
                     <th style="text-align: center; vertical-align:middle">MAT.</th>
@@ -77,15 +79,15 @@
                     <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '3' || $listPlan['psemestre'] == '4') { echo $listPlan['ptotalHoras']; } ?></td>
                     <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
                     <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
-                    <?php if ($datosPlantilla['PEstatus'] == 'Pendiente') { ?>
+                    <?php if ($listPlan['pbObservaciones'] != '' && $listPlan['pestatus'] == 'Corregir') { ?>
+                        <td class="text-center"><?= $listPlan['pbObservaciones']; ?></td>
                         <td class="text-center" colspan="2">
-                            <button class="btn btn-primary btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Editar
+                            <button class="btn btn-danger btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Corregir
                             </button>
                         </td>
-                    <?php } else {//if ($datosPlantilla['PEstatus'] == 'Revisón')  { ?>
-                        <td class="text-center"><?= $listPlan['pbObservaciones']; ?></td>
+                    <?php } if ($listPlan['pbObservaciones'] == '' && $listPlan['pestatus'] == 'Revisión')  { ?>
                         <td class="text-center">
-                            <button class="btn btn-primary btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Corregir
+                            <button class="btn btn-warning btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Editar
                             </button>
                         </td>
                     <?php } ?>

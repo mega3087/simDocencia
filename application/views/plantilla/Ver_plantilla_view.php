@@ -72,36 +72,44 @@
 				<p><?= $listDoc['URFC']; ?></p>
 			</div>
 			<div class="cuerpo">
+				<p><?= $listDoc['estudios'][0]['ULCedulaProf'] ?><br>
 				<?php foreach ($listDoc['plazas'] as $p => $listP) { 
 					$fechaAnio = explode('-',$listP['UDFecha_ingreso']);
-					?>
-					<?php if($listP['UDTipo_Nombramiento'] == '4') { 
-						echo '<p>'.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).'</p>'; 
-					} elseif($listP['UDTipo_Nombramiento'] == '2') {
-						echo 'p>'.fecha_format($listP['UDFecha_ingreso']).'</p>'; 
-					} elseif($listP['UDTipo_Nombramiento'] == '5' || $listP['UDTipo_Nombramiento'] == '8') {
-						echo '<p></p>'; 
-					} ?>
-					<p><b>
-					<?php if($listP['UDTipo_Nombramiento'] == '2' || $listP['UDTipo_Nombramiento'] == '3') { 
-						echo $listP['TPNombre'].' '.$fechaAnio[0]; 
-						} elseif ($listP['UDTipo_Nombramiento'] == '1' || $listP['UDTipo_Nombramiento'] == '4') {
-						echo $listP['TPNombre']; }?></b>
-					</p>
-					<p>
-						<?php if ($listP['UDTipo_Nombramiento'] == '5') { 
-							echo '<b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Folio: '.$listP['UDNumOficio'].'</b>';
-						} elseif ($listP['UDTipo_Nombramiento'] == '8') {
-							echo '<b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> por promoción '.fecha_format($listP['UDFecha_ingreso']).'</b>';
-						} else { ?>
-						<?= $listP['nomplaza']; ?>
-						<?php if ($listP['TotalHoras'] != '0') { 
+					
+					if($listP['UDTipo_Nombramiento'] == '1' || $listP['UDTipo_Nombramiento'] == '2' ) { 
+						echo fecha_format($listP['UDFecha_ingreso']).'</p>';
+						echo '<p><b>'.$listP['TPNombre'].'</b><br>';
+						echo $listP['nomplaza']; 
+						if ($listP['TotalHoras'] != '0') { 
+							echo '('.$listP['TotalHoras'].' Horas) '; 
+							if ($listP['UDHoras_CB'] != '0' ) { 
+								echo ' y '.$listP['UDHoras_CB'].' horas/semana/mes como CB-I</p>'; } 
+						} else { 
+							echo 'con '.$listP['UDHoras_CB'].'  horas/semana/mes</p>'; 
+						}
+					} elseif($listP['UDTipo_Nombramiento'] == '3' || $listP['UDTipo_Nombramiento'] == '4') {
+						echo fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).'</p>'; 
+						echo '<p><b>'.$listP['TPNombre'].'</b></p>';
+						echo '<p>'.$listP['nomplaza'].'</p>';
+						if ($listP['TotalHoras'] != '0') { 
 							echo '('.$listP['TotalHoras'].' Horas)'; 
-							if($listP['UDHoras_CB'] != '0' ) { echo ' y '.$listP['UDHoras_CB'].' horas/semana/mes como CB-I'; } 
+							if ($listP['UDHoras_CB'] != '0' ) { 
+								echo ' y '.$listP['UDHoras_CB'].' horas/semana/mes como CB-I'; } 
 						} else { 
 							echo 'con '.$listP['UDHoras_CB'].'  horas/semana/mes'; 
-						} }?>
-					</p>
+						}
+					} elseif ($listP['UDTipo_Nombramiento'] == '5') { 
+						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Folio: '.$listP['UDNumOficio'].'</b></p>';
+					} elseif ($listP['UDTipo_Nombramiento'] == '6') { 
+						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Folio: '.$listP['UDNumOficio'].'</b></p>';
+						//echo '<p><b>'.$listP['UDHoras_CB'].' <b> hrs.  Provisional Of. '.$listP['UDNumOficio'].'</b> por '.$listP['TPNombre'].'</b></p>';
+					} elseif ($listP['UDTipo_Nombramiento'] == '7') { 
+						echo '<p><b>'.$listP['UDHoras_CB'].' <b></b> Horas Provisionales, Folio: '.$listP['TPNombre'].'</b></p>';
+					} elseif ($listP['UDTipo_Nombramiento'] == '8') {
+						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> por promoción '.fecha_format($listP['UDFecha_ingreso']).'</b></p>';
+					}?>
+
+					<div style="background-color: #e7eaec;"><?= nvl($listP['UDObservaciones']); ?></div>
 				<?php } ?>
 			</div>
 			<div class="cuerpo">
@@ -109,7 +117,6 @@
 				<?php foreach ($listDoc['estudios'] as $e => $listEst) { ?>
 					<p><?= nvl($listEst['LGradoEstudio']).' en '.nvl($listEst['Licenciatura']); ?></p>
 				<?php } ?>
-				<p><?= nvl($listDoc['plazas'][0]['UDObservaciones']); ?></p>
 			</div>
 			<div class="cuerpo">
 				<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
@@ -175,7 +182,7 @@
 			<div class="cuerpo" style="text-align: center;">
 			<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
 				<input type="hidden" name="idPlanDetalle[]" value="<?= $listMat['idPlanDetalle']?>">
-				<p>&nbsp;<button title="OBSERVACIONES" class="btn btn-warning btn-circle pull-left no-imprimir" nombre="<?= $listMat['idPlanDetalle'] ?>" value="" type="button" data-toggle="popover" data-placement="auto left" data-content="--------------------------------------"><i class="fa fa-comment"></i></button></p>
+				<p><button title="OBSERVACIONES" class="btn btn-warning btn-circle pull-left no-imprimir" nombre="<?= $listMat['idPlanDetalle'] ?>" value="" type="button" data-toggle="popover" data-placement="auto right" data-content="--------------------------------------"><i class="fa fa-comment"></i></button><br><br></p>
 			<?php } ?>
 			</div>
 			<?php } ?>
@@ -183,12 +190,13 @@
 			<?php foreach ($listDoc['horas'] as $h => $listHor) { 
 				$sumfrente = $sumfrente + $listHor['UDHoras_grupo'];
 				$sumapoyo = $sumapoyo + $listHor['UDHoras_apoyo'];
-				$sumcb = $sumcb + $listHor['UDHoras_CB'];
+				if ($listHor["totalHoras"] > $listHor['UDHoras_grupo']) { $horasCB = $listHor['UDHoras_CB']; } else { $horasCB = "0"; }
+				$sumcb = $sumcb + $horasCB;
 				$sumhoras = $sumfrente + $sumapoyo + $sumcb;?>				
 			<div class="cuerpo" style="text-align: center;"><p> <?= $listHor['UDHoras_grupo']; ?></p></div>
 			<div class="cuerpo" style="text-align: center;"><p> <?= $listHor['UDHoras_apoyo']; ?></p></div>
-			<div class="cuerpo" style="text-align: center;"><p> <?= $listHor['UDHoras_CB']; ?></p></div>
-			<div class="cuerpo" style="text-align: center;"><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $listHor['UDHoras_CB']; ?></div>
+			<div class="cuerpo" style="text-align: center;"><p> <?php if ($listHor["totalHoras"] > $listHor['UDHoras_grupo']) { echo $listHor['UDHoras_CB']; } else { echo "0"; } ?></p></div>
+			<div class="cuerpo" style="text-align: center;"><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $horasCB; ?></div>
 			<?php } ?>			
 		<?php $i++; } ?>
 			<div class="totales" style="text-align: center;">TOTALES</div>

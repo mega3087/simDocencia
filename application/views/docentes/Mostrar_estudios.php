@@ -110,8 +110,8 @@
 		document.getElementById("ULNivel_estudio").value = id_gradoestudios;
 		document.getElementById("ULCedulaProf").value = ULCedulaProf;
 
-		$("#ULLicenciatura").val(ULLicenciatura.split(',') ).trigger("chosen:updated");
-		$("#ULLicenciatura").removeAttr( "disabled", true );
+		$("#ULLicenciatura_chosen").val(ULLicenciatura.split(',') ).trigger("chosen:updated");
+		$("#ULLicenciatura_chosen").removeAttr( "disabled", true );
 		
 	}
 </script>

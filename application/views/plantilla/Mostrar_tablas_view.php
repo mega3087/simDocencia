@@ -24,18 +24,18 @@
                 <td class="text-left"><?php echo number_format($list['HorasAsig'],0)." de ".number_format($list['HorasTot'],0); ?> ( <?php echo $porcentaje = number_format($list['HorasAsig']/$list['HorasTot']*100,0); ?>% )</td>
                 <td class="text-center">
                 <?php if ($porcentaje < '100' && $list['PEstatus'] == 'Pendiente' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
-                    <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                    <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>','<?php echo $Tipo_Nombramiento;?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Asignar Materias</button>
                 <?php } ?> 
                 <?php if ($list['PEstatusDetalle'] == 'Revisión' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
                     <b class="text-warning"><i class="fa fa-clock-o"></i> En Revisión</b>
                 <?php } ?>
-                <?php if ($porcentaje == '100' && $list['PEstatusDetalle'] == 'Pendiente' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
-                    <button class="btn btn-success btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                <?php if ($porcentaje == '100' && $list['PEstatus'] == 'Pendiente' && $list['PEstatusDetalle'] != 'Corregir' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                    <button class="btn btn-success btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $Tipo_Nombramiento;?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Horas Asignadas</button>
                 <?php } ?>
-                <?php if ($list['PEstatusDetalle'] == 'Correción'  && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
-                    <button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $list['UDTipo_Nombramiento'];?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
+                <?php if ($list['PEstatusDetalle'] == 'Corregir' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                    <button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $Tipo_Nombramiento;?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Corregir</button>
                 <?php } ?>
 

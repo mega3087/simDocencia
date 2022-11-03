@@ -68,8 +68,10 @@
                                         data-toggle="modal"
                                         data-rclave_plantel="<?php echo $PClave_skip; ?>" 
                                         data-clave_plantel="<?php echo $list['CPLClave']; ?>" 
-                                        data-nombre_plantel="<?php echo $list['CPLNombre']; ?>" 
-                                        ><i class="fa fa-plus"></i> Agregar Alumnos
+                                        data-nombre_plantel="<?php echo $list['CPLNombre']; ?>">
+                                        <?php if( is_permitido(null,'grupos','save') ){ ?><i class="fa fa-plus"></i> Agregar Alumnos <?php } else { ?>
+                                        <i class="fa fa-eye"></i> Ver Alumnos <?php } ?>
+
                                     </button>
                                     <button class="btn btn-success btn-sm openReportes"
                                         data-target="#modal_ver_Reportes" 

@@ -534,6 +534,7 @@
                         $("#UDHorasGrupo").val('');
                         $("#UDHorasApoyo").val('');
                         $("#UDHoras_CB").val('');
+                        $("#UDNumOficio").val('');
                         
                         $("#UDFecha_inicio").val('');
                         $("#UDFecha_final").val('');
@@ -586,6 +587,7 @@
                         $('#ULNivel_estudio').val('').trigger('change');
                         $('#ULLicenciatura').val('').trigger('chosen:updated');
                         //$("#ULNivel_estudio").val("");
+                        $("#ULClave").val("");
                         
                         $("#ULCedulaProf").val("");
 

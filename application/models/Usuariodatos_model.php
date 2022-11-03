@@ -39,12 +39,12 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 				SUM(UDHoras_grupo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) $horasApoyo AS HorasTot,
 				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1) AS HorasAsig,
 				(SELECT noplantilla.PEstatus FROM noplantilla WHERE PClave = $idPlantilla GROUP BY PClave) AS PEstatus,
-				(SELECT noplantilladetalle.pestatus FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1 AND noplantilladetalle.pestatus = 'Correción' GROUP BY idPUsuario) AS PEstatusDetalle
+				(SELECT noplantilladetalle.pestatus FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1 AND noplantilladetalle.pestatus = 'Corregir' GROUP BY idPUsuario) AS PEstatusDetalle
 			";
 			if($permanente=='Y'){
 				$this->db->where("UDPermanente","Y");
 			}else{
-				$this->db->where(" (UDPermanente = 'Y' OR (UDPermanente != 'Y' AND UDPlantilla=$idPlantilla)) ");
+				$this->db->where(" (UDPermanente = 'Y' OR (UDPermanente != 'Y' OR UDPlantilla=$idPlantilla)) ");
 			}
 			
 			if($idTipoNombramiento){

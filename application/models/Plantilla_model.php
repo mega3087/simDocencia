@@ -29,6 +29,7 @@
 				"PPlantel" => $idPlantel
 			);
 			$this->db->where("PEstatus IN('Pendiente','Revisión')");
+			$this->db->where("PACtivo","1");
 			$this->db->order_by('PClave', 'DESC');
 			$plantilla = $this->plantilla_model->find($where);
 			
