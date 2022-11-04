@@ -463,7 +463,7 @@
 
 </script>
 <script>
-    function verEstudios(idEstudios) {
+    function verEstudios(idEstudios, ULLicenciatura = null) {
         $.ajax({
                 type: "POST",
                 url: "<?php echo base_url("Docente/mostrarCarreras"); ?>",
@@ -477,9 +477,13 @@
                     $(".resultCarrera").empty();
                     $(".resultCarrera").append(data);  
                     $(".loadingArchivo").html("");
+                    if (ULLicenciatura) {
+                        $("#ULLicenciatura").val(ULLicenciatura).trigger("chosen:updated");
+                    }
                 }
             });
         }
+    
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -645,10 +649,10 @@
                     if(newIndex == '2'){
 						var idUsuario = document.getElementById("UNCI_usuario").value;
                         datosEstudios(idUsuario);
-                        /*var tiponombramiento = document.getElementById("tipoNombramiento").value;
+                        var tiponombramiento = document.getElementById("tipoNombramiento").value;
                         if (tiponombramiento == '1' ) {
                             $('#documento').hide();
-                        }*/
+                        }
 					}
 
                 }

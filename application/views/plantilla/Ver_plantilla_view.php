@@ -99,9 +99,9 @@
 							echo 'con '.$listP['UDHoras_CB'].'  horas/semana/mes'; 
 						}
 					} elseif ($listP['UDTipo_Nombramiento'] == '5') { 
-						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Folio: '.$listP['UDNumOficio'].'</b></p>';
+						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Oficio / Folio: '.$listP['UDNumOficio'].'</b></p>';
 					} elseif ($listP['UDTipo_Nombramiento'] == '6') { 
-						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Folio: '.$listP['UDNumOficio'].'</b></p>';
+						echo '<p><b>'.$listP['UDHoras_CB'].' <b>'.$listP['TPNombre'].'</b> autorizadas del '.fecha_format($listP['UDFecha_inicio']).' al '.fecha_format($listP['UDFecha_final']).' Oficio / Folio: '.$listP['UDNumOficio'].'</b></p>';
 						//echo '<p><b>'.$listP['UDHoras_CB'].' <b> hrs.  Provisional Of. '.$listP['UDNumOficio'].'</b> por '.$listP['TPNombre'].'</b></p>';
 					} elseif ($listP['UDTipo_Nombramiento'] == '7') { 
 						echo '<p><b>'.$listP['UDHoras_CB'].' <b></b> Horas Provisionales, Folio: '.$listP['TPNombre'].'</b></p>';
@@ -217,19 +217,20 @@
 			<div class="cuerpo" style="text-align: center;"><?= $sumhoras ?></div>
 		</div>
 	</div>
+	<div class="form-group">
+	<div class="loadingRevision"></div>
+</div>
 </form>
-
-<div class="loadingRevision"></div>
-<div id="resultRevision"></div>
-<div id="errorRevision"></div>
 
 <br><br>
 
 <?php if (is_permitido(null,'generarplantilla','revisarPlantilla') && $plantilla['PEstatus'] == 'Pendiente') { ?>
-	<div class="form-group">
+<div class="form-group">
 	<div class="col-lg-1"></div>
 	<div class="col-lg-10"><br><br>
+	<?php if ($contarDoc != $DocPlan)  {?>
 		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button"> <i class="fa fa-eye"></i> Mandar a Revisón</button>
+	<?php } ?>
 	</div>
 </div>
 <?php } ?>
@@ -277,18 +278,11 @@ $(document).ready(function() {
 							$(".loadingRevision").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
 						},
 						success: function(data) {
-							var data = data.split("::");
-								if(data[1]=='OK'){	
-									$("#resultRevision").empty();
-									$("#resultRevision").html(data[0]);
-									$(".loadingRevision").html('');
-									$("#errorRevision").html('');
-									verPlantilla(data[2]);
-									//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
-								} else {
-									$("#errorRevision").empty();
-									$("#errorRevision").append(data);
-									$(".loadingRevision").html("");
+						var data = data.split("::");
+							if(data[1]=='OK'){	
+								$(".loadingRevision").html('');
+								verPlantilla(data[2]);
+								//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
 							}
 						}
 					});
@@ -310,17 +304,11 @@ $(document).ready(function() {
 			},
 			success: function(data) {
 				var data = data.split("::");
-					if(data[1]=='OK'){	
-						$("#resultRevision").empty();
-						$("#resultRevision").html(data[0]);
-						$(".loadingRevision").html('');
-						verPlantilla(data[2]);
-						//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
-					} else {
-						$("#errorRevision").empty();
-                   		$("#errorRevision").append(data);
-                    	$(".loadingRevision").html("");
-				}
+				if(data[1]=='OK'){	
+					$(".loadingRevision").html('');
+					verPlantilla(data[2]);
+					//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
+				} 
 			}
 		});
 	});

@@ -105,13 +105,12 @@
 		} else {
 			$('#contentPasante').hide();
 		}
-		verEstudios(id_gradoestudios);
+		verEstudios(id_gradoestudios, ULLicenciatura);
 		document.getElementById("ULClave").value = ULClave;
 		document.getElementById("ULNivel_estudio").value = id_gradoestudios;
 		document.getElementById("ULCedulaProf").value = ULCedulaProf;
 
-		$("#ULLicenciatura_chosen").val(ULLicenciatura.split(',') ).trigger("chosen:updated");
-		$("#ULLicenciatura_chosen").removeAttr( "disabled", true );
+		//$("#ULLicenciatura").val(ULLicenciatura).trigger("chosen:updated");
 		
 	}
 </script>

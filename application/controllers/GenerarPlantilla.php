@@ -385,10 +385,13 @@
 			$this->db->join('nousuariodatos','idPUsuario = UDUsuario','LEFT');
 			$this->db->group_by('UNCI_usuario');
 			$data['docentes'] = $this->plantilla_model->find_all(null, $select);
-			
+			$data['contarDoc'] = count($data['docentes']);
+
 			$idPlantel 	= $data['docentes'][0]['PPlantel'];
 			$periodo	= $data['docentes'][0]['PPeriodo'];
-			
+			$data['doc'] = $this->usuariodatos_model->nombramientos($idPlantel, $data['docentes'][0]['UDTipo_Nombramiento']);
+			$data['DocPlan'] = count($data['doc']);
+
 			$this->db->select('CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector');
         	$data['plantel'] = $this->plantel_model->get($idPlantel);
 			
@@ -446,25 +449,20 @@
 			$datos = array(
 				'PEstatus' => 'Revision'
 			);
-			$this->plantilla_model->update($data['idPlantilla'], $datos);
+			//$this->plantilla_model->update($data['idPlantilla'], $datos);
 
 			foreach ($data['UDClave'] as $x => $listIds) {
-				/*$updatos = array (
-					'UDValidado' => '3'
-				);
 
-				/Cambiar estatus en Datos del Usuario a 3 Revisión
-				$this->usuariodatos_model->update($listIds, $updatos);*/
 				$pldatos = array (
 					'pestatus' => 'Revision',
 					'pusuario_envio' => get_session('UNCI_usuario'),
 					'pfecha_envio' => date('Y-m-d H:i:s')
 				);
-				//Cambiar estatus en plantilla Final a 2 Revisión
+				
 				$this->db->set($pldatos);
 				$this->db->where('idPUDatos', $listIds);
 				$this->db->where('idPlantilla', $data['idPlantilla']);
-				$this->db->update('noplantilladetalle');
+				//$this->db->update('noplantilladetalle');
 			}
 
 			set_mensaje("Los Plantilla se envio correctamente a Revisión.",'success::');
