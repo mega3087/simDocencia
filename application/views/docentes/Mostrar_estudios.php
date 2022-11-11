@@ -36,7 +36,7 @@
 				<?php if( is_permitido(null,'generarplantilla','save')) { ?>
 				<td>
 				<button type="button" class="btn btn-warning btn-sm" onclick="editarEstudios('<?= $list['ULClave'] ?>','<?= $list['id_gradoestudios'] ?>','<?= $list['ULLicenciatura'] ?>','<?= $list['ULTitulado'] ?>','<?= $list['ULCedulaProf'] ?>')"><i class="fa fa-pencil"></i> Editar </button>
-					<?php //echo nvl($borrar); ?>
+					<?php echo nvl($borrar); ?>
 				</td>
 				<?php } ?>
 			</tr>

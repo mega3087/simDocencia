@@ -69,31 +69,41 @@
             <tbody>
                 <?php foreach($datos as $x => $listDatos) {
                     $contar = count($listDatos['plantilla']) +1;
-                    foreach($listDatos['plantilla'] as $y => $listPlan) { ?>
-                <tr>
-                    <td class="text-center"><?= $listPlan['materia']; ?></td>
-                    <td class="text-center"><?= $listPlan['hsm']; ?></td>
-                    <td class="text-center"><?= $listPlan['pnogrupoMatutino']; ?></td>
-                    <td class="text-center"><?= $listPlan['pnogrupoVespertino']; ?></td>
-                    <td class="text-center"><?php $listPlan['psemestre'] ;  if ($listPlan['psemestre'] == '1' || $listPlan['psemestre'] == '2') { echo $listPlan['ptotalHoras']; } ?></td>
-                    <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '3' || $listPlan['psemestre'] == '4') { echo $listPlan['ptotalHoras']; } ?></td>
-                    <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
-                    <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
-                    <?php if ($listPlan['pbObservaciones'] != '' && $listPlan['pestatus'] == 'Corregir') { ?>
+                    foreach($listDatos['plantilla'] as $y => $listPlan) { 
+                    if ($listPlan['idPBitacora'] != '' && $listPlan['pbObservaciones'] != '' && $listPlan['pestatus'] == 'Corregir') { ?>
+                    <tr>
+                        <td class="text-center"><?= $listPlan['materia']; ?></td>
+                        <td class="text-center"><?= $listPlan['hsm']; ?></td>
+                        <td class="text-center"><?= $listPlan['pnogrupoMatutino']; ?></td>
+                        <td class="text-center"><?= $listPlan['pnogrupoVespertino']; ?></td>
+                        <td class="text-center"><?php $listPlan['psemestre'] ;  if ($listPlan['psemestre'] == '1' || $listPlan['psemestre'] == '2') { echo $listPlan['ptotalHoras']; } ?></td>
+                        <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '3' || $listPlan['psemestre'] == '4') { echo $listPlan['ptotalHoras']; } ?></td>
+                        <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
+                        <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
                         <td class="text-center"><?= $listPlan['pbObservaciones']; ?></td>
                         <td class="text-center" colspan="2">
                             <button class="btn btn-danger btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Corregir
                             </button>
                         </td>
-                    <?php } if ($listPlan['pbObservaciones'] == '' && $listPlan['pestatus'] == 'Revisión')  { ?>
+                    </tr>
+                    <?php } else if ($datosPlantilla['PEstatus'] == 'Pendiente')  { ?>
+                    <tr>
+                        <td class="text-center"><?= $listPlan['materia']; ?></td>
+                        <td class="text-center"><?= $listPlan['hsm']; ?></td>
+                        <td class="text-center"><?= $listPlan['pnogrupoMatutino']; ?></td>
+                        <td class="text-center"><?= $listPlan['pnogrupoVespertino']; ?></td>
+                        <td class="text-center"><?php $listPlan['psemestre'] ;  if ($listPlan['psemestre'] == '1' || $listPlan['psemestre'] == '2') { echo $listPlan['ptotalHoras']; } ?></td>
+                        <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '3' || $listPlan['psemestre'] == '4') { echo $listPlan['ptotalHoras']; } ?></td>
+                        <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
+                        <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
                         <td class="text-center">
                             <button class="btn btn-warning btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Editar
                             </button>
                         </td>
-                    <?php } ?>
-                </tr>
+                    </tr>
                 <?php } ?>
-            <?php } ?>
+            <?php } 
+            }   ?>
             </tbody>
         </table>
     </div>

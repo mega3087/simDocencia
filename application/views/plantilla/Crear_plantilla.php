@@ -11,7 +11,7 @@
             <div class="panel-heading no-padding">
                 <ul class="nav nav-tabs">
                     <li class="<?php if($plantillas) echo"active"; ?>" nav-border nav-border-top-danger>
-                        <a href="#plantillas" data-toggle="tab">
+                        <a href="#plantillas" data-toggle="tab" onclick="js:tablaPlantillas();">
                             <i class="fa fa-list-alt fg-danger"></i>
                             <div>
                                 <span class="text-strong">Plantillas</span>                                
@@ -56,31 +56,7 @@
                     <div class="panel-body">
                         <div class="tab-content">
 							<div class="tab-pane fade <?php if($plantillas) echo"in active"; ?>" id="plantillas">
-								<div class="table-responsive">
-									<?php //if ($plantillas) echo"active"; ?>
-									<table class="table table-striped table-bordered table-hover" >
-										<tr>
-											<th>No.</th>
-											<th>Semestre</th>
-											<th>Fechas Periodo</th>
-											<th>Estatus</th>
-											<th>Ver</th>
-										</tr>
-										<?php 
-										foreach ($plantillas as $key => $list){ 
-										$periodo = str_replace("-1"," (Febrero-Agosto)",$list['PPeriodo']);
-										$periodo = str_replace("-2"," (Agosto-Febrero)",$periodo);
-										?>
-										<tr>
-											<td><?php echo($key+1); ?></td>
-											<td>20<?php echo $periodo; ?></td>
-											<td><?php echo fecha_format($list['PFechaInicial'])." - ".fecha_format($list['PFechaFinal']); ?></td>
-											<td><?php echo $list['PEstatus']; ?></td>
-											<td><button onclick="verPlantilla(<?php echo$list['PClave']; ?>)" class="btn btn-success btn-xs" ><i class="fa fa-eye"> Revisar</button></u></td>
-										</tr>
-										<?php } ?>
-									</table>
-								</div>
+								&nbsp;
                             </div>
                             <div class="tab-pane fade <?php if(!$plantillas) echo"in active"; ?>" id="docentes">
 								<ol class="breadcrumb">
@@ -154,8 +130,8 @@
                                     <div class="form-group">
                                         <div class="col-lg-2"></div>
                                         <div class="col-lg-9">
-                                            <div class="mostrarMat1"></div>
-                                            <div class="mostrarMat2"></div>
+                                            <div class="mostrarMat1">&nbsp;</div>
+                                            <div class="mostrarMat2">&nbsp;</div>
                                         </div>
                                     </div>                                    
 
@@ -171,14 +147,10 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">&nbsp;</div>
                                         <div class="col-lg-9">
-                                            <div class="mostrarMat3">
-                                                
-                                            </div>
-                                            <div class="mostrarMat4">
-                                                
-                                            </div>
+                                            <div class="mostrarMat3">&nbsp;</div>
+                                            <div class="mostrarMat4">&nbsp;</div>
                                         </div>
                                     </div>  
 
@@ -196,18 +168,13 @@
                                     <div class="form-group">
                                         <div class="col-lg-2"></div>
                                         <div class="col-lg-9">
-                                            <div class="mostrarMat5">
-                                                
-                                            </div>
-                                            <div class="mostrarMat6">
-                                                
-                                            </div>
+                                            <div class="mostrarMat5">&nbsp;</div>
+                                            <div class="mostrarMat6">&nbsp;</div>
                                         </div>
                                     </div> 
                                     <div class="loadingMat"></div>
                                     <div class="form-group">
-                                        <div class="col-lg-2">
-                                        </div>
+                                        <div class="col-lg-2"></div>
                                         <div class="col-lg-11">
                                             <input type="hidden" name="idPlanDetalle" id="idPlanDetalle" value="" >
                                             <button class="btn btn-primary save  pull-right" type="button"> <i class="fa fa-save"></i> Guardar</button>
@@ -245,33 +212,38 @@
 </div>
 
 <!-- Jquery Validate -->
-<script>
-$(document).on('change','input[type="checkbox"]' ,function(e) {
-//$(".semestre").click(function(e){
-    var semestre = this.id;
-    var divsemestre = semestre;
-    if ($(this).prop('checked')==false) {
-        semestre = '';
-    }
-    var idPlanDetalle = document.getElementById('idPlanDetalle').value;
-    $.ajax({
-        type: "POST",
-        url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
-        data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre, idPlanDetalle : idPlanDetalle},
-        dataType: "html",
-        beforeSend: function(){
-            //carga spinner
-            $(".loadingMat").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-        },
-        success: function(data){
-            $(".mostrarMat"+divsemestre).empty();
-            $(".mostrarMat"+divsemestre).append(data);  
-            $(".loadingMat").html("");
-        }
-    });
+<script type="text/javascript">
 
-});
+	$(document).on('change','input[type="checkbox"]' ,function(e) {
+	//$(".semestre").click(function(e){
+		var semestre = this.id;
+		var divsemestre = semestre;
+		if ($(this).prop('checked')==false) {
+			semestre = '';
+		}
+		var idPlanDetalle = document.getElementById('idPlanDetalle').value;
+		$.ajax({
+			type: "POST",
+			url: "<?php echo base_url("generarplantilla/mostrarMaterias_skip"); ?>",
+			data: {plantel : document.getElementById('plantelId').value, periodo : document.getElementById('periodo').value, licenciatura: document.getElementById('licenciatura').value, UDClave : document.getElementById('nombramiento').value, semestre : semestre, idPlanDetalle : idPlanDetalle},
+			dataType: "html",
+			beforeSend: function(){
+				//carga spinner
+				$(".loadingMat").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
+			},
+			success: function(data){
+				$(".mostrarMat"+divsemestre).empty();
+				$(".mostrarMat"+divsemestre).append(data);  
+				$(".loadingMat").html("");
+			}
+		});
 
+	});
+	
+	tablaPlantillas();
+	function tablaPlantillas(){
+		$('#plantillas').load('<?php echo base_url("generarplantilla/tablaPlantillas_skip"); ?>',{"plantel":$("#plantelId").val()});
+	}
 
     function tablaBase() {
         $.ajax({
@@ -434,5 +406,4 @@ $(document).on('change','input[type="checkbox"]' ,function(e) {
 			}
 		});
     }
-
 </script>

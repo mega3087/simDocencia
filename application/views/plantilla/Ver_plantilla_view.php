@@ -31,7 +31,7 @@
 			<p>ESTUDIOS COMPLEMENTARIOS</p>
 			<p>(PROFORDEMS, CERTIDEMS, ECODEMS)</p>
 		</div>
-		<div class="one"><br><br><br><p>ASIGNATURAS</p></div>
+		<div class="one"><br><br><br><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ASIGNATURAS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></div>
 		<div class="one"><br><br><p>HORAS POR </p><p>ASIG.</p></div>
 		<div class="two"><br><br><p>NO. DE GRUPOS</p></div>
 		<div class="three"><br><p>H/S/M </p><p>POR SEM.</p></div>
@@ -76,9 +76,20 @@
 				<?php foreach ($listDoc['plazas'] as $p => $listP) { 
 					$fechaAnio = explode('-',$listP['UDFecha_ingreso']);
 					
-					if($listP['UDTipo_Nombramiento'] == '1' || $listP['UDTipo_Nombramiento'] == '2' ) { 
+					if($listP['UDTipo_Nombramiento'] == '1') { 
 						echo fecha_format($listP['UDFecha_ingreso']).'</p>';
 						echo '<p><b>'.$listP['TPNombre'].'</b><br>';
+						echo $listP['nomplaza']; 
+						if ($listP['TotalHoras'] != '0') { 
+							echo '('.$listP['TotalHoras'].' Horas) '; 
+							if ($listP['UDHoras_CB'] != '0' ) { 
+								echo ' y '.$listP['UDHoras_CB'].' horas/semana/mes como CB-I</p>'; } 
+						} else { 
+							echo 'con '.$listP['UDHoras_CB'].'  horas/semana/mes</p>'; 
+						}
+					} elseif($listP['UDTipo_Nombramiento'] == '2' ) { 
+						echo fecha_format($listP['UDFecha_ingreso']).'</p>';
+						echo '<p><b>'.$listP['TPNombre'].' '.$fechaAnio[0].'</b><br>';
 						echo $listP['nomplaza']; 
 						if ($listP['TotalHoras'] != '0') { 
 							echo '('.$listP['TotalHoras'].' Horas) '; 
@@ -120,7 +131,7 @@
 			</div>
 			<div class="cuerpo">
 				<?php foreach ($listDoc['materias'] as $m => $listMat) { ?>
-					<p><?= $listMat['materia']; ?></p>
+					<p><?= $listMat['materia']; ?><?php if ($listMat['UDTipo_Nombramiento'] == 8) { echo " <b>(Adicionales)</b>";} elseif ($listMat['UDTipo_Nombramiento'] == 5) { echo " <b>(Provisionales)</b>";} ?></p>
 				<?php } ?>
 			</div>
 			<div class="cuerpo" style="text-align: center;">
@@ -224,12 +235,17 @@
 
 <br><br>
 
-<?php if (is_permitido(null,'generarplantilla','revisarPlantilla') && $plantilla['PEstatus'] == 'Pendiente') { ?>
+<?php if (is_permitido(null,'generarplantilla','revisarPlantilla') ) { ?>
 <div class="form-group">
 	<div class="col-lg-1"></div>
 	<div class="col-lg-10"><br><br>
-	<?php if ($contarDoc != $DocPlan)  {?>
-		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button"> <i class="fa fa-eye"></i> Mandar a Revisón</button>
+	<?php if ($contarDoc != $DocPlan)  { ?>
+		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button" <?php if($plantilla['PEstatus'] == 'Revisión'){ echo "disabled"; }?>>
+			<i class="fa fa-eye"></i> <?php if ($plantilla['PEstatus'] == 'Revisión') { 
+				echo "Plantilla en Revisión"; 
+				} else {
+				echo "Mandar a Revisón"; } ?>
+		</button>
 	<?php } ?>
 	</div>
 </div>

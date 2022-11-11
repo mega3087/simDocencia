@@ -98,7 +98,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Clave ISSEMYM: </label>
-                                                    <input type="text" id="UISSEMYM" name="UISSEMYM" value="<?php echo nvl($usuario[0]['UISSEMYM']); ?>" maxlength='150' class="form-control <?php if (nvl($usuario[0]['UISSEMYM'])) echo "disabled";?> required" />
+                                                    <input type="text" id="UISSEMYM" name="UISSEMYM" value="<?php echo nvl($usuario[0]['UISSEMYM']); ?>" maxlength='150' class="form-control <?php if (nvl($usuario[0]['UISSEMYM'])) echo "disabled";?>" />
                                             </div>
                                             <div class="form-group">
                                                 <label>R.F.C.: <em>*</em></label>
@@ -308,9 +308,13 @@
                                                     <?php } ?>
                                                     </div>
                                                 </div>
-                                            </div>                                            
+                                            </div>
+                                            
+                                            <div class="form-group col-lg-12">
                                                 <input type="hidden" name="UDClave" id="UDClave" value="">
                                                 <button type='button' class='btn btn-sm btn-success savePlazas pull-right'> Guardar Plazas</button>
+                                            </div>
+                                                <br><br>
                                             <div class="form-group col-lg-12">
                                                 <div class="loadingPlazas"></div>
                                                 <div id="errorPlazas"></div>
@@ -402,14 +406,16 @@
                                             <br>
                                         </div>
                                         <?php if( is_permitido(null,'generarplantilla','save')) { ?>
-                                            <input type="hidden" name="ULClave" id="ULClave" value="">
-                                            <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
+                                            <div class="form-group col-lg-12">
+                                                <input type="hidden" name="ULClave" id="ULClave" value="">
+                                                <button type='button' class='btn btn-sm btn-success saveEstudios pull-right '> Guardar Estudios</button>
+                                            </div>
                                         <?php } ?>
-
+                                        <br><br><br>
                                         <div class="form-group col-lg-12">
-                                                <div class="loadingEstudios"></div>
-                                                <div class="msgEstudios"></div>
-                                                <div class="resultEstudios"></div>
+                                            <div class="loadingEstudios"></div>
+                                            <div class="msgEstudios"></div>
+                                            <div class="resultEstudios"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -641,7 +647,9 @@
                     $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
 
                     if(newIndex == '1'){
-						save(form);
+                        if (!form.length) {
+                            save(form);
+                        }
                         var idUsuario = document.getElementById("UNCI_usuario").value;
                         datosPlazas(idUsuario);
 					}
@@ -669,17 +677,28 @@
 
                 // Disable validation on fields that are disabled.
                 // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
-                //form.validate().settings.ignore = ":disabled";
+                form.validate().settings.ignore = ":disabled";
 
                 // Start validation; Prevent form submission if false
                 return form.valid();
             },            
-            onFinished: function (event, currentIndex)
+            //onFinished: function (event, currentIndex)
+            onFinished: function (event)
             {
-                var form = $(this);
+                //recogemos la dirección del Proceso PHP
+				mensaje = "¿Estás seguro finalizar?";
+				//colocamos fondo de pantalla
+				$('#wrapper').prop('class','bgtransparent');				
+				alertify.confirm(mensaje, function (e) {
+					//aqui introducimos lo que haremos tras cerrar la alerta.
+					$('#wrapper').prop('class','');
+					if (e){
+                        window.location.href = "<?= base_url("Docente/ver_docentes/$idPlantel"); ?>";
+					}
+				});     /*var form = $(this);
                 // Submit form input
                 //form.submit();
-                save(form,true);
+                save(form,true);*/
             },
             onCanceled: function (event)
 			{
@@ -789,11 +808,11 @@
         var idNombramiento = $("#UDTipo_Nombramiento option:selected").val();
 
         if (idNombramiento == 3) {
-            $('.mostrarFechaIng').hide();
+            $('.mostrarFechaIng').show();
             $('.mostrarFechaIng2014').hide();            
             $('.mostrarOficio').show();
-            $('.mostrarFechaInicio').show();
-            $('.mostrarFechaFinal').show();
+            $('.mostrarFechaInicio').hide();
+            $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             
         } else if (idNombramiento == 4) {

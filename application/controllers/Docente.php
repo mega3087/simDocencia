@@ -173,10 +173,10 @@ class Docente extends CI_Controller {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
-            if (($data['UDTipo_Nombramiento'] == '1' || $data['UDTipo_Nombramiento'] == '2') &&  $data['UDFecha_ingreso'] == '') {
+            if (($data['UDTipo_Nombramiento'] == '1' || $data['UDTipo_Nombramiento'] == '2' || $data['UDTipo_Nombramiento'] == '3') &&  $data['UDFecha_ingreso'] == '') {
                 set_mensaje("Favor de ingresar todos los datos requeridos.");
                 muestra_mensaje();
-            } elseif (($data['UDTipo_Nombramiento'] == '3' || $data['UDTipo_Nombramiento'] == '4'  || $data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6')  &&  ($data['UDFecha_inicio'] == '' ||  $data['UDFecha_final'] == '')) {
+            } elseif (($data['UDTipo_Nombramiento'] == '4'  || $data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6')  &&  ($data['UDFecha_inicio'] == '' ||  $data['UDFecha_final'] == '')) {
                 set_mensaje("Favor de ingresar todos los datos requeridos.");
                 muestra_mensaje();
             } elseif ($data['UDTipo_Nombramiento'] == '8'  &&  $data['UDFecha_inicio'] == '') {
@@ -195,7 +195,7 @@ class Docente extends CI_Controller {
                         set_mensaje("Número Total de horas exceden las<b> 40</b>.");
                         muestra_mensaje();
                     } else {
-                        if (($data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6' || $data['UDTipo_Nombramiento'] == '7' || $data['UDTipo_Nombramiento'] == '8') && $data['UDHoras_CB'] > '5') {
+                        if (($data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6' || $data['UDTipo_Nombramiento'] == '7') && $data['UDHoras_CB'] > '5') {
                             set_mensaje("Número de horas no pueden exceder las<b> 5 horas por Nombramiento.</b>");
                             muestra_mensaje();
                         } else {
@@ -447,18 +447,19 @@ class Docente extends CI_Controller {
         set_mensaje("Los datos del usuario se eliminaron correctamente.",'success::');
         muestra_mensaje();
 
-        $idUsuario = $this->input->post('idUsuario');
-        $idPlantel = $this->input->post('idPlantel');
-        
-        $selectDatos = "ULClave, ULUsuario, ULPLantel, ULNivel_estudio, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
-        $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura');
+        $data['contar'] = 0;
 
+        $selectDatos = "ULClave, ULUsuario, ULPLantel, id_gradoestudios, grado_estudios, ULLicenciatura, Licenciatura, ULTitulo_file, ULCedula_file, ULTitulado, ULCedulaProf, ULActivo";
+        $this->db->join('nolicenciaturas','ULLicenciatura = IdLicenciatura','left');
+        $this->db->join('nogradoestudios','LIdentificador = id_gradoestudios','left');
         $this->db->where('ULUsuario',$idUsuario);
         $this->db->where('ULPlantel',$idPlantel);
         $this->db->where('ULActivo','1');
         $data['data'] = $this->usuariolic_model->find_all(null, $selectDatos);
-
+        
         $data['contar'] = count($data['data']);
+        
+        $data['contar'];
 
         $this->load->view('docentes/Mostrar_estudios', $data);
     }

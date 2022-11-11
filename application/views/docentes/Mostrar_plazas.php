@@ -26,9 +26,9 @@
 					<?php echo nvl($list['TPNombre']); ?>
 				</td>
 				<td>
-					<?php if( nvl($list['UDFecha_ingreso']) != '0000-00-00') { 
+					<?php if( nvl($list['UDTipo_Nombramiento']) == '1' || nvl($list['UDTipo_Nombramiento']) == '2' || nvl($list['UDTipo_Nombramiento']) == '3') { 
 						echo fecha_format(nvl($list['UDFecha_ingreso']));
-					} else {
+					} elseif( nvl($list['UDTipo_Nombramiento']) == '4') {
 						echo fecha_format(nvl($list['UDFecha_inicio'])).' al '.fecha_format(nvl($list['UDFecha_final']));
 					}
 					?>
@@ -186,26 +186,26 @@
         }
 		if(UDHorasGrupo != ''){
 			$(".UDHorasGrupo").addClass("disabled").attr("disabled", true);
-			$("#UDHoras_CB").val('0');
+			//$("#UDHoras_CB").val('0');
 		} else {
 			$(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
-			$("#UDHorasGrupo").val('0');
+			//$("#UDHorasGrupo").val('0');
 		}
 
 		if(UDHorasApoyo != ''){
 			$(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
-			$("#UDHoras_CB").val('0');
+			//$("#UDHoras_CB").val('0');
 		} else {
 			$(".UDHorasApoyo").removeClass("disabled").attr("disabled", true);
 			$("#UDHorasApoyo").val('0');
 		}
-		if (idPlaza == '11' || idPlaza == '12' || idPlaza == '13' || idPlaza == '14' || idPlaza == '15') {
+		if (UDPlaza == '11' || UDPlaza == '12' || UDPlaza == '13' || UDPlaza == '14' || UDPlaza == '15') {
 			$(".UDHorasGrupo").removeClass("disabled").attr("disabled", false);
 			$("#UDHorasGrupo").val('0');
 			$(".UDHorasApoyo").addClass("disabled").attr("disabled", true);
 			$("#UDHorasApoyo").val('0');
 			$(".UDHoras_CB").removeClass("disabled").attr("disabled", false);
-			$("#UDHoras_CB").val('0');
+			//$("#UDHoras_CB").val('0');
 
 			$("#UDHorasGrupo").change(function(){
 				if($(this).val() != ''){

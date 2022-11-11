@@ -27,26 +27,26 @@
                     <button class="btn btn-primary btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>','<?php echo $Tipo_Nombramiento;?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Asignar Materias</button>
                 <?php } ?> 
-                <?php if ($list['PEstatusDetalle'] == 'Revisión' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
-                    <b class="text-warning"><i class="fa fa-clock-o"></i> En Revisión</b>
-                <?php } ?>
                 <?php if ($porcentaje == '100' && $list['PEstatus'] == 'Pendiente' && $list['PEstatusDetalle'] != 'Corregir' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
                     <button class="btn btn-success btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $Tipo_Nombramiento;?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Horas Asignadas</button>
                 <?php } ?>
-                <?php if ($list['PEstatusDetalle'] == 'Corregir' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                <?php if ($list['PEstatus'] == 'Revisión' &&  $list['PEstatusDetalle'] == '' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
+                    <b class="text-warning"><i class="fa fa-clock-o"></i> En Revisión</b>
+                <?php } ?>
+                <?php if ($list['PEstatus'] == 'Revisión' &&  $list['PEstatusDetalle'] == 'Corregir' && is_permitido(null,'generarplantilla','REVISARPLANTILLA')) { ?>
                     <button class="btn btn-danger btn-xs" type="button" onclick="asignar('<?php echo $list['UNCI_usuario'];?>', '<?php echo $Tipo_Nombramiento;?>')" name="idUsuario" id="idUsuario<?php echo $list['UNCI_usuario'];?>" value="<?php echo $list['UNCI_usuario'];?>">
                     <i class="fa fa-pencil"></i> Corregir</button>
                 <?php } ?>
 
-                <?php if ($porcentaje < '100' && $list['PEstatusDetalle'] == 'Revisión' &&  $list['PEstatus'] == 'Pendiente' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
+                <?php if ($list['PEstatus'] == 'Pendiente' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
                     <b class="text-info"><i class="fa fa-clock-o"></i> Asignando Materias</b>
                 <?php } ?> 
-                <?php if ($list['PEstatus'] == 'Revisión' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
+                <?php if ($list['PEstatus'] == 'Revisión' &&  $list['PEstatusDetalle'] == '' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
                     <b class="text-warning"><i class="fa fa-clock-o"></i> En Revisión</b>
                 <?php } ?>
-                <?php if ($list['PEstatus'] == 'Revisión' && $list['PEstatusDetalle'] == 'Revisión' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
-                    <b class="text-warning"><i class="fa fa-clock-o"></i> Correciones Enviadas</b>
+                <?php if ($list['PEstatus'] == 'Revisión' &&  $list['PEstatusDetalle'] == 'Corregir' && is_permitido(null,'generarplantilla','VALIDAR')) { ?>
+                    <b class="text-danger"><i class="fa fa-clock-o"></i> Correciones Enviadas</b>
                 <?php } ?>
                 
                 
