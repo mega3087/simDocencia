@@ -1,34 +1,10 @@
-<form action="<?php echo base_url("generarplantilla/validar"); ?>" name="formValidar" id="formValidar" method="POST" class="wizard-big form-vertical">
-	<input type="hidden" name="idPlantel" id="idPlantel" value="<?php echo $plantel['CPLClave']; ?>">
-	<input type="hidden" name="idPlantilla" id="idPlantilla" value="<?php echo $plantilla['PClave']; ?>">
-	<div class="col-lg-12" id="Exportar_a_Excel">
-		<table>
-			<tr>
-				<td rowspan="2" class="no-border text-left" style="font-size: 12px">
-					COLEGIO DE BACHILLERES DEL ESTADO DE MÉXICO<br>
-					DIRECCIÓN ACADÉMICA<br>
-					DEPARTAMENTO DE DOCENCIA Y ORIENTACIÓN EDUCATIVA<br>
-					PLANTILLA DE PERSONAL DOCENTE<br>
-					PLANTEL Y/O CENTRO EMSAD: <b><?php echo $plantel['CPLNombre']; ?></b> <br>
-					SEMESTRE:<b> 20<?= substr($periodo['PEPeriodo'],0,2); ?> <?= substr($periodo['PEPeriodo'],3,1) == 1? '(Febrero-Agosto)' : '(Agosto-Febrero)'?></b><br>
-					FECHA: <b><?php 
-					if ($plantilla['PEstatus'] == 'Pendiente' || $plantilla['PEstatus'] == 'Revisión') {
-						$fecha = explode(' ', $plantilla['PFecha_registro']);
-						echo fecha_format($fecha[0]);
-					} 
-					if ($plantilla['PEstatus'] == 'Autorizada') {
-						$fecha = explode(' ', $plantilla['PFecha_modificacion']);
-						echo fecha_format($fecha[0]);
-					}
-					?></b> <br>
-				</td>
-			</tr>
-		</table><br>
-		<div class="wrapper" >
+<div class="col-lg-12">
+	<div class="wrapper" >
 		<div class="one" style="text-align:center"><br><br><br><p>#</p></div>
 		<div class="one"><br><br>
 			<p>NOMBRE DEL DOCENTE</p>
-			<p>R.F.C. CON HOMOCLAVE</p></div>
+			<p>R.F.C. CON HOMOCLAVE</p>
+		</div>
 		<div class="one"><br>
 			<p>CEDULA PROFESIONAL</p>
 			<p>FECHA DE INGRESO</p>
@@ -74,8 +50,9 @@
 		$sumcb = 0;
 		$sumhoras = 0;
 		foreach ($docentes as $d => $listDoc) { 
-		$idPlantel = $this->encrypt->encode($listDoc['idPPlantel']); ?>
+		$idPlantel = $this->encrypt->encode($listDoc['UDPlantel']); ?>
 			<div class="cuerpo" style="text-align:center">
+			<input type="hidden" id="UDClave" name="UDClave[]" value="<?= $listDoc['UDClave']; ?>" />
 			<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;<b><?= $i; ?></b>&nbsp;</p>
 			</div>
 			<div class="cuerpo">
@@ -86,7 +63,6 @@
 			<div class="cuerpo">
 				<p>&nbsp;<?= $listDoc['estudios'][0]['ULCedulaProf'] ?><br>
 				<?php foreach ($listDoc['plazas'] as $p => $listP) { 
-					echo '<input type="hidden" id="UDClave" name="UDClave[]" value="'.$listP['UDClave'].'" />';
 					$fechaAnio = explode('-',$listP['UDFecha_ingreso']);
 					
 					if($listP['UDTipo_Nombramiento'] == '1') { 
@@ -219,185 +195,43 @@
 			<?php } ?>
 			<div class="cuerpo" style="text-align: center;"></div>
 			<?php foreach ($listDoc['horas'] as $h => $listHor) { 
-					$sumfrente = $sumfrente + $listHor['UDHoras_grupo'];
-					$sumapoyo = $sumapoyo + $listHor['UDHoras_apoyo'];
-					if ($listHor["TotalHoras"] > $listHor['UDHoras_grupo']) { $horasCB = $listHor['UDHoras_CB']; } else { $horasCB = "0"; }
-					$sumcb = $sumcb + $horasCB;
-					$sumhoras = $sumfrente + $sumapoyo + $sumcb;
-					?>				
-				<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> <?= $listHor['UDHoras_grupo']; ?></p></div>
-				<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> <?= $listHor['UDHoras_apoyo']; ?></p></div>
-				<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> <?php if ($listHor["TotalHoras"] > $listHor['UDHoras_grupo']) { echo $listHor['UDHoras_CB']; } else { echo "0"; } ?></p></div>
-				<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $horasCB; ?></p></div>
-			<?php } ?>
-			
-			<?php $i++; } ?>
-			<div class="totales" style="text-align: center;">TOTALES</div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumhsm ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumMat ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumVesp ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sum1 ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sum2 ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sum3 ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumtotal ?></div>
-			<?php if( is_permitido(null,'generarplantilla','validar') && $plantilla['PEstatus'] == 'Revisión' ) { ?>
-			<div class="cuerpo" style="text-align: center;"></div>
-			<?php } ?>
-			<div class="cuerpo" style="text-align: center;"><?= $sumcompl ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumfrente ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumapoyo ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumcb ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumhoras ?></div>
-		</div>
-	</div>
-	<div class="form-group">
-	<div class="loadingRevision"></div>
-</div>
-</form>
-
-<br><br>
-
-<?php if (is_permitido(null,'generarplantilla','revisarPlantilla') && $plantilla['PEstatus'] == 'Pendiente') { ?>
-<div class="form-group">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-10"><br><br>
-	<?php if ($contarDoc != $DocPlan)  { ?>
-		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button" <?php if($plantilla['PEstatus'] == 'Revisión'){ echo "disabled"; }?>>
-			<i class="fa fa-eye"></i> <?php if ($plantilla['PEstatus'] == 'Revisión') { 
-				echo "Plantilla en Revisión"; 
-				} else {
-				echo "Mandar a Revisón"; } ?>
-		</button>
-	<?php } ?>
+				$sumfrente = $sumfrente + $listHor['UDHoras_grupo'];
+				$sumapoyo = $sumapoyo + $listHor['UDHoras_apoyo'];
+				if ($listHor["totalHoras"] > $listHor['UDHoras_grupo']) { $horasCB = $listHor['UDHoras_CB']; } else { $horasCB = "0"; }
+				$sumcb = $sumcb + $horasCB;
+				$sumhoras = $sumfrente + $sumapoyo + $sumcb;?>				
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> <?= $listHor['UDHoras_grupo']; ?></p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> <?= $listHor['UDHoras_apoyo']; ?></p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> <?php if ($listHor["totalHoras"] > $listHor['UDHoras_grupo']) { echo $listHor['UDHoras_CB']; } else { echo "0"; } ?></p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $horasCB; ?></p></div>
+			<?php } ?>			
+		<?php $i++; } ?>
+		<div class="totales" style="text-align: center;">TOTALES</div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumhsm ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumMat ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumVesp ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sum1 ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sum2 ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sum3 ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumtotal ?></div>
+		<?php if( is_permitido(null,'generarplantilla','validar') && $plantilla['PEstatus'] == 'Revisión' ) { ?>
+		<div class="cuerpo" style="text-align: center;"></div>
+		<?php } ?>
+		<div class="cuerpo" style="text-align: center;"><?= $sumcompl ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumfrente ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumapoyo ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumcb ?></div>
+		<div class="cuerpo" style="text-align: center;"><?= $sumhoras ?></div>
 	</div>
 </div>
-<?php } ?>
-<?php if (is_permitido(null,'generarplantilla','revisarPlantilla') && $plantilla['PEstatus'] == 'Autorizada') { ?>
-<div class="form-group">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-10"><br><br>
-	<a href="" target="_blank" id="ImprimirPlantilla" type="button" class="btn btn-success btn-sm"><i class="fa fa-print"></i> Imprimir</a>
-	</div>
-</div>
-<?php } ?>
-<br><br>
-<?php if( is_permitido(null,'generarplantilla','validar') && $plantilla['PEstatus'] == 'Revisión' ) { ?>
-	<div class="form-group">
-	<div class="col-lg-1"></div>
-	<div class="col-lg-10"><br><br>
-		<button class="btn btn-primary btn-rounded btn-block save_rechazar pull-center enviarCorrecciones" type="button"> <i class="fa fa-exchange"></i> Enviar Correcciones</button>
-	</div>
-</div>
-<?php } ?>
-
-<!--<form action="<?= base_url("generarplantilla/exportarExcel_skip")?>" method="post" target="_blank" id="FormularioExportacion">
-<button class="btn btn-primary btn-rounded btn-block botonExcel pull-center" type="button"> <i class="fa fa-save"></i> Exportar Excel</button>
-	<input type="hidden" id="datos_a_enviar" name="datos_a_enviar" />
-</form>-->
-<script src="<?php echo base_url('assets/inspinia/js/plugins/bootbox.all.min.js'); ?>"></script>
-<script>
-$(document).ready(function() {
-	$(".revision").click(function() {
-		bootbox.confirm({
-			message: "<div class='text-center'>¿Seguro de enviar la Plantilla a Revisión?</div>",
-			size: 'small',
-			buttons: {
-				confirm: {
-					label: 'Si',
-					className: 'btn-primary'
-				},
-				cancel: {
-					label: 'No',
-					className: 'btn-danger'
-				}
-			},
-			callback: function (result) {
-				if (result == true) {
-					var idPlantel = document.getElementById('plantelId').value;
-					$.ajax({
-						type: "POST",
-						url: "<?php echo base_url("generarplantilla/revisarPlantilla"); ?>",
-						data: $('#formValidar').serialize(),
-						dataType: "html",
-						beforeSend: function(){
-							//carga spinner
-							$(".loadingRevision").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-						},
-						success: function(data) {
-						var data = data.split("::");
-							if(data[1]=='OK'){	
-								$(".loadingRevision").html('');
-								verPlantilla(data[2]);
-								//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
-							}
-						}
-					});
-				}
-			}
-		});		
-	});
-
-	$(".enviarCorrecciones").click(function() {
-		var idPlantel = document.getElementById('plantelId').value;
-		$.ajax({
-			type: "POST",
-			url: "<?php echo base_url("generarplantilla/enviarCorrecciones_skip"); ?>",
-			data: $('#formValidar').serialize(),
-			dataType: "html",
-			beforeSend: function(){
-				//carga spinner
-				$(".loadingRevision").html("<div class=\"spiner-example\"><div class=\"sk-spinner sk-spinner-three-bounce\"><div class=\"sk-bounce1\"></div><div class=\"sk-bounce2\"></div><div class=\"sk-bounce3\"></div></div></div>");
-			},
-			success: function(data) {
-				var data = data.split("::");
-				if(data[1]=='OK'){	
-					$(".loadingRevision").html('');
-					verPlantilla(data[2]);
-					//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
-				} 
-			}
-		});
-	});
-
-	$(".botonExcel").click(function(event) {
-		$("#datos_a_enviar").val( $("<div>").append( $("#Exportar_a_Excel").eq(0).clone()).html());
-		$("#FormularioExportacion").submit();
-	});
-
-	var idPlantilla = window.btoa(unescape(encodeURIComponent(<?=$plantilla['PClave']?>))).replace("=","").replace("=","");
-    $("#ImprimirPlantilla").attr("href","<?php echo base_url("generarplantilla/imprimirPlantilla_skip"); ?>/"+idPlantilla);
-});
-
-	
-	$(document).ready(function(){
-		$('button[data-toggle="popover"]').popover();   
-	});
-
-	$("button[data-toggle]").click(function() {
-		var nombre = $(this).attr('nombre');
-		var i = 0;
-		var y = 0;
-		var texto = '';
-		$('input[name='+nombre+']').each(function(){
-			i = 1;
-		});
-		if(i == 0){
-			$(this).parent().append('<input type="hidden" name="'+nombre+'" value="" />');
-		}else{
-			texto = $('input[name='+nombre+']').val();
-		}
-		
-		$('#'+$(this).attr('aria-describedby')+' .popover-content').html('<textarea id="'+nombre+'" class="form-control textarea" >'+texto+'</textarea>');
-		
-		$('.textarea').keyup(function(){
-			nombre = $(this).attr('id');
-			$('input[name='+nombre+']').val( $(this).val() );
-		});
-	});
-
-</script>
 
 <style>
+.left-text{
+	text-align:left;
+}
+.right-text{
+	text-align:right;
+}
 .wrapper {
   display: grid;
   -grid-template-columns: repeat(3, 1fr);
@@ -475,5 +309,11 @@ $(document).ready(function() {
 	grid-column-end: 6;
 	border: 1px solid rgba(0, 0, 0, .8);
 	text-align: center;
+}
+@page { 
+	margin: 30px 40px 30px 40px; 
+	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 9px;
+	color: #676a6c;
 }
 </style>

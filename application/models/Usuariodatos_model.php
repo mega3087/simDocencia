@@ -25,7 +25,18 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 			$periodo = periodo();
 			$result = array();
 			$idPlantilla = $this->plantilla_model->plantilla_actual($idPlantel);
-			
+
+			$select = 'COUNT(*) total';
+			$this->db->where('PPeriodo',$periodo['PEPeriodo']);
+			$this->db->where('PPlantel',$idPlantel);
+			$this->db->where('PActivo','1');
+			$plantillas = $this->plantilla_model->find_all(null, $select);
+			if ($plantillas[0]['total'] == 1){
+				$busDatos = "AND idPlantilla = '".$idPlantilla."'";
+			} else {
+				$busDatos = "AND pperiodo = '".$periodo['PEPeriodo']."'";
+			}
+
 			if($horasApoyo)
 				$horasApoyo = "+SUM(UDHoras_apoyo)";
 			
@@ -37,14 +48,13 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 				UEstado, UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDValidado, UDHoras_grupo, 
 				SUM(IF(UDTipo_Nombramiento IN (1,2,3,4), 1, 0)) AS num,
 				SUM(UDHoras_grupo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) $horasApoyo AS HorasTot,
-				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1) AS HorasAsig,
-				(SELECT noplantilla.PEstatus FROM noplantilla WHERE PClave = $idPlantilla GROUP BY PClave) AS PEstatus,
-				(SELECT noplantilladetalle.pestatus FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND idPlantilla = $idPlantilla AND pactivo = 1 AND noplantilladetalle.pestatus = 'Corregir' GROUP BY idPUsuario) AS PEstatusDetalle
-			";
+				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND pperiodo = '".$periodo['PEPeriodo']."' AND idPUDatos = UDClave AND pactivo = 1) AS HorasAsig,
+				(SELECT noplantilla.PEstatus FROM noplantilla WHERE noplantilla.PPeriodo = '".$periodo['PEPeriodo']."' AND paCTIVO = '1' GROUP BY PClave ORDER BY PVersion DESC LIMIT 1) AS PEstatus,
+				(SELECT COUNT(*) FROM noplantilladetalle INNER JOIN noplantillabitacora ON idBPlanDetalle = idPlanDetalle WHERE idPUsuario = UDUsuario AND pperiodo = '".$periodo['PEPeriodo']."' AND pactivo = 1) AS PEstatusDetalle ";
 			if($permanente=='Y'){
 				$this->db->where("UDPermanente","Y");
 			}else{
-				$this->db->where(" (UDPermanente = 'Y' OR (UDPermanente != 'Y' OR UDPlantilla=$idPlantilla)) ");
+				$this->db->where(" (UDPermanente = 'Y' OR (`UDFecha_inicio` >= '".$periodo['PEFecha_inicial']."' AND UDFecha_final <= '".$periodo['PEFecha_final']."')) ");
 			}
 			
 			if($idTipoNombramiento){

@@ -195,7 +195,7 @@
 														<div class="form-group">
 														<option value="">- Seleccionar Nombramiento -</option>
 														<?php foreach($tipoDocente as $key_t => $list_t){ ?>
-														<option class="<?php if($list_t['TPClave']>4) echo"nombTod"; ?>" value="<?=$list_t['TPClave'];?>"><?=$list_t['TPNombre'];?></option>
+														<option class="<?php if($list_t['TPClave'] > 4 && $list_t['TPClave'] != 7) echo"nombTod"; ?>" value="<?=$list_t['TPClave'];?>" <?php if($list_t['TPClave'] == 7) echo"disabled"; ?>><?=$list_t['TPNombre'];?></option>
 														<?php } ?>
 														</div>
                                                 </select>
@@ -215,14 +215,6 @@
                                                 <div class="input-group date">
                                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                                     <input type="text" class="form-control fecha" id="UDFecha_ingreso" name="UDFecha_ingreso" value="<?php echo fecha_format(nvl($usuario['UDFecha_ingreso'])); ?>" minlength="10" maxlength="10">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group mostrarFechaIng2014" style="display:none;">
-                                                <label>Fecha de Ingreso: <em>*</em></label>
-                                                <div class="input-group date">
-                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                    <input type="text" class="form-control fecha">
                                                 </div>
                                             </div>
 
@@ -278,6 +270,17 @@
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <input type="text" class="form-control" id="UDNumOficio" name="UDNumOficio" value="" minlength="6" maxlength="24">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                <label class="col-lg-2">Docente con Licencia: </label>
+                                                    <div class="col-lg-2">
+                                                    <label>Si<em>*</em></label> <input id="UDLicenciaSi" name="UDLicencia" type="radio" value="Si"> 
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                    <label>No<em>*</em></label> <input id="UDLicenciaNo" name="UDLicencia" type="radio" value="No" checked>
                                                     </div>
                                                 </div>
                                             </div>
@@ -548,6 +551,8 @@
                         
                         $("#UDFecha_inicio").val('');
                         $("#UDFecha_final").val('');
+                        $('#UDLicenciaSi').prop('checked', false);
+                        $('#UDLicenciaNo').prop('checked', true);
                         $("#UDObservaciones").val('');
 
                         $("#UDNombramiento_file").val('');
@@ -809,7 +814,6 @@
 
         if (idNombramiento == 3) {
             $('.mostrarFechaIng').show();
-            $('.mostrarFechaIng2014').hide();            
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
@@ -817,7 +821,6 @@
             
         } else if (idNombramiento == 4) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
@@ -825,7 +828,6 @@
             
         } else if (idNombramiento == 5) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
@@ -833,31 +835,28 @@
             
         } else if (idNombramiento == 6) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
             
         } else if (idNombramiento == 7) {
-            $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').show();
+            $('.mostrarFechaIng').show();
+            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             
         } else if (idNombramiento == 8) {
-            $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
+            $('.mostrarFechaIng').show();
             $('.mostrarOficio').show();
-            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             
         } else {
             $('.mostrarFechaIng').show();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').hide();
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
@@ -925,6 +924,7 @@
                     });
                 } 
                 $("#UDTipo_materia").val(data[3]);
+                $("#UDTipo_materia").addClass("disabled").attr("disabled", true);
 
             }
         });

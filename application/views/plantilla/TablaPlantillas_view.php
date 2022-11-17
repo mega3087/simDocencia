@@ -27,13 +27,16 @@
 			<td><?php echo $horasAsignadas; ?> (<?php echo number_format($horasAsignadas/$horasTotales*100,1); ?>%)</td>
 			<td><?php echo $list['PEstatus']; ?></td>
 			<td>
-				<button onclick="verPlantilla(<?php echo$list['PClave']; ?>)" class="btn btn-success btn-xs" ><i class="fa fa-eye"></i> Revisar</button>
+				<button onclick="verPlantilla(<?php echo$list['PClave']; ?>)" class="btn btn-success btn-xs" ><i class="fa fa-eye"></i> <?php if($list['PEstatus'] == 'Pendiente') { echo "Revisar"; } else {
+					echo "Ver";} ?></button>
 			</td>
 		</tr>
 		<?php } ?>
 		<tr>
 			<th colspan="3" style="text-align:right !important;">Total h/s/m:</th>
 			<th><?php echo $hrsTotalAsig; ?> de <?php echo $horasTotales; ?></th>
+			<th>&nbsp;</th>
+			<th>&nbsp;</th>
 		</tr>
 	</table>
 </div>

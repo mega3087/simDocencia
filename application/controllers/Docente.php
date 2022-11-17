@@ -195,7 +195,7 @@ class Docente extends CI_Controller {
                         set_mensaje("Número Total de horas exceden las<b> 40</b>.");
                         muestra_mensaje();
                     } else {
-                        if (($data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6' || $data['UDTipo_Nombramiento'] == '7') && $data['UDHoras_CB'] > '5') {
+                        if (($data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6') && $data['UDHoras_CB'] > '5') {
                             set_mensaje("Número de horas no pueden exceder las<b> 5 horas por Nombramiento.</b>");
                             muestra_mensaje();
                         } else {
@@ -218,6 +218,14 @@ class Docente extends CI_Controller {
                                 $data['UDNombramiento_file'] = '';
                             }
                             $idPlantilla = $this->plantilla_model->plantilla_actual($data['UDPlantel']);
+
+                            if($data['UDTipo_Nombramiento'] == '1' || $data['UDTipo_Nombramiento'] == '2' || $data['UDTipo_Nombramiento'] == '3' || $data['UDTipo_Nombramiento'] == '8') {
+                                $permanente = 'Y';
+                                $plantilla = NULL;
+                            } else {
+                                $permanente = 'N';
+                                $plantilla = $idPlantilla;
+                            }
                             
                             if (nvl($data['UDClave']) == '') {
                                 $datos['UDUsuario'] = $data['UDUsuario'];
@@ -232,11 +240,13 @@ class Docente extends CI_Controller {
                                 $datos['UDHoras_CB'] = $data['UDHoras_CB'];
                                 $datos['UDFecha_inicio'] = $data['UDFecha_inicio'];
                                 $datos['UDFecha_final'] = $data['UDFecha_final'];
+                                $datos['UDLicencia'] = $data['UDLicencia'];
                                 $datos['UDObservaciones'] = $data['UDObservaciones'];
                                 $datos['UDNombramiento_file'] = $data['UDNombramiento_file'];
-                                $datos['UDPlantilla'] = $idPlantilla;
+                                $datos['UDPlantilla'] = $plantilla;
                                 $datos['UDActivo'] = '1';
                                 $datos['UDValidado'] = '1';
+                                $datos['UDPermanente'] = $permanente;
                                 $datos['UDUsuario_registro'] = get_session('UNCI_usuario');
                                 $datos['UDFecha_registro'] = date('Y-m-d H:i:s');
                                 $this->usuariodatos_model->insert($datos);
@@ -246,7 +256,8 @@ class Docente extends CI_Controller {
                                 echo "::OK";
                                 echo "::".$data['UDUsuario'];
                             } else {
-                                $data['UDPlantilla'] = $idPlantilla;
+                                $data['UDPlantilla'] = $plantilla;
+                                $data['UDPermanente'] = $permanente;
                                 $data['UDUsuarioModificacion'] = get_session('UNCI_usuario');
                                 $data['UDFechaModificacion'] = date('Y-m-d H:i:s');
                                 $this->usuariodatos_model->update($data['UDClave'], $data);

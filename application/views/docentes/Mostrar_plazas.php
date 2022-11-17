@@ -26,9 +26,9 @@
 					<?php echo nvl($list['TPNombre']); ?>
 				</td>
 				<td>
-					<?php if( nvl($list['UDTipo_Nombramiento']) == '1' || nvl($list['UDTipo_Nombramiento']) == '2' || nvl($list['UDTipo_Nombramiento']) == '3') { 
+					<?php if( nvl($list['UDTipo_Nombramiento']) == '1' || nvl($list['UDTipo_Nombramiento']) == '2' || nvl($list['UDTipo_Nombramiento']) == '3' || nvl($list['UDTipo_Nombramiento']) == '7' || nvl($list['UDTipo_Nombramiento']) == '8') { 
 						echo fecha_format(nvl($list['UDFecha_ingreso']));
-					} elseif( nvl($list['UDTipo_Nombramiento']) == '4') {
+					} elseif( nvl($list['UDTipo_Nombramiento']) == '4' || nvl($list['UDTipo_Nombramiento']) == '5' || nvl($list['UDTipo_Nombramiento']) == '6') {
 						echo fecha_format(nvl($list['UDFecha_inicio'])).' al '.fecha_format(nvl($list['UDFecha_final']));
 					}
 					?>
@@ -54,7 +54,7 @@
 				<?php //if( nvl($data[0]['UDPermanente']) == 'N' && is_permitido(null,'generarplantilla','save')) { 
 					if( is_permitido(null,'generarplantilla','save')) { ?>
 				<td>
-				<button type="button" class="btn btn-warning btn-sm" onclick="editarPlaza('<?= $list['UDTipo_Nombramiento'] ?>', '<?= $list['UDPlaza'] ?>','<?= $list['UDFecha_ingreso'] ?>','<?= $list['UDFecha_inicio'] ?>','<?= $list['UDFecha_final'] ?>','<?= $list['UDObservaciones'] ?>','<?= $list['UDNombramiento_file'] ?>','<?= $list['UDHoras_grupo'] ?>','<?= $list['UDHoras_apoyo'] ?>','<?= $list['UDHoras_CB'] ?>','<?= $list['UDTipo_materia'] ?>','<?= $list['UDClave']?>')"><i class="fa fa-pencil"></i> Editar </button>
+				<button type="button" class="btn btn-warning btn-sm" onclick="editarPlaza('<?= $list['UDTipo_Nombramiento'] ?>', '<?= $list['UDPlaza'] ?>','<?= $list['UDFecha_ingreso'] ?>','<?= $list['UDFecha_inicio'] ?>','<?= $list['UDFecha_final'] ?>','<?= $list['UDLicencia'] ?>','<?= $list['UDObservaciones'] ?>','<?= $list['UDNombramiento_file'] ?>','<?= $list['UDHoras_grupo'] ?>','<?= $list['UDHoras_apoyo'] ?>','<?= $list['UDHoras_CB'] ?>','<?= $list['UDTipo_materia'] ?>','<?= $list['UDClave']?>')"><i class="fa fa-pencil"></i> Editar </button>
                     <?php // echo nvl($borrar); ?>
 				</td>
 				<?php } ?>
@@ -113,7 +113,8 @@
 	});
 
 
-	function editarPlaza(UDTipo_Nombramiento, UDPlaza, UDFecha_ingreso, UDFecha_inicio, UDFecha_final, UDObservaciones, UDNombramiento_file, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDTipo_materia, UDClave){
+	function editarPlaza(UDTipo_Nombramiento, UDPlaza, UDFecha_ingreso, UDFecha_inicio, UDFecha_final, UDLicencia, UDObservaciones, UDNombramiento_file, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDTipo_materia, UDClave){
+		
 		document.getElementById("UDTipo_Nombramiento").value = UDTipo_Nombramiento;
 		document.getElementById("UDPlaza").value = UDPlaza;
 		document.getElementById("UDFecha_ingreso").value = UDFecha_ingreso;
@@ -127,9 +128,15 @@
 		document.getElementById("UDTipo_materia").value = UDTipo_materia;
 		document.getElementById("UDClave").value = UDClave;
 
+		if (UDLicencia == 'Si') {			
+			$('#UDLicenciaSi').prop('checked', true);
+		}
+		if (UDLicencia == 'No'){
+			$('#UDLicenciaNo').prop('checked', true);
+		}
+
 		if (UDTipo_Nombramiento == 3) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();            
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
@@ -137,7 +144,6 @@
             
         } else if (UDTipo_Nombramiento == 4) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
@@ -145,7 +151,6 @@
             
         } else if (UDTipo_Nombramiento == 5) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
@@ -153,31 +158,28 @@
             
         } else if (UDTipo_Nombramiento == 6) {
             $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').show();
             $('.mostrarFechaFinal').show();
             $('.mostrarDocNom').show();
             
         } else if (UDTipo_Nombramiento == 7) {
-            $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').show();
+			$('.datosNombramiento').attr("disabled",true);
+            $('.mostrarFechaIng').show();
             $('.mostrarOficio').show();
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             
         } else if (UDTipo_Nombramiento == 8) {
-            $('.mostrarFechaIng').hide();
-            $('.mostrarFechaIng2014').hide();
+            $('.mostrarFechaIng').show();
             $('.mostrarOficio').show();
-            $('.mostrarFechaInicio').show();
+            $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();
             $('.mostrarDocNom').show();
             
         } else {
             $('.mostrarFechaIng').show();
-            $('.mostrarFechaIng2014').hide();
             $('.mostrarOficio').hide();
             $('.mostrarFechaInicio').hide();
             $('.mostrarFechaFinal').hide();

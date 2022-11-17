@@ -39,7 +39,6 @@
                     <li class="nav-border nav-border-top-danger">
                         <a href="#ver-plantilla" data-toggle="tab" onclick="verPlantilla('<?php echo $this->plantilla_model->plantilla_actual($plantel); ?>')">
                             <i class="fa fa-eye fg-danger"></i>
-                            
                             <div>
                                 <span class="text-strong">Ver Plantilla</span>
                             </div>
@@ -61,7 +60,7 @@
                             <div class="tab-pane fade <?php if(!$plantillas) echo"in active"; ?>" id="docentes">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item">
-										<button class="btn btn-outline btn-primary" id="UDTipo_Base" onclick='tablaBase()' value="1"  type="button"> <i class="fa fa-users"></i> Docentes BASE</button>
+										<button class="btn btn-outline btn-primary" id="UDTipo_Base" onclick='tablaBase()' value="1" type="button"> <i class="fa fa-users"></i> Docentes BASE</button>
 									</li>
 									<li class="breadcrumb-item">
 									<button class="btn btn-outline btn-primary" id="UDTipo_Idoneo" onclick='tablaIdoneo()' value="2" type="button"> <i class="fa fa-users"></i> Docentes IDONEOS</button>    

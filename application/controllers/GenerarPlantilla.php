@@ -422,48 +422,47 @@
 			
 			$this->db->where('PClave', $this->input->post('idPlantilla'));
 			$data['plantilla'] = $this->plantilla_model->find();
-						
-			$select = 'PClave, idPlanDetalle, PPlantel, noplantilla.PPeriodo, pd.idPUsuario, noplantilla.PEstatus,
-			UDClave, UDUsuario, UDPlantel, UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, URFC, 
-			(SELECT UDTipo_Nombramiento FROM nousuariodatos WHERE UDUsuario = UNCI_usuario ORDER BY UDTipo_Nombramiento ASC LIMIT 1) AS UDTipo_Nombramiento';
-			$this->db->join("noplantilladetalle AS pd","PClave = idPlantilla","LEFT");
+			
+			$select = 'idPlanDetalle,idPlantilla,idPPlantel,UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, URFC, (SELECT UDTipo_Nombramiento FROM nousuariodatos WHERE UDUsuario = UNCI_usuario ORDER BY UDTipo_Nombramiento ASC LIMIT 1) AS UDTipo_Nombramiento';
 			$this->db->join('nousuario','UNCI_usuario = idPUsuario','LEFT');
-			$this->db->join('nousuariodatos','idPUsuario = UDUsuario','LEFT');
-			$this->db->where("PClave",$data['plantilla']['PClave']);
+			$this->db->where("idPlantilla",$data['plantilla']['PClave']);
+			$this->db->where("pactivo",'1');
 			$this->db->order_by('UDTipo_Nombramiento','ASC');
 			$this->db->order_by('UApellido_pat','ASC');
 			$this->db->order_by('UApellido_mat','ASC');
 			$this->db->group_by('UNCI_usuario');
-			$data['docentes'] = $this->plantilla_model->find_all(null, $select);
-
+			$data['docentes'] = $this->generarplantilla_model->find_all(null, $select);
+			
 			$data['contarDoc'] = count($data['docentes']);
 
-			$idPlantel 	= $data['docentes'][0]['PPlantel'];
-			$periodo	= $data['docentes'][0]['PPeriodo'];
+			$idPlantel 	= $data['docentes'][0]['idPPlantel'];
+			
 			$data['doc'] = $this->usuariodatos_model->nombramientos($idPlantel, $data['docentes'][0]['UDTipo_Nombramiento']);
 			$data['DocPlan'] = count($data['doc']);
 
 			$this->db->select('CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector');
         	$data['plantel'] = $this->plantel_model->get($idPlantel);
 			
-			$data['periodo'] = periodo($periodo);
-			
+			$data['periodo'] = periodo();			
 			
 			foreach ($data['docentes'] as $u => $listUser) {
-				$select = "UDClave, UDFecha_ingreso, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, UDPlaza, nomplaza, UDFecha_inicio, UDFecha_final, UDObservaciones,UDNumOficio";
+				$select = "idPlantilla, UDUsuario,`UDClave`, `UDFecha_ingreso`, `UDTipo_Nombramiento`, `TPNombre`, `UDTipo_materia`, `UDHoras_grupo`, `UDHoras_apoyo`, `UDHoras_CB`, `UDHoras_provicionales`, 
+				(`UDHoras_grupo`+`UDHoras_apoyo`+UDHoras_CB) AS TotalHoras, `UDPlaza`, `nomplaza`, `UDFecha_inicio`, `UDFecha_final`, `UDObservaciones`, `UDNumOficio`";
+				$this->db->join('nousuariodatos', 'idPUDatos = UDClave', 'left');
 				$this->db->join('noctipopersonal', 'UDTipo_Nombramiento = TPClave', 'left');
 				$this->db->join('noplazadocente', 'UDPlaza = idPlaza', 'left');
 				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
-				$this->db->where('UDPlantel',$listUser['UDPlantel']);
+				$this->db->where("idPlantilla",$listUser['idPlantilla']);
+				$this->db->where('pactivo','1');
 				$this->db->order_by('UDTipo_Nombramiento','ASC');
-				$this->db->where('UDActivo','1');
-				
-				$data['docentes'][$u]['plazas'] = $this->usuariodatos_model->find_all(null, $select);
+				$this->db->group_by('UDClave');
+
+				$data['docentes'][$u]['plazas'] = $this->generarplantilla_model->find_all(null, $select);
 
 				$selects = "ULClave, ULNivel_estudio, ULLicenciatura, LGradoEstudio, Licenciatura, ULCedulaProf, ULTitulado";
 				$this->db->join('nolicenciaturas','IdLicenciatura = ULLicenciatura','left');
 				$this->db->where('ULUsuario',$listUser['UNCI_usuario']);
-				$this->db->where('ULPlantel',$listUser['UDPlantel']);
+				$this->db->where('ULPlantel',$listUser['idPPlantel']);
 
 				$data['docentes'][$u]['estudios'] = $this->usuariolic_model->find_all(null, $selects);
 
@@ -471,7 +470,7 @@
 				$this->db->join('nomaterias','id_materia = pidMateria','left');
 				$this->db->join('nousuariodatos','UDClave = idPUDatos','left');
 				$this->db->where('idPUsuario',$listUser['UNCI_usuario']);
-				$this->db->where('idPPlantel',$listUser['UDPlantel']);
+				$this->db->where('idPPlantel',$listUser['idPPlantel']);
 				$this->db->where('idPlantilla',$data['plantilla']['PClave']);
 				$this->db->where('pactivo','1');
 				$this->db->order_by('idPUDatos','ASC');
@@ -479,18 +478,31 @@
 
 				$data['docentes'][$u]['materias'] = $this->generarplantilla_model->find_all(null, $selectMat);
 
-				$selectHoras = 
-				"SUM(UDHoras_grupo) UDHoras_grupo, SUM(UDHoras_apoyo) UDHoras_apoyo, SUM(UDHoras_CB) UDHoras_CB, SUM(UDHoras_provicionales) UDHoras_provicionales, 
-				(`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, 
-				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = ".$listUser['UNCI_usuario']." AND idPPlantel = ".$listUser['UDPlantel']." AND idPlantilla = ".$data['plantilla']['PClave']." AND pactivo = 1) AS totalHoras";
+				$selectHoras = "`UDHoras_grupo`, `UDHoras_apoyo`, `UDHoras_CB`, `UDHoras_provicionales`";
+				$this->db->join('nousuariodatos', 'idPUDatos = UDClave', 'left');
 				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
-				$this->db->where('UDPlantel',$listUser['UDPlantel']);
-				$this->db->where('UDActivo','1');
+				$this->db->where("idPlantilla",$listUser['idPlantilla']);
+				$this->db->where('pactivo','1');
+				$this->db->order_by('UDTipo_Nombramiento','ASC');
+				$this->db->group_by('idPUDatos');
 
-				$data['docentes'][$u]['horas'] = $this->usuariodatos_model->find_all(null, $selectHoras);
+				$horas[$u] = $this->generarplantilla_model->find_all(null, $selectHoras);
 
+				$sumasGrupos[$u] = array_sum(array_column($horas[$u], 'UDHoras_grupo'));
+				$sumasApoyo[$u] = array_sum(array_column($horas[$u], 'UDHoras_apoyo'));
+				$sumasCB[$u] = array_sum(array_column($horas[$u], 'UDHoras_CB'));
+				$sumasProv[$u] = array_sum(array_column($horas[$u], 'UDHoras_provicionales'));
+
+				$data['docentes'][$u]['horas'][] = array(
+					'UDHoras_grupo' => $sumasGrupos[$u],
+					'UDHoras_apoyo' => $sumasApoyo[$u],
+					'UDHoras_CB' => $sumasCB[$u],
+					'UDHoras_provicionales' => $sumasProv[$u],
+					'TotalHoras' => $sumasGrupos[$u] + $sumasCB[$u],
+				);
+				
 			}
-
+			
 			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
 			$this->load->view('plantilla/Ver_plantilla_view', $data);
 		}
@@ -646,6 +658,91 @@
 			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
 			$this->load->view('plantilla/Ver_plantilla_view', $data);
 		}*/
+
+		public function imprimirPlantilla_skip($idPlantilla = null) {
+			$idPlantilla = base64_decode($idPlantilla);
+			$data['plantilla'] = $this->plantilla_model->get($idPlantilla);
+						
+			$select = 'PClave, idPlanDetalle, PPlantel, noplantilla.PPeriodo, pd.idPUsuario, noplantilla.PEstatus,
+			UDClave, UDUsuario, UDPlantel, UNCI_usuario, UClave_servidor, UNombre, UApellido_pat, UApellido_mat, URFC, 
+			(SELECT UDTipo_Nombramiento FROM nousuariodatos WHERE UDUsuario = UNCI_usuario ORDER BY UDTipo_Nombramiento ASC LIMIT 1) AS UDTipo_Nombramiento';
+			$this->db->join("noplantilladetalle AS pd","PClave = idPlantilla","LEFT");
+			$this->db->join('nousuario','UNCI_usuario = idPUsuario','LEFT');
+			$this->db->join('nousuariodatos','idPUsuario = UDUsuario','LEFT');
+			$this->db->where("PClave",$idPlantilla);
+			$this->db->order_by('UDTipo_Nombramiento','ASC');
+			$this->db->order_by('UApellido_pat','ASC');
+			$this->db->order_by('UApellido_mat','ASC');
+			$this->db->group_by('UNCI_usuario');
+			$data['docentes'] = $this->plantilla_model->find_all(null, $select);
+
+			$data['contarDoc'] = count($data['docentes']);
+
+			$idPlantel 	= $data['docentes'][0]['PPlantel'];
+			$periodo	= $data['docentes'][0]['PPeriodo'];
+			$data['doc'] = $this->usuariodatos_model->nombramientos($idPlantel, $data['docentes'][0]['UDTipo_Nombramiento']);
+			$data['DocPlan'] = count($data['doc']);
+
+			$this->db->select('CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector');
+        	$data['plantel'] = $this->plantel_model->get($idPlantel);
+			
+			$data['periodo'] = periodo($periodo);			
+			
+			foreach ($data['docentes'] as $u => $listUser) {
+				$select = "UDClave, UDFecha_ingreso, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, (`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, UDPlaza, nomplaza, UDFecha_inicio, UDFecha_final, UDObservaciones,UDNumOficio";
+				$this->db->join('noctipopersonal', 'UDTipo_Nombramiento = TPClave', 'left');
+				$this->db->join('noplazadocente', 'UDPlaza = idPlaza', 'left');
+				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
+				$this->db->where('UDPlantel',$listUser['UDPlantel']);
+				$this->db->where("UDPlantilla",$listUser['PClave']);
+				$this->db->order_by('UDTipo_Nombramiento','ASC');
+				$this->db->where('UDActivo','1');
+				
+				$data['docentes'][$u]['plazas'] = $this->usuariodatos_model->find_all(null, $select);
+
+				$selects = "ULClave, ULNivel_estudio, ULLicenciatura, LGradoEstudio, Licenciatura, ULCedulaProf, ULTitulado";
+				$this->db->join('nolicenciaturas','IdLicenciatura = ULLicenciatura','left');
+				$this->db->where('ULUsuario',$listUser['UNCI_usuario']);
+				$this->db->where('ULPlantel',$listUser['UDPlantel']);
+
+				$data['docentes'][$u]['estudios'] = $this->usuariolic_model->find_all(null, $selects);
+
+				$selectMat = "idPlanDetalle, idPlantilla, idPUDatos, UDTipo_Nombramiento, pidLicenciatura, pperiodo, psemestre, pidMateria, materia, hsm, pnogrupoMatutino, pnogrupoVespertino, ptotalHoras";
+				$this->db->join('nomaterias','id_materia = pidMateria','left');
+				$this->db->join('nousuariodatos','UDClave = idPUDatos','left');
+				$this->db->where('idPUsuario',$listUser['UNCI_usuario']);
+				$this->db->where('idPPlantel',$listUser['UDPlantel']);
+				$this->db->where('idPlantilla',$idPlantilla);
+				$this->db->where('pactivo','1');
+				$this->db->order_by('idPUDatos','ASC');
+				$this->db->order_by('psemestre','ASC');
+
+				$data['docentes'][$u]['materias'] = $this->generarplantilla_model->find_all(null, $selectMat);
+
+				$selectHoras = 
+				"SUM(UDHoras_grupo) UDHoras_grupo, SUM(UDHoras_apoyo) UDHoras_apoyo, SUM(UDHoras_CB) UDHoras_CB, SUM(UDHoras_provicionales) UDHoras_provicionales, 
+				(`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, 
+				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = ".$listUser['UNCI_usuario']." AND idPPlantel = ".$listUser['UDPlantel']." AND idPlantilla = ".$idPlantilla." AND pactivo = 1) AS totalHoras";
+				$this->db->where('UDUsuario',$listUser['UNCI_usuario']);
+				$this->db->where('UDPlantel',$listUser['UDPlantel']);
+				$this->db->where('UDActivo','1');
+
+				$data['docentes'][$u]['horas'] = $this->usuariodatos_model->find_all(null, $selectHoras);
+
+			}
+			//echo json_encode($data);
+			//exit;
+
+			$this->load->library('Dpdf');
+			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
+        	
+			$data['subvista'] = 'plantilla/Ver_PlantillaPdf_view';
+			
+			$this->dpdf->load_view('plantilla/plantilla_general_pdf',$data);
+			$this->dpdf->setPaper('Legal', 'landscape');
+			$this->dpdf->render();
+			$this->dpdf->stream("Plantilla".$data['plantel']['CPLNombre'].".pdf",array("Attachment"=>false));
+		}
 
 		public function exportarExcel_skip() {
 			$this->load->view('plantilla/ExportarExcel');
