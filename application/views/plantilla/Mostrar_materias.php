@@ -12,13 +12,14 @@
             <tbody>
             <?php foreach($arrayMaterias as $ar => $listM){ ?>
                 <tr>
-                    <td style="width: 400px;"><input type="checkbox" name="pidMateria[]" id="id_materia" value="<?= $listM[0]['id_materia']; ?>" <?php if(nvl($datosPlantilla['pidMateria']) == $listM[0]['id_materia']) { echo "checked";} ?> > <?php echo $listM[0]['materia']; ?></td>
+                    <td style="width: 400px;">
+                    <input class="id_materia<?= $listM[0]['id_materia']; ?>" type="checkbox" name="pidMateria[]" id="id_materia" value="<?= $listM[0]['id_materia']; ?>" <?php if(nvl($datosPlantilla['pidMateria']) == $listM[0]['id_materia']) { echo "checked";} ?> ><?php echo $listM[0]['id_materia']?> :: <?php echo $listM[0]['materia']; ?></td>
                     <td><input name="multiplo[]" id="multipo<?= $listM[0]['id_materia']; ?>" class="form-control disabled" value="<?= $listM[0]['hsm']; ?>"></td>
                     <td>
-                        <input type="text" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" name="nogrupoMatutino[]" placeholder="0" value="<?= nvl($datosPlantilla['pnogrupoMatutino'])?>" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
+                        <input class="numeros" type="text" id="nogrupoMatutino<?= $listM[0]['id_materia']; ?>" min="1" max="5" name="nogrupoMatutino[]" placeholder="0" value="<?= nvl($datosPlantilla['pnogrupoMatutino'])?>" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/> 
                     </td>
                     <td>
-                        <input type="text" id="nogrupoVespertino<?= $listM[0]['id_materia']; ?>" name="nogrupoVespertino[]" placeholder="0" value="<?= nvl($datosPlantilla['pnogrupoVespertino'])?>" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/>
+                        <input class="numeros" type="number" id="nogrupoVespertino<?= $listM[0]['id_materia']; ?>" min="1" max="5" name="nogrupoVespertino[]" placeholder="0" value="<?= nvl($datosPlantilla['pnogrupoVespertino'])?>" maxlength='2' class="form-control" onkeyup="sumar<?= $listM[0]['id_materia']; ?>();"/>
                     </td>
                     <td class="text-center"><input type="text" id="spTotal<?= $listM[0]['id_materia']; ?>" name="spTotal[]" placeholder="0" value="<?= nvl($datosPlantilla['ptotalHoras'])?>" class="form-control disabled"></td>
                 </tr>
@@ -35,6 +36,15 @@
                     
                     document.getElementById('spTotal<?= $listM[0]['id_materia']; ?>').value = total;
                 }
+            </script>
+            <script>
+                jQuery(document).ready(function(){
+                    // Listen for the input event.
+                    jQuery(".numeros").on('input', function (evt) {
+                        // Allow only numbers.
+                        jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
+                    });
+                });
             </script>
             <?php } ?>
             </tbody>
@@ -82,7 +92,7 @@
                         <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
                         <td class="text-center"><?= $listPlan['pbObservaciones']; ?></td>
                         <td class="text-center" colspan="2">
-                            <button class="btn btn-danger btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Corregir
+                            <button class="btn btn-danger btn-sm" onclick="js:asignar('<?=$listPlan['idPUsuario']?>','<?= $UDTipo_Nombramientos ?>','<?= $listPlan['idPlanDetalle'] ?>'); cargarDatos('<?= $listPlan['psemestre']?>','<?= $listPlan['idPlanDetalle'] ?>')"><i class="fa fa-pencil"></i> Corregir
                             </button>
                         </td>
                     </tr>
@@ -97,7 +107,7 @@
                         <td class="text-center"><?php $listPlan['psemestre'] ; if ($listPlan['psemestre'] == '5' || $listPlan['psemestre'] == '6') { echo $listPlan['ptotalHoras']; } ?></td>
                         <td class="text-center"><?= $listPlan['ptotalHoras']; ?></td>
                         <td class="text-center">
-                            <button class="btn btn-warning btn-sm" onclick="js:asignar(<?=$listPlan['idPUsuario']?>,<?= $UDTipo_Nombramiento ?>,<?= $listPlan['idPlanDetalle'] ?>); cargarDatos(<?= $listPlan['psemestre']?>,<?= $listPlan['idPlanDetalle'] ?>)"><i class="fa fa-pencil"></i> Editar
+                            <button class="btn btn-warning btn-sm" onclick="js:asignar('<?=$listPlan['idPUsuario']?>','<?= $UDTipo_Nombramientos ?>','<?= $listPlan['idPlanDetalle'] ?>'); cargarDatos('<?= $listPlan['psemestre']?>','<?= $listPlan['idPlanDetalle'] ?>')"><i class="fa fa-pencil"></i> Editar
                             </button>
                         </td>
                     </tr>

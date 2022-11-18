@@ -37,7 +37,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 				UEstado, UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, UDValidado, UDHoras_grupo, 
 				SUM(IF(UDTipo_Nombramiento IN (1,2,3,4), 1, 0)) AS num,
 				SUM(UDHoras_grupo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) $horasApoyo AS HorasTot,
-				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND pperiodo = '".$periodo['PEPeriodo']."' AND idPUDatos = UDClave AND pactivo = 1) AS HorasAsig,
+				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND pperiodo = '".$periodo['PEPeriodo']."' /*AND idPUDatos = UDClave*/ AND pactivo = 1) AS HorasAsig,
 				(SELECT noplantilla.PEstatus FROM noplantilla WHERE PClave = '$idPlantilla') AS PEstatus,
 				(SELECT idPlanDetalle FROM noplantilladetalle INNER JOIN noplantillabitacora ON idBPlanDetalle = idPlanDetalle WHERE idPlantilla = '$idPlantilla' AND idPUsuario = UDUsuario AND pbUsuarioCorrecion IS NULL AND pactivo = 1 LIMIT 1) AS idPlanDetalle
 				";

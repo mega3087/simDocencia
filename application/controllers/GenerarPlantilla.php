@@ -184,10 +184,11 @@
 				$idMat = explode(',',$data['ids'][0]['LIdmateria']);
 				
 				foreach ($idMat as $k => $mats) {
+					$this->db->join("noccapacitacion","tipo = CCAAbrev OR tipo = 'BAS'");
+					$this->db->join("nogrupos","GRCClave = CCAClave");
 					if ($data['datosPlantilla'] ) {
 						$this->db->where('id_materia',$data['datosPlantilla']['pidMateria']);
-					}
-
+					}					
 					$this->db->where('id_materia',$mats);
 					$this->db->where('semmat',$semestre);
 					$this->db->where('plan_estudio',$plan_estudio);
@@ -195,9 +196,11 @@
 						$this->db->where('campo_cono', $tipoMat['UDTipo_materia']);				
 					}
 					$this->db->where('activo','1');
+					$this->db->group_by('id_materia');
 					$this->db->order_by('semmat','ASC');
 					$arreglo[$k] = $this->materias_model->find_all();
 				}
+
 				$arrayAux = array();
 				foreach ($arreglo as $valor) {
 					if ($valor != null && !empty($valor)) {
@@ -216,6 +219,7 @@
 
 		public function save() {
 			$data = post_to_array('_skip');
+			//echo json_encode($data).'<br>';
 
 			if($data['idPlanDetalle']) {
 				$data['datosPlantilla'] = $this->generarplantilla_model->get($data['idPlanDetalle']);
@@ -250,22 +254,26 @@
 				}
 			}
 			
-			$datosNom = 'UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, UDPlaza, nomplaza, UDActivo, UDValidado';
-			$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
-			$this->db->join('noplazadocente','idPlaza = UDPlaza','left');
-			$this->db->where('UDClave',$data['idPUDatos']);
+			//$datosNom = 'SUM(UDHoras_grupo) sumhfg, SUM(UDHoras_CB) sumhcb,UDClave, UDUsuario, UDPlantel, UDTipo_Nombramiento, TPNombre, UDTipo_materia, UDHoras_grupo, UDHoras_apoyo, UDHoras_CB, UDHoras_provicionales, UDPlaza, nomplaza, UDActivo, UDValidado';
+			/*$this->db->join('noctipopersonal','TPClave = UDTipo_Nombramiento','left');
+			$this->db->join('noplazadocente','idPlaza = UDPlaza','left');*/
+			//$this->db->where('UDClave',$data['idPUDatos']);
+			$datosNom = 'SUM(UDHoras_grupo) sumhfg, SUM(UDHoras_CB) sumhcb';
+			$this->db->where('UDPlantel',$data['idPPlantel']);
+			$this->db->where('UDUsuario',$data['idPUsuario']);
+			$this->db->where("(UDPlantilla = $idPlantilla OR UDPermanente = 'Y')");
 			$data['datosnom'] = $this->usuariodatos_model->find_all(null, $datosNom);
-			
+
 			$sumahoras = '0';
 			$totalHoras = '0';
 			//$totalHoras = $data['datosnom'][0]['UDHoras_grupo'] + $data['datosnom'][0]['UDHoras_apoyo'] + $data['datosnom'][0]['UDHoras_CB'] + $data['datosnom'][0]['UDHoras_provicionales'];
-			$totalHoras = $data['datosnom'][0]['UDHoras_grupo'] + $data['datosnom'][0]['UDHoras_CB'];
+			$totalHoras = $data['datosnom'][0]['sumhfg'] + $data['datosnom'][0]['sumhcb'];
 
 			$selsum = 'SUM(ptotalHoras) as horasTotales';
 			$this->db->where('idPPlantel',$data['idPPlantel']);
 			$this->db->where('idPUsuario',$data['idPUsuario']);
-			$this->db->where('idPUDatos',$data['idPUDatos']);
-			//$this->db->where('idPlantilla',$idPlantilla);
+			//$this->db->where('idPUDatos',$data['idPUDatos']);
+			$this->db->where('idPlantilla',$idPlantilla);
 			$this->db->where('pactivo','1');
 			if($data['idPlanDetalle']) {
 				$this->db->where("idPlanDetalle != ".$data['idPlanDetalle']);
@@ -275,6 +283,25 @@
 			if(nvl($data['spTotal'])) {
 				$sumahoras = array_sum(nvl($data['spTotal'])) + $sumNombramiento[0]['horasTotales'];
 			}
+
+			/*foreach ($data['psemestre'] as $s => $listSem) {
+				foreach ($data['pidMateria'] as $mat => $listMat) {
+					$selecthr = "pidMateria, SUM(pnogrupoMatutino) gruposMat, SUM(pnogrupoVespertino) gruposVesp, SUM(ptotalHoras) sumHoras,
+					(SELECT SUM(GRTurno = 1) FROM `nogrupos` WHERE `GRPeriodo` = '".$data['pperiodo']."' AND `GRCPlantel` = '". $data['idPPlantel']."' AND `GRSemestre` = '".$listSem."' AND `GRStatus` = '1' GROUP BY GRSemestre) GrupMat,
+					(SELECT SUM(GRTurno = 2) FROM `nogrupos` WHERE `GRPeriodo` = '".$data['pperiodo']."' AND `GRCPlantel` = '". $data['idPPlantel']."' AND `GRSemestre` = '1' AND `GRStatus` = '".$listSem."' GROUP BY GRSemestre) GrupVes";
+					$where = array(
+						"pperiodo" => $data['pperiodo'],
+						"psemestre" => $listSem,
+						"pidMateria" => $listMat,
+						"pactivo" => '1'
+					);
+					
+					$data['grupos'][$s] = $this->generarplantilla_model->find_all($where, $selecthr);
+				}
+			}
+
+			echo json_encode($data['grupos']);
+			exit; */
 			if(nvl($data['psemestre']) == '' || nvl($data['pidMateria']) == '') {
 				set_mensaje("Favor de ingresar todos los datos.");
 				muestra_mensaje();
@@ -388,7 +415,7 @@
 			$idPlantel = $this->input->post('idPlantel');
 			$data['periodos'] = $this->input->post('periodo');
 
-			$data['UDTipo_Nombramiento'] = $this->input->post('UDTipo_Docente');
+			$data['UDTipo_Nombramientos'] = $this->input->post('UDTipo_Docente');
 
 			$data['opcion'] = 'plantilla';
 
@@ -444,7 +471,7 @@
 			
 			foreach ($data['docentes'] as $u => $listUser) {
 				$select = "idPlantilla, UDUsuario,`UDClave`, `UDFecha_ingreso`, `UDTipo_Nombramiento`, `TPNombre`, `UDTipo_materia`, `UDHoras_grupo`, `UDHoras_apoyo`, `UDHoras_CB`, `UDHoras_provicionales`, 
-				(`UDHoras_grupo`+`UDHoras_apoyo`+UDHoras_CB) AS TotalHoras, `UDPlaza`, `nomplaza`, `UDFecha_inicio`, `UDFecha_final`, `UDObservaciones`, `UDNumOficio`";
+				(`UDHoras_grupo`+`UDHoras_apoyo`) AS TotalHoras, `UDPlaza`, `nomplaza`, `UDFecha_inicio`, `UDFecha_final`, `UDObservaciones`, `UDNumOficio`";
 				$this->db->join('nousuariodatos', 'idPUDatos = UDClave', 'left');
 				$this->db->join('noctipopersonal', 'UDTipo_Nombramiento = TPClave', 'left');
 				$this->db->join('noplazadocente', 'UDPlaza = idPlaza', 'left');
@@ -497,20 +524,75 @@
 					'UDHoras_provicionales' => $sumasProv[$u],
 					'TotalHoras' => $sumasGrupos[$u] + $sumasCB[$u],
 				);
-			}
+			}			
 			
-			
-			$select = "`CCANombre`, `id_materia`, `materia`, `hsm`, SUM(GRTurno = 1) TotMat, IF(MIN(GRTurno) = 1, 1, '') AS TMat, SUM(GRTurno = 2) TotVes, IF(MAX(GRTurno) = 2, 1, '') AS TVes, `GRPlanEst`, `GRSemestre`, `GRCClave`, COUNT(*) AS GRNoGrupos";
+			$select = "`id_materia`, `materia`, `hsm`, SUM(GRTurno = 1) TotMat, IF(MIN(GRTurno) = 1, 1, '') AS TMat, SUM(GRTurno = 2) TotVes, IF(MAX(GRTurno) = 2, 1, '') AS TVes, `GRPlanEst`, `GRSemestre`, `GRCClave`, COUNT(*) AS GRNoGrupos";
 			$where = array(
-				"GRPeriodo" => '22-2',
-				"GRCPlantel" => '3',
+				"GRPeriodo" => $data['periodo']['PEPeriodo'],
+				"GRCPlantel" => $idPlantel,
 				"GRStatus" => '1'
 			);
+			
 			$this->db->join("noccapacitacion"," CCAClave = GRCClave","LEFT");
-			$this->db->join("nomaterias","GRPlanEst = plan_estudio AND GRSemestre = semmat","AND ((GRSemestre >= 3 AND CCAAbrev = tipo) OR tipo = 'BAS')","LEFT");
-			$this->db->group_by("GRSemestre,GRCClave,materia");
+			$this->db->join("nomaterias","GRPlanEst = plan_estudio AND GRSemestre = semmat","LEFT");
+			$this->db->where("((GRSemestre >= 3 AND CCAAbrev = tipo) OR tipo = 'BAS')");
+			$this->db->group_by("id_materia,GRSemestre");
 			$this->db->order_by("GRSemestre,CCANombre,orden");
-			$data['vacantes'] = $this->grupos_model->find_all($where, $select);
+			$vacantes = $this->grupos_model->find_all($where, $select);
+
+			$selectGr = "SUM(GRTurno = 1) GrupMat, SUM(GRTurno = 2) GrupVes";
+			$whereGr = array(
+				"GRPeriodo" => $data['periodo']['PEPeriodo'],
+				"GRCPlantel" => $idPlantel,
+				"GRStatus" => '1'
+			);
+
+			$data['grupos'] = $this->grupos_model->find_all($whereGr, $selectGr);
+
+			foreach ($vacantes as $vac => $listvac) {
+				$selecthr = "pidMateria, SUM(pnogrupoMatutino) gruposMat, SUM(pnogrupoVespertino) gruposVesp, SUM(ptotalHoras) sumHoras";
+				$where = array(
+					"pperiodo" => $data['periodo']['PEPeriodo'],
+					"psemestre" => $listvac['GRSemestre'],
+					"pidMateria" => $listvac['id_materia'],
+					"pactivo" => '1'
+				);
+				$restarGrupos[$vac] = $this->generarplantilla_model->find_all($where, $selecthr);
+
+				foreach ($restarGrupos as $r => $rest) {
+					if (!empty($rest[0]['gruposMat'])) {
+						$gruposMat = $rest[0]['gruposMat'];
+					} else {
+						$gruposMat = 0;
+					}
+					if (!empty($rest[0]['gruposVesp'])) {
+						$gruposVesp = $rest[0]['gruposVesp'];
+					} else {
+						$gruposVesp = 0;
+					}
+					if (!empty($rest[0]['sumHoras'])) {
+						$sumHoras = $rest[0]['sumHoras'];
+					} else {
+						$sumHoras = 0;
+					}
+					$data['vacantes'][$vac] = array(
+						'id_materia' => $listvac['id_materia'],
+						'materia' => $listvac['materia'],
+						'hsm' => $listvac['hsm'],
+						'TotMat' => $listvac['TotMat'],
+						'TMat' => $listvac['TMat'],
+						'TotVes' => $listvac['TotVes'],
+						'TVes' => $listvac['TVes'],
+						'GRPlanEst' => $listvac['GRPlanEst'],
+						'GRSemestre' => $listvac['GRSemestre'],
+						'GRCClave' => $listvac['GRCClave'],
+						'GRNoGrupos' => $listvac['GRNoGrupos'],
+						'restMat' => $gruposMat,
+						'restVesp' => $gruposVesp,
+						'restTotal' => $sumHoras
+					);
+				}
+			}
 
 			/*echo"<pre>";
 			print_r($data['vacantes']);

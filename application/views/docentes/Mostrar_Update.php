@@ -519,6 +519,7 @@
             formData.append("UDFecha_inicio",  document.getElementById("UDFecha_inicio").value);
             formData.append("UDFecha_final", document.getElementById("UDFecha_final").value);
             formData.append("UDObservaciones", document.getElementById("UDObservaciones").value);
+            formData.append("UDLicencia", $("input[type=radio][name=UDLicencia]:checked").val());
 
             formData.append("UDNombramiento_file", UDNombramiento_file.files[0]);
 

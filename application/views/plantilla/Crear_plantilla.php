@@ -334,27 +334,22 @@
                     $("#error").empty();
                     $("#error").append(data[0]);
                     datosPlantilla(data[2],data[3]);
-                    uncheckAll();
+                    limpiarFormulario();
                     $(".mostrarMat1").html("");
                     $(".mostrarMat2").html("");
                     $(".mostrarMat3").html("");
                     $(".mostrarMat4").html("");
                     $(".mostrarMat5").html("");
                     $(".mostrarMat6").html("");
-                    $(".loadingSave").html("");
                 } else {
                     $("#error").empty();
-                    $("#error").append(data);   
-                    $(".loadingSave").html(""); 
-                    //datosPlantilla(data[2]);
+                    $("#error").append(data);
                 }             
             }
         });
     });//----->fin
     
     function limpiarFormulario() {
-        //$("#nombramiento").empty();
-        //$("#licenciatura").empty();
         $("#nombramiento").val('');
         $("#licenciatura").val('');
         uncheckAll();
@@ -385,8 +380,7 @@
 			},
 			success: function(data){
 				$(".mostrarDatos").empty();
-				$(".mostrarDatos").append(data);  
-				$(".loadingSave").html("");
+				$(".mostrarDatos").append(data); 
 			}
 		});
 	}

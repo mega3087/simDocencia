@@ -151,7 +151,7 @@
 			<div class="cuerpo" style="text-align: center;">
 			<p>&nbsp;</p>
 				<?php foreach ($listDoc['materias'] as $m => $listMat) { 
-					$sumhsm = $sumhsm + $listMat['hsm'];?>
+					//$sumhsm = $sumhsm + $listMat['hsm'];?>
 					<p><?= $listMat['hsm']; ?></p>
 				<?php } ?>
 			</div>
@@ -235,7 +235,7 @@
 	<!--Lista de Vacantes-->
 	<?php foreach ($vacantes as $v => $listVac) { ?>
 		<div class="cuerpo" style="text-align:center">
-		<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;<b><?= $v; ?></b>&nbsp;</p>
+		<p>&nbsp;</p><p>&nbsp;<b><?= $i + $v; ?></b>&nbsp;</p>
 		</div>
 		<div class="cuerpo">
 			<p>&nbsp;</p>
@@ -243,9 +243,11 @@
 			<p>&nbsp;</p>
 		</div>
 		<div class="cuerpo">
+			<p>&nbsp;</p>
 			<p>&nbsp;Vacante<br></p>
 		</div>
 		<div class="cuerpo">
+		<p>&nbsp;</p>
 			<p>&nbsp;<b>Vacante</b></p>
 		</div>
 		<div class="cuerpo">
@@ -254,20 +256,30 @@
 		</div>
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>
-				<p><?= $listVac['hsm']; ?></p>
+				<p><?= $listVac['hsm'];  
+				//$sumhsm =  $sumhsm + $listVac['hsm']; ?></p>
 		</div>
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>
-				<p><?= $listVac['TotMat']; ?></p>
+			<p><?php $TotMat = $listVac['TotMat'] - $listVac['restMat'];
+			echo $TotMat;
+			$sumMat = $sumMat + $listVac['TotMat']; 
+			?></p>
 		</div>
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>
-				<p><?= $listVac['TotVes']; ?></p>
+			<p><?php $TotVes =  $listVac['TotVes'] - $listVac['restVesp']; 
+			echo $TotVes;
+			$sumVesp = $sumVesp + $listVac['TotVes']; ?></p>
 		</div>
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>
-			<?php if ($listVac['GRSemestre'] == '1' || $listVac['GRSemestre'] == '2') { ?>
-				<p><?= $listVac['GRNoGrupos']; ?></p>
+			<?php if ($listVac['GRSemestre'] == '1' || $listVac['GRSemestre'] == '2') { 
+				 ?>
+				<p><?php 
+				$mult1 = ($TotMat + $TotVes) * $listVac['hsm']; 
+				echo $mult1;
+				$sum1 = $sum1 + $mult1; ?></p>
 			<?php } else { ?>
 				<p>&nbsp;</p>
 			<?php } ?>
@@ -275,7 +287,10 @@
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>
 			<?php if ($listVac['GRSemestre'] == '3' || $listVac['GRSemestre'] == '4') { ?>
-				<p><?= $listVac['GRNoGrupos']; ?></p>
+				<p><?php 
+					$mult2 = ($TotMat + $TotVes) * $listVac['hsm'];
+					echo $mult2; 
+					$sum2 = $sum2 + $mult2; ?></p>
 			<?php } else { ?>
 				<p>&nbsp;</p>
 			<?php } ?>
@@ -283,30 +298,45 @@
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>			
 			<?php if ($listVac['GRSemestre'] == '5' || $listVac['GRSemestre'] == '6') { ?>
-				<p><?= $listVac['GRNoGrupos']; ?></p>
+				<p><?php 
+					$mult3 = ($TotMat + $TotVes) * $listVac['hsm'];
+					echo $mult3; 
+					$sum3 = $sum3 + $mult3; ?></p>
 			<?php } else { ?>
 				<p>&nbsp;</p>
 			<?php } ?>
 		</div>
 		<div class="cuerpo" style="text-align: center;">
 		<p>&nbsp;</p>
-			<p><?= $listVac['GRNoGrupos']; ?></p>			
+			<p><?php 
+			$multTotal = ($TotMat + $TotVes) * $listVac['hsm'];
+			echo $multTotal;
+			$sumtotal = $sumtotal + $multTotal;
+			?></p>			
 		</div>
 		<?php if( is_permitido(null,'generarplantilla','validar') && $plantilla['PEstatus'] == 'Revisión' ) { ?>
 		<div class="cuerpo" style="text-align: center;">			
 		</div>
 		<?php } ?>
-			<div class="cuerpo" style="text-align: center;">0</div>
 			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> 0</p></div>
 			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> 0</p></div>
-			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> Total horas</p></div>
-			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p>Total Horas</p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> 0</p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p><?php 
+			$multcb = ($TotMat + $TotVes) * $listVac['hsm'];
+			echo $multcb;
+			$sumcb = $sumcb + $multcb;
+			?></p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p><?php 
+			$multhoras = ($TotMat + $TotVes) * $listVac['hsm'];
+			echo $multhoras; 
+			$sumhoras = $sumhoras + $multhoras;
+			?></p></div>
 	<?php } ?>
 	<?php ?>
 			<div class="totales" style="text-align: center;">TOTALES</div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumhsm ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumMat ?></div>
-			<div class="cuerpo" style="text-align: center;"><?= $sumVesp ?></div>
+			<div class="cuerpo" style="text-align: center;"><?php //echo $sumhsm; ?></div>
+			<div class="cuerpo" style="text-align: center;"><?= $grupos[0]['GrupMat'] ?></div>
+			<div class="cuerpo" style="text-align: center;"><?= $grupos[0]['GrupVes'] ?></div>
 			<div class="cuerpo" style="text-align: center;"><?= $sum1 ?></div>
 			<div class="cuerpo" style="text-align: center;"><?= $sum2 ?></div>
 			<div class="cuerpo" style="text-align: center;"><?= $sum3 ?></div>

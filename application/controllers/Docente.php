@@ -173,13 +173,10 @@ class Docente extends CI_Controller {
             set_mensaje("Favor de ingresar todos los datos requeridos.");
             muestra_mensaje();
         } else {
-            if (($data['UDTipo_Nombramiento'] == '1' || $data['UDTipo_Nombramiento'] == '2' || $data['UDTipo_Nombramiento'] == '3') &&  $data['UDFecha_ingreso'] == '') {
+            if (($data['UDTipo_Nombramiento'] == '1' || $data['UDTipo_Nombramiento'] == '2' || $data['UDTipo_Nombramiento'] == '3' || $data['UDTipo_Nombramiento'] == '8') &&  $data['UDFecha_ingreso'] == '') {
                 set_mensaje("Favor de ingresar todos los datos requeridos.");
                 muestra_mensaje();
             } elseif (($data['UDTipo_Nombramiento'] == '4'  || $data['UDTipo_Nombramiento'] == '5' || $data['UDTipo_Nombramiento'] == '6')  &&  ($data['UDFecha_inicio'] == '' ||  $data['UDFecha_final'] == '')) {
-                set_mensaje("Favor de ingresar todos los datos requeridos.");
-                muestra_mensaje();
-            } elseif ($data['UDTipo_Nombramiento'] == '8'  &&  $data['UDFecha_inicio'] == '') {
                 set_mensaje("Favor de ingresar todos los datos requeridos.");
                 muestra_mensaje();
             } else {
