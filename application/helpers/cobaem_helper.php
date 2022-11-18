@@ -757,7 +757,7 @@
 		$where = null;
 		
 		if(!$periodo){
-			$where = "CURDATE() BETWEEN CONCAT(CPEAnioInicio,CPEMesInicio,CPEDiaInicio) AND CONCAT(CPEAnioFin,CPEMesFin,CPEDiaFin)";
+			$where = "CURDATE() BETWEEN CONCAT(CPEAnioInicio,'-',CPEMesInicio,'-',CPEDiaInicio) AND CONCAT(CPEAnioFin,'-',CPEMesFin,'-',CPEDiaFin)";
 		}else{
 			$where = "CPEPeriodo = '$periodo'";
 		}
@@ -772,6 +772,24 @@
 		}else{
 			exit("Sin periodo actual!!");
 		}
+		return $periodo;
+	}
+	
+	function periodo_s($periodo=null){
+		$CI = & get_instance();
+		$where = null;
+		
+		$select = "*, CONCAT(CPEAnioInicio,'-',CPEMesInicio,'-',CPEDiaInicio)AS FechaInicio";
+		$CI->db->order_by("FechaInicio","DESC");
+		$CI->db->limit("1");
+		$data = $CI->periodos_model->find("CPEStatus = 1", $select);
+		
+		$periodo = array(
+			"PEPeriodo" => $data['CPEPeriodo'],
+			"PEFecha_inicial" => $data['CPEAnioInicio']."-".$data['CPEMesInicio']."-".$data['CPEDiaInicio'],
+			"PEFecha_final" => $data['CPEAnioFin']."-".$data['CPEMesFin']."-".$data['CPEDiaFin']
+		);
+			
 		return $periodo;
 	}
 

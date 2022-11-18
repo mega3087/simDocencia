@@ -26,17 +26,6 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 			$result = array();
 			$idPlantilla = $this->plantilla_model->plantilla_actual($idPlantel);
 
-			$select = 'COUNT(*) total';
-			$this->db->where('PPeriodo',$periodo['PEPeriodo']);
-			$this->db->where('PPlantel',$idPlantel);
-			$this->db->where('PActivo','1');
-			$plantillas = $this->plantilla_model->find_all(null, $select);
-			if ($plantillas[0]['total'] == 1){
-				$busDatos = "AND idPlantilla = '".$idPlantilla."'";
-			} else {
-				$busDatos = "AND pperiodo = '".$periodo['PEPeriodo']."'";
-			}
-
 			if($horasApoyo)
 				$horasApoyo = "+SUM(UDHoras_apoyo)";
 			
@@ -49,8 +38,9 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 				SUM(IF(UDTipo_Nombramiento IN (1,2,3,4), 1, 0)) AS num,
 				SUM(UDHoras_grupo)+SUM(UDHoras_CB)+SUM(UDHoras_provicionales) $horasApoyo AS HorasTot,
 				(SELECT SUM(ptotalHoras) FROM noplantilladetalle WHERE idPUsuario = UDUsuario AND pperiodo = '".$periodo['PEPeriodo']."' AND idPUDatos = UDClave AND pactivo = 1) AS HorasAsig,
-				(SELECT noplantilla.PEstatus FROM noplantilla WHERE noplantilla.PPeriodo = '".$periodo['PEPeriodo']."' AND paCTIVO = '1' GROUP BY PClave ORDER BY PVersion DESC LIMIT 1) AS PEstatus,
-				(SELECT COUNT(*) FROM noplantilladetalle INNER JOIN noplantillabitacora ON idBPlanDetalle = idPlanDetalle WHERE idPUsuario = UDUsuario AND pperiodo = '".$periodo['PEPeriodo']."' AND pactivo = 1) AS PEstatusDetalle ";
+				(SELECT noplantilla.PEstatus FROM noplantilla WHERE PClave = '$idPlantilla') AS PEstatus,
+				(SELECT idPlanDetalle FROM noplantilladetalle INNER JOIN noplantillabitacora ON idBPlanDetalle = idPlanDetalle WHERE idPlantilla = '$idPlantilla' AND idPUsuario = UDUsuario AND pbUsuarioCorrecion IS NULL AND pactivo = 1 LIMIT 1) AS idPlanDetalle
+				";
 			if($permanente=='Y'){
 				$this->db->where("UDPermanente","Y");
 			}else{

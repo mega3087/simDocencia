@@ -42,7 +42,7 @@
 			if(!$plantel) redirect('generarplantilla');
 			
 			//Consultar plantillas generadas del periodo
-			$periodo = periodo();
+			$periodo = periodo_s();
 			$where = array('PPeriodo' => $periodo['PEPeriodo'], 'PPlantel' => $plantel, 'PActivo' => '1');
 			$data['plantillas'] = $this->plantilla_model->find_all($where);
 
@@ -61,7 +61,7 @@
 		public function tablaPlantillas_skip(){
 			//var
 			$idPlantel = $this->input->post('plantel');
-			$periodo = periodo();
+			$periodo = periodo_s();
 			$horasTotales = 0;
 			
 			$data['plantel'] = $this->plantel_model->get($idPlantel);
@@ -418,7 +418,7 @@
 		}
 
 
-		public function verplantilla() {
+		public function verplantilla(){
 			
 			$this->db->where('PClave', $this->input->post('idPlantilla'));
 			$data['plantilla'] = $this->plantilla_model->find();
@@ -432,18 +432,15 @@
 			$this->db->order_by('UApellido_mat','ASC');
 			$this->db->group_by('UNCI_usuario');
 			$data['docentes'] = $this->generarplantilla_model->find_all(null, $select);
-			
-			$data['contarDoc'] = count($data['docentes']);
 
-			$idPlantel 	= $data['docentes'][0]['idPPlantel'];
+			$idPlantel 	= $data['plantilla']['PPlantel'];
 			
-			$data['doc'] = $this->usuariodatos_model->nombramientos($idPlantel, $data['docentes'][0]['UDTipo_Nombramiento']);
-			$data['DocPlan'] = count($data['doc']);
+			$data['doc'] = $this->usuariodatos_model->nombramientos($idPlantel, @$data['docentes'][0]['UDTipo_Nombramiento']);
 
 			$this->db->select('CPLClave, CPLNombre, CPLCCT, CPLCorreo_electronico, CPLDirector');
         	$data['plantel'] = $this->plantel_model->get($idPlantel);
 			
-			$data['periodo'] = periodo();			
+			$data['periodo'] = periodo_s();			
 			
 			foreach ($data['docentes'] as $u => $listUser) {
 				$select = "idPlantilla, UDUsuario,`UDClave`, `UDFecha_ingreso`, `UDTipo_Nombramiento`, `TPNombre`, `UDTipo_materia`, `UDHoras_grupo`, `UDHoras_apoyo`, `UDHoras_CB`, `UDHoras_provicionales`, 
@@ -500,8 +497,24 @@
 					'UDHoras_provicionales' => $sumasProv[$u],
 					'TotalHoras' => $sumasGrupos[$u] + $sumasCB[$u],
 				);
-				
 			}
+			
+			
+			$select = "`CCANombre`, `id_materia`, `materia`, `hsm`, SUM(GRTurno = 1) TotMat, IF(MIN(GRTurno) = 1, 1, '') AS TMat, SUM(GRTurno = 2) TotVes, IF(MAX(GRTurno) = 2, 1, '') AS TVes, `GRPlanEst`, `GRSemestre`, `GRCClave`, COUNT(*) AS GRNoGrupos";
+			$where = array(
+				"GRPeriodo" => '22-2',
+				"GRCPlantel" => '3',
+				"GRStatus" => '1'
+			);
+			$this->db->join("noccapacitacion"," CCAClave = GRCClave","LEFT");
+			$this->db->join("nomaterias","GRPlanEst = plan_estudio AND GRSemestre = semmat","AND ((GRSemestre >= 3 AND CCAAbrev = tipo) OR tipo = 'BAS')","LEFT");
+			$this->db->group_by("GRSemestre,GRCClave,materia");
+			$this->db->order_by("GRSemestre,CCANombre,orden");
+			$data['vacantes'] = $this->grupos_model->find_all($where, $select);
+
+			/*echo"<pre>";
+			print_r($data['vacantes']);
+			echo"</pre>";*/
 			
 			$data['FLogo_cobaemex'] = "logo_cobaemex_2018.png";
 			$this->load->view('plantilla/Ver_plantilla_view', $data);
@@ -545,9 +558,7 @@
 						'idBPlantilla' => $data['idPlantilla'], //Validado
 						'idBPlanDetalle' =>  $ids,
 						'pbObservaciones' =>$data[$ids],
-						'pbusuario' => get_session('UNCI_usuario'),
-						'pbfecha' => date('Y-m-d H:i:s')
-
+						'pbusuario' => get_session('UNCI_usuario')
 					);
 
 					$this->plantillabitacora_model->insert($pldatos);

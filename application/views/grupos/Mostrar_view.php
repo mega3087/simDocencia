@@ -188,7 +188,7 @@
 
                             <tr>
                                 <td rowspan="2">
-                                    <?= '20'.$periodos[0]['CPEPeriodo'] ?> <?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)'; ?>
+                                    <?= '20'.substr($periodos[0]['CPEPeriodo'],0,2)?> <?=substr($periodos[0]['CPEPeriodo'],3,1)==1?'(Febrero-Agosto)':'(Agosto-Febrero)';?>
                                 </td>
                                 <td rowspan="2">
                                     <?php $sem2 =  substr($periodos[0]['CPEPeriodo'],3,1)==1?'6':'5'; echo $sem2; ?>

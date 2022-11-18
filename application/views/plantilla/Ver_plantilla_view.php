@@ -231,7 +231,78 @@
 				<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p><?= $listHor['UDHoras_grupo'] + $listHor['UDHoras_apoyo'] + $horasCB; ?></p></div>
 			<?php } ?>
 			
-			<?php $i++; } ?>
+	<?php $i++; } ?>
+	<!--Lista de Vacantes-->
+	<?php foreach ($vacantes as $v => $listVac) { ?>
+		<div class="cuerpo" style="text-align:center">
+		<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;<b><?= $v; ?></b>&nbsp;</p>
+		</div>
+		<div class="cuerpo">
+			<p>&nbsp;</p>
+			<p>&nbsp;Vacante</p>
+			<p>&nbsp;</p>
+		</div>
+		<div class="cuerpo">
+			<p>&nbsp;Vacante<br></p>
+		</div>
+		<div class="cuerpo">
+			<p>&nbsp;<b>Vacante</b></p>
+		</div>
+		<div class="cuerpo">
+		<p>&nbsp;</p>
+				<p>&nbsp;<?= $listVac['materia']; ?></p>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>
+				<p><?= $listVac['hsm']; ?></p>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>
+				<p><?= $listVac['TotMat']; ?></p>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>
+				<p><?= $listVac['TotVes']; ?></p>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>
+			<?php if ($listVac['GRSemestre'] == '1' || $listVac['GRSemestre'] == '2') { ?>
+				<p><?= $listVac['GRNoGrupos']; ?></p>
+			<?php } else { ?>
+				<p>&nbsp;</p>
+			<?php } ?>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>
+			<?php if ($listVac['GRSemestre'] == '3' || $listVac['GRSemestre'] == '4') { ?>
+				<p><?= $listVac['GRNoGrupos']; ?></p>
+			<?php } else { ?>
+				<p>&nbsp;</p>
+			<?php } ?>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>			
+			<?php if ($listVac['GRSemestre'] == '5' || $listVac['GRSemestre'] == '6') { ?>
+				<p><?= $listVac['GRNoGrupos']; ?></p>
+			<?php } else { ?>
+				<p>&nbsp;</p>
+			<?php } ?>
+		</div>
+		<div class="cuerpo" style="text-align: center;">
+		<p>&nbsp;</p>
+			<p><?= $listVac['GRNoGrupos']; ?></p>			
+		</div>
+		<?php if( is_permitido(null,'generarplantilla','validar') && $plantilla['PEstatus'] == 'Revisión' ) { ?>
+		<div class="cuerpo" style="text-align: center;">			
+		</div>
+		<?php } ?>
+			<div class="cuerpo" style="text-align: center;">0</div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> 0</p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> 0</p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p> Total horas</p></div>
+			<div class="cuerpo" style="text-align: center;"><p>&nbsp;</p><p>Total Horas</p></div>
+	<?php } ?>
+	<?php ?>
 			<div class="totales" style="text-align: center;">TOTALES</div>
 			<div class="cuerpo" style="text-align: center;"><?= $sumhsm ?></div>
 			<div class="cuerpo" style="text-align: center;"><?= $sumMat ?></div>
@@ -261,7 +332,7 @@
 <div class="form-group">
 	<div class="col-lg-1"></div>
 	<div class="col-lg-10"><br><br>
-	<?php if ($contarDoc != $DocPlan)  { ?>
+	<?php if ($docentes != $doc)  { ?>
 		<button class="btn btn-primary btn-rounded btn-block revision pull-center" type="button" <?php if($plantilla['PEstatus'] == 'Revisión'){ echo "disabled"; }?>>
 			<i class="fa fa-eye"></i> <?php if ($plantilla['PEstatus'] == 'Revisión') { 
 				echo "Plantilla en Revisión"; 
@@ -328,7 +399,6 @@ $(document).ready(function() {
 							if(data[1]=='OK'){	
 								$(".loadingRevision").html('');
 								verPlantilla(data[2]);
-								//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
 							}
 						}
 					});
@@ -353,7 +423,6 @@ $(document).ready(function() {
 				if(data[1]=='OK'){	
 					$(".loadingRevision").html('');
 					verPlantilla(data[2]);
-					//location.href ='<?php echo base_url("generarplantilla/crear/$idPlantel"); ?>';
 				} 
 			}
 		});

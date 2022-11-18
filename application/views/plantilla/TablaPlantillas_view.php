@@ -19,12 +19,14 @@
 		$horasAsignadas = $this->generarplantilla_model->find($where,$select);
 		$horasAsignadas = $horasAsignadas['horasTotales'];
 		$hrsTotalAsig+= $horasAsignadas;
+		
+		$horasTotales_d = $horasTotales>0?$horasTotales:1;
 		?>
 		<tr>
 			<td><?php echo($key+1); ?></td>
 			<td>20<?php echo $periodo; ?></td>
 			<td><?php echo fecha_format($list['PFechaInicial'])." - ".fecha_format($list['PFechaFinal']); ?></td>
-			<td><?php echo $horasAsignadas; ?> (<?php echo number_format($horasAsignadas/$horasTotales*100,1); ?>%)</td>
+			<td><?php echo $horasAsignadas; ?> (<?php echo number_format($horasAsignadas/$horasTotales_d*100,1); ?>%)</td>
 			<td><?php echo $list['PEstatus']; ?></td>
 			<td>
 				<button onclick="verPlantilla(<?php echo$list['PClave']; ?>)" class="btn btn-success btn-xs" ><i class="fa fa-eye"></i> <?php if($list['PEstatus'] == 'Pendiente') { echo "Revisar"; } else {

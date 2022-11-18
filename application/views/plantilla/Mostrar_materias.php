@@ -70,7 +70,7 @@
                 <?php foreach($datos as $x => $listDatos) {
                     $contar = count($listDatos['plantilla']) +1;
                     foreach($listDatos['plantilla'] as $y => $listPlan) { 
-                    if ($listPlan['idPBitacora'] != '' && $listPlan['pbObservaciones'] != '' && $listPlan['pestatus'] == 'Corregir') { ?>
+                    if ($listPlan['idPBitacora'] != '' && $listPlan['pbObservaciones'] != '' && $listPlan['PEstatus'] == 'Revisión') { ?>
                     <tr>
                         <td class="text-center"><?= $listPlan['materia']; ?></td>
                         <td class="text-center"><?= $listPlan['hsm']; ?></td>

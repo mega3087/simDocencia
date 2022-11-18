@@ -20,7 +20,7 @@
 		*/		
 		function plantilla_actual($idPlantel = null){
 			//var
-			$periodo = periodo();
+			$periodo = periodo_s();
 			
 			if(!$idPlantel) return false;
 			

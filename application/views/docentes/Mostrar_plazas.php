@@ -6,6 +6,7 @@
 				<th>Fecha Ingreso</th>
 				<th>Plaza / No Horas</th>
 				<th>Tipo Materias</th>
+				<th>Observaciones</th>
 				<?php //if( is_permitido(null,'generarplantilla','save') && (nvl($data[0]['UDValidado']) == '' || nvl($data[0]['UDValidado']) == '1' ) || nvl($data[0]['UDValidado']) == '2' || nvl($data[0]['UDPermanente']) == 'N') { ?>
 				<?php if( is_permitido(null,'generarplantilla','save')) { ?>
 				<th>Acción</th>
@@ -51,6 +52,7 @@
 					} ?>
 				</td>
 				<td><?php echo nvl($list['UDTipo_materia']); ?></td>
+				<td><?php echo nvl($list['UDObservaciones']); ?></td>
 				<?php //if( nvl($data[0]['UDPermanente']) == 'N' && is_permitido(null,'generarplantilla','save')) { 
 					if( is_permitido(null,'generarplantilla','save')) { ?>
 				<td>

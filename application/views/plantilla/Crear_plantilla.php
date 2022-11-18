@@ -140,7 +140,7 @@
                                             <?php if (substr($periodos[0]['CPEPeriodo'],3,1) == '2'){?>
                                                 <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="3" class="sem3" value="3"><label class="control-label">&nbsp;3 Semestre <em>*</em></label></div>
                                             <?php } else { ?>
-                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="4" class="sem4" value="4"><label class="control-label">&nbsp;4 Semestre <em>*</em></label></div><div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="sexto" value="6"><label class="control-label">&nbsp;6 Semestre <em>*</em></label></div>
+                                                <div class="col-lg-4"><input type="checkbox" name="psemestre[]" id="4" class="sem4" value="4"><label class="control-label">&nbsp;4 Semestre <em>*</em></label></div>
                                             <?php } ?>
                                         </div>
                                     </div>
@@ -183,7 +183,6 @@
                                 <div class="form-group">
                                         <div class="col-lg-2"></div>
                                             <div class="col-lg-9">
-                                            <div class="loadingSave"></div>
                                             <div id="error"></div>
                                         </div>
                                     </div>
